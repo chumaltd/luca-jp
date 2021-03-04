@@ -16,11 +16,12 @@ module Luca
       # TODO: 軽減税率売上の識別
       #
       def kani
-        税率 = 10 # percent
+        税率 = BigDecimal('7.8') # percent
         @state.pl
-        sales = @state.pl_data.dig('A0')
-        tax_amount = sales * 10 / 100
-        みなし仕入額 = tax_amount * みなし仕入率(LucaSupport::CONFIG.dig('jp', 'syouhizei_kubun')) / 100
+        sales = @state.pl_data.dig('A0') * 100 / (100 + 10).floor # 課税資産の譲渡等の対価の額
+        課税標準額 = (sales / 1000).floor * 1000
+        tax_amount = (課税標準額 * 税率 / 100).floor
+        みなし仕入額 = (tax_amount * みなし仕入率(LucaSupport::CONFIG.dig('jp', 'syouhizei_kubun')) / 100).floor
         税額 = LucaSupport::Code.readable(tax_amount - みなし仕入額)
       end
 
