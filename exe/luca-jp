@@ -1,0 +1,22 @@
+#!/usr/bin/ruby
+
+require 'optparse'
+require 'luca/jp'
+
+class LucaCmd
+  def self.syouhizei(args, params)
+    puts Luca::Jp::Syouhizei.new(*args).kani
+  end
+end
+
+cmd = ARGV.shift
+params = {}
+
+case cmd
+when /s[yh]ou?hizei/
+    OptionParser.new do |opt|
+      opt.banner = 'Usage: luca-jp syouhizei [options] yyyy mm yyyy mm'
+      args = opt.parse!(ARGV)
+      LucaCmd.syouhizei(args, params)
+    end
+end

@@ -11,8 +11,8 @@ module Luca
       include LucaSupport::View
 
       def initialize(from_year, from_month, to_year = from_year, to_month = from_month)
-        @start_date = Date.new(from_year, from_month, 1)
-        @end_date = Date.new(to_year, to_month, 1)
+        @start_date = Date.new(from_year.to_i, from_month.to_i, 1)
+        @end_date = Date.new(to_year.to_i, to_month.to_i, 1)
         @dict = LucaRecord::Dict.load('base.tsv')
         @state = LucaBook::State.range(from_year, from_month, to_year, to_month)
       end
@@ -21,6 +21,8 @@ module Luca
       #
       def kani
         @state.pl
+        @procedure_code = 'RSH0040'
+        #@version = ''
         @it = it_part
         @form_sec = ['SHB047', 'SHB067'].map{ |c| form_rdf(c) }.join('')
         @form_data = [付表四の三, 付表五の三].join("\n")
@@ -37,30 +39,31 @@ module Luca
 
         <<~EOS
         <SHB047 page="1" VR="1" id="SHB047">
-        <DUA0000><DUA0010>
-        <DUA0020 IDREF="KAZEI_KIKAN_FROM"/>
-        <DUA0030 IDREF="KAZEI_KIKAN_TO"/>
-        <DUA0040 IDREF="NOZEISHA_NM"/>
-        </DUA0010></DUA0000>
-        <DUB0000>
-        #{render_attr('DUB0020', 課税標準額(sales))}
-        #{render_attr('DUB0030', 課税標準額(sales))}
-        </DUB0000>
-        <DUC0000>
-        #{render_attr('DUC0020', sales)}
-        #{render_attr('DUC0030', sales)}
-        </DUC0000>
-        <DUD0000>
-        #{render_attr('DUD0020', 税額)}
-        #{render_attr('DUD0030', 税額)}
-        </DUD0000>
-        #{render_attr('DUH0030', 税額)}
-        <DUI0000>
-        #{render_attr('DUI0020', 税額)}
-        </DUI0000>
-        <DUJ0000>
-        #{render_attr('DUJ0020', 譲渡割額)}
-        </DUJ0000>
+        <DUA00000><DUA00010>
+        <DUA00020 IDREF="KAZEI_KIKAN_FROM"/>
+        <DUA00030 IDREF="KAZEI_KIKAN_TO"/>
+        </DUA00010>
+        <DUA00040 IDREF="NOZEISHA_NM"/>
+        </DUA00000>
+        <DUB00000>
+        #{render_attr('DUB00020', 課税標準額(sales))}
+        #{render_attr('DUB00030', 課税標準額(sales))}
+        </DUB00000>
+        <DUC00000>
+        #{render_attr('DUC00020', LucaSupport::Code.readable(sales))}
+        #{render_attr('DUC00030', LucaSupport::Code.readable(sales))}
+        </DUC00000>
+        <DUD00000>
+        #{render_attr('DUD00020', 税額)}
+        #{render_attr('DUD00030', 税額)}
+        </DUD00000>
+        #{render_attr('DUH00030', 税額)}
+        <DUI00000>
+        #{render_attr('DUI00020', 税額)}
+        </DUI00000>
+        <DUJ00000>
+        #{render_attr('DUJ00020', 譲渡割額)}
+        </DUJ00000>
         </SHB047>
         EOS
       end
@@ -75,27 +78,28 @@ module Luca
 
         <<~EOS
         <SHB067 page="1" VR="1" id="SHB067"><SHB067-1 page="1">
-        <DVA0000><DVA0010>
-        <DVA0020 IDREF="KAZEI_KIKAN_FROM"/>
-        <DVA0030 IDREF="KAZEI_KIKAN_TO"/>
-        <DVA0040 IDREF="NOZEISHA_NM"/>
-        </DVA0010></DVA0000>
-        <DVB0000>
-        <DVB0010>
-        #{render_attr('DVB0020', tax_amount)}
-        #{render_attr('DVB0030', tax_amount)}
-        </DVB0010>
-        <DVB0130>
-        #{render_attr('DVB0150', tax_amount)}
-        #{render_attr('DVB0160', tax_amount)}
-        </DVB0130>
-        </DVB0000>
-        <DVC0000>
-        <DVC0010><kubun_CD>#{LucaSupport::CONFIG.dig('jp', 'syouhizei_kubun')}</kubun_CD>
-        </DVC0010>
-        #{render_attr('DVC0030', みなし仕入額)}
-        #{render_attr('DVC0040', みなし仕入額)}
-        </DVC0000>
+        <DVA00000><DVA00010>
+        <DVA00020 IDREF="KAZEI_KIKAN_FROM"/>
+        <DVA00030 IDREF="KAZEI_KIKAN_TO"/>
+        </DVA00010>
+        <DVA00040 IDREF="NOZEISHA_NM"/>
+        </DVA00000>
+        <DVB00000>
+        <DVB00010>
+        #{render_attr('DVB00020', tax_amount)}
+        #{render_attr('DVB00030', tax_amount)}
+        </DVB00010>
+        <DVB00130>
+        #{render_attr('DVB00150', tax_amount)}
+        #{render_attr('DVB00160', tax_amount)}
+        </DVB00130>
+        </DVB00000>
+        <DVC00000>
+        <DVC00010><kubun_CD>#{LucaSupport::CONFIG.dig('jp', 'syouhizei_kubun')}</kubun_CD>
+        </DVC00010>
+        #{render_attr('DVC00030', みなし仕入額)}
+        #{render_attr('DVC00040', みなし仕入額)}
+        </DVC00000>
         </SHB067-1></SHB067>
         EOS
       end
