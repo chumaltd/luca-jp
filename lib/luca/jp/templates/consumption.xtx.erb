@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<DATA id="DATA" xmlns="http://xml.e-tax.nta.go.jp/XSD/shohi" xmlns:gen="http://xml.e-tax.nta.go.jp/XSD/general" xmlns:kyo="http://xml.e-tax.nta.go.jp/XSD/kyotsu" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <<%= @procedure_code %> VR="<%= @version %>" id="<%= @procedure_code %>">
+    <CATALOG id="CATALOG">
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+        <rdf:description id="REPORT">
+          <%# SEND_DATA/ %>
+        </rdf:description>
+      </rdf:RDF>
+  </CATALOG>
+  <CONTENTS id="CONTENTS">
+
+      <%= @it %>
+      <%= @form_data %>
+
+  <%# SOFUSHO VR="2.0" xmlns="http://xml.e-tax.nta.go.jp/XSD/kyotsu" %>
+  <%# /SOFUSHO %>
+  </CONTENTS>
+</<%= @procedure_code %>>
+
+<%# dsig:Signature xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" %>
+<%# /dsig:Signature %>
+</DATA>
