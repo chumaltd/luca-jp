@@ -1,0 +1,37 @@
+<SHB047 page="1" VR="1.0" id="SHB047" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <DUA00000><DUA00010>
+        <DUA00020 IDREF="KAZEI_KIKAN_FROM"/>
+        <DUA00030 IDREF="KAZEI_KIKAN_TO"/>
+    </DUA00010>
+    <DUA00040 IDREF="NOZEISHA_NM"/>
+    </DUA00000>
+    <DUB00000>
+        <%= render_attr('DUB00020', 課税標準額(@sales)) %>
+        <%= render_attr('DUB00030', 課税標準額(@sales)) %>
+    </DUB00000>
+    <DUC00000>
+        <%= render_attr('DUC00020', LucaSupport::Code.readable(@sales)) %>
+        <%= render_attr('DUC00030', LucaSupport::Code.readable(@sales)) %>
+    </DUC00000>
+    <DUD00000>
+        <%= render_attr('DUD00020', @tax_amount) %>
+        <%= render_attr('DUD00030', @tax_amount) %>
+    </DUD00000>
+    <DUF00000>
+        <DUF00010>
+        <%= render_attr('DUF00030', @みなし仕入税額) %>
+        <%= render_attr('DUF00040', @みなし仕入税額) %>
+        </DUF00010>
+        <DUF00130>
+            <%= render_attr('DUF00150', @みなし仕入税額) %>
+            <%= render_attr('DUF00160', @みなし仕入税額) %>
+        </DUF00130>
+    </DUF00000>
+    <%= render_attr('DUH00000', @税額) %>
+    <DUI00000>
+        <%= render_attr('DUI00020', @税額) %>
+    </DUI00000>
+    <DUJ00000>
+        <%= render_attr('DUJ00020', @譲渡割額) %>
+    </DUJ00000>
+</SHB047>

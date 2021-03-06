@@ -1,0 +1,24 @@
+<SHB067 page="1" VR="1.0" id="SHB067" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>"><SHB067-1 page="1">
+    <DVA00000><DVA00010>
+        <DVA00020 IDREF="KAZEI_KIKAN_FROM"/>
+        <DVA00030 IDREF="KAZEI_KIKAN_TO"/>
+    </DVA00010>
+    <DVA00040 IDREF="NOZEISHA_NM"/>
+    </DVA00000>
+    <DVB00000>
+        <DVB00010>
+            <%= render_attr('DVB00030', @tax_amount) %>
+            <%= render_attr('DVB00040', @tax_amount) %>
+        </DVB00010>
+        <DVB00130>
+            <%= render_attr('DVB00150', @tax_amount) %>
+            <%= render_attr('DVB00160', @tax_amount) %>
+        </DVB00130>
+    </DVB00000>
+    <DVC00000>
+        <DVC00010><kubun_CD><%= LucaSupport::CONFIG.dig('jp', 'syouhizei_kubun') %></kubun_CD>
+        </DVC00010>
+        <%= render_attr('DVC00030', @みなし仕入税額) %>
+        <%= render_attr('DVC00040', @みなし仕入税額) %>
+    </DVC00000>
+</SHB067-1></SHB067>

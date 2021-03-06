@@ -1,0 +1,31 @@
+<HOA116 page="1" VR="1.0" id="HOA116" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+
+    <QHA00000><QHA00010>
+        <QHA00020 IDREF="JIGYO_NENDO_FROM"/>
+        <QHA00030 IDREF="JIGYO_NENDO_TO"/>
+    </QHA00010>
+    <QHA00040 IDREF="NOZEISHA_NM"/>
+    </QHA00000>
+    <QHB00000>
+        <QHB00010>
+            <%= render_attr('QHB00020', '12') %>
+            <%= render_attr('QHB00030', 中小企業の軽減税率対象所得) %>
+        </QHB00010>
+        <%= render_attr('QHB00070', 中小企業の軽減税率対象を超える所得) %>
+        <QHB00080>
+            <QHB00090><kubun_CD>1</kubun_CD></QHB00090><%# 15% %>
+            <%= render_attr('QHB00100', 中小企業の軽減税額) %>
+        </QHB00080>
+        <QHB00120>
+            <QHB00130><kubun_CD>2</kubun_CD></QHB00130><%# 23.2% %>
+            <%= render_attr('QHB00140', 一般区分の税額) %>
+        </QHB00120>
+    </QHB00000>
+    <QHC00000>
+        <%= render_attr('QHC00010', @地方法人税課税標準) %>
+        <QHC00030>
+            <QHC00040><kubun_CD>2</kubun_CD></QHC00040><%# 10.3% %>
+            <%= render_attr('QHC00050', 地方法人税額(@地方法人税課税標準)) %>
+        </QHC00030>
+    </QHC00000>
+</HOA116>

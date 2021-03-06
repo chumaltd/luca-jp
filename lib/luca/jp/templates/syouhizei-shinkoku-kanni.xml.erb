@@ -1,0 +1,93 @@
+<SHA020 page="1" VR="7.0" id="SHA020" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <SHA020-1 page="1">
+    <ABH00000>
+        <ABH00010 IDREF="TEISYUTSU_DAY"/>
+        <ABH00020 IDREF="ZEIMUSHO"/>
+        <ABH00030 IDREF="NOZEISHA_ADR"/>
+        <ABH00040 IDREF="NOZEISHA_TEL"/>
+        <ABH00050>
+            <ABH00060 IDREF="NOZEISHA_NM_KN"/>
+            <ABH00070 IDREF="NOZEISHA_NM"/>
+        </ABH00050>
+        <ABH00080 IDREF="NOZEISHA_BANGO"/>
+        <ABH00090>
+            <ABH00100 IDREF="DAIHYO_NM_KN"/>
+            <ABH00110 IDREF="DAIHYO_NM"/>
+        </ABH00090>
+        <ABH00120>
+            <ABH00130 IDREF="KAZEI_KIKAN_FROM"/>
+            <ABH00140 IDREF="KAZEI_KIKAN_TO"/>
+        </ABH00120>
+        <ABH00150 IDREF="SHINKOKU_KBN"/>
+        <ABH00190 IDREF="KANPU_KINYUKIKAN"/>
+        <ABH00230><kubun_CD>2</kubun_CD></ABH00230><%# 税理士なし %>
+        <ABH00240><kubun_CD>2</kubun_CD></ABH00240><%# 税理士なし %>
+    </ABH00000>
+    <ABI00000>
+        <%= render_attr('ABI00010', 課税標準額(@sales)) %>
+        <%= render_attr('ABI00020', @tax_amount) %>
+        <ABI00040>
+            <%= render_attr('ABI00050', @みなし仕入税額) %>
+            <%= render_attr('ABI00080', @みなし仕入税額) %>
+        </ABI00040>
+        <%= render_attr('ABI00100', @税額) %>
+        <%= render_attr('ABI00110', @中間納付額) %>
+        <%= render_attr('ABI00120', 納付税額(@税額, @中間納付額)) %>
+        <%= render_attr('ABI00130', 中間還付税額(@税額, @中間納付額)) %>
+    </ABI00000>
+    <ABJ00000>
+        <ABJ00010>
+            <%= render_attr('ABJ00030', @税額) %>
+        </ABJ00010>
+        <ABJ00040>
+            <%= render_attr('ABJ00060', @譲渡割額) %>
+        </ABJ00040>
+        <%= render_attr('ABJ00070', @地方税中間納付額) %>
+        <%= render_attr('ABJ00080', 納付税額(@譲渡割額, @地方税中間納付額)) %>
+        <%= render_attr('ABJ00090', 中間還付税額(@譲渡割額, @地方税中間納付額)) %>
+        <%= render_attr('ABJ00130', 納付税額(@税額, @中間納付額) + 納付税額(@譲渡割額, @地方税中間納付額)) %>
+    </ABJ00000>
+    <ABK00000>
+        <ABK00010><kubun_CD>2</kubun_CD></ABK00010>
+        <ABK00020><kubun_CD>2</kubun_CD></ABK00020>
+        <ABK00030><kubun_CD>2</kubun_CD></ABK00030>
+        <ABK00040><kubun_CD>2</kubun_CD></ABK00040>
+    </ABK00000>
+    <ABL00000>
+        <ABL00010><kubun_CD>2</kubun_CD></ABL00010>
+        <ABL00020><%= 事業区分 %></ABL00020>
+    </ABL00000>
+    </SHA020-1>
+    <SHA020-2 page="1">
+        <ABM00000>
+            <ABM00010 IDREF="NOZEISHA_ADR"/>
+            <ABM00020 IDREF="NOZEISHA_TEL"/>
+            <ABM00030>
+                <ABM00040 IDREF="NOZEISHA_NM_KN"/>
+                <ABM00050 IDREF="NOZEISHA_NM"/>
+            </ABM00030>
+            <ABM00060>
+                <ABM00070 IDREF="DAIHYO_NM_KN"/>
+                <ABM00080 IDREF="DAIHYO_NM"/>
+            </ABM00060>
+            <ABM00090>
+                <ABM00100 IDREF="KAZEI_KIKAN_FROM"/>
+                <ABM00110 IDREF="KAZEI_KIKAN_TO"/>
+            </ABM00090>
+            <ABM00120 IDREF="SHINKOKU_KBN"/>
+        </ABM00000>
+        <%= render_attr('ABO00000', 課税標準額(@sales)) %>
+        <ABP00000>
+            <%= render_attr('ABP00050', LucaSupport::Code.readable(@sales)) %>
+            <%= render_attr('ABP00060', LucaSupport::Code.readable(@sales)) %>
+        </ABP00000>
+        <%= render_attr('ABR00000', @tax_amount) %>
+        <ABS00000>
+            <%= render_attr('ABS00050', @tax_amount) %>
+        </ABS00000>
+        <ABV00000>
+            <%= render_attr('ABV00010', @税額) %>
+            <%= render_attr('ABV00040', @譲渡割額) %>
+        </ABV00000>
+    </SHA020-2>
+</SHA020>

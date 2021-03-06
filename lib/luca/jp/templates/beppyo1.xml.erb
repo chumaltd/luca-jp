@@ -1,0 +1,47 @@
+<HOA112 page="1" VR="2.0" id="HOA112" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <BGA00000>
+        <BGA00010 IDREF="TEISYUTSU_DAY"/>
+        <BGA00020 IDREF="ZEIMUSHO"/>
+        <BGA00030 IDREF="NOZEISHA_ADR"/>
+        <BGA00040 IDREF="NOZEISHA_TEL"/>
+        <BGA00050>
+            <BGA00060 IDREF="NOZEISHA_NM_KN"/>
+            <BGA00070 IDREF="NOZEISHA_NM"/>
+        </BGA00050>
+        <BGA00080 IDREF="NOZEISHA_BANGO"/>
+        <BGA00090>
+            <BGA00100 IDREF="DAIHYO_NM_KN"/>
+            <BGA00110 IDREF="DAIHYO_NM"/>
+        </BGA00090>
+        <BGA00120 IDREF="DAIHYO_ADR"/>
+        <BGA00140 IDREF="JIGYO_NAIYO"/>
+        <BGA00150 IDREF="SHIHON_KIN"/>
+        <BGA00330>
+            <BGA00340 IDREF="JIGYO_NENDO_FROM"/>
+            <BGA00350 IDREF="JIGYO_NENDO_TO"/>
+        </BGA00330>
+        <BGA00360 IDREF="SHINKOKU_KBN"/>
+        <BGA00420 IDREF="KANPU_KINYUKIKAN"/>
+    </BGA00000>
+
+    <BGB00000>
+        <%= render_attr('BGB00010', 所得金額) %>
+        <%= render_attr('BGB00020', 中小企業の軽減税額 + 一般区分の税額) %>
+        <%= render_attr('BGB00040', 中小企業の軽減税額 + 一般区分の税額) %>
+        <BGB00120>
+            <%= render_attr('BGB00150', 中小企業の軽減税額 + 一般区分の税額) %>
+        </BGB00120>
+        <%= render_attr('BGB00190', ((中小企業の軽減税額 + 一般区分の税額) / 100).floor * 100) %>
+    </BGB00000>
+    <BGC00000>
+        <BGC00010>
+            <BGC00020>
+                <%= render_attr('BGC00030', 中小企業の軽減税額 + 一般区分の税額) %>
+            </BGC00020>
+            <%= render_attr('BGC00050', @地方法人税課税標準) %>
+        </BGC00010>
+        <%= render_attr('BGC00060', 地方法人税額(@地方法人税課税標準)) %>
+        <%= render_attr('BGC00080', 地方法人税額(@地方法人税課税標準)) %>
+        <%= render_attr('BGC00120', (地方法人税額(@地方法人税課税標準) / 100).floor * 100) %>
+    </BGC00000>
+</HOA112>

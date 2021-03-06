@@ -7,12 +7,22 @@ class LucaCmd
   def self.syouhizei(args, params)
     puts Luca::Jp::Syouhizei.new(*args).kani
   end
+
+  def self.houjinzei(args, params)
+    puts Luca::Jp::Aoiro.new(*args).kani
+  end
 end
 
 cmd = ARGV.shift
 params = {}
 
 case cmd
+when /hou?jinzei/
+  OptionParser.new do |opt|
+    opt.banner = 'Usage: luca-jp houjinzei [options] yyyy mm yyyy mm'
+    args = opt.parse!(ARGV)
+    LucaCmd.houjinzei(args, params)
+  end
 when /s[yh]ou?hizei/
     OptionParser.new do |opt|
       opt.banner = 'Usage: luca-jp syouhizei [options] yyyy mm yyyy mm'
