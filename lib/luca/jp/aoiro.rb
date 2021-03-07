@@ -101,9 +101,12 @@ module Luca
 
       # 税引前当期利益をもとに計算
       # 消費税を租税公課に計上している場合、控除済みの金額
+      # 未払/未収事業税は精算時に認識
       #
       def 所得金額
-        @state.pl_data.dig('GA')
+        納付事業税 = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5152')[:debit]
+        還付事業税 = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '1504')[:credit]
+        LucaSupport::Code.readable(@state.pl_data.dig('GA') - 納付事業税 + 還付事業税)
       end
 
       def 中小企業の軽減税率対象所得
