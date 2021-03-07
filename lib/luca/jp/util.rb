@@ -21,6 +21,26 @@ module Luca
         end
       end
 
+      def prepaid_tax(code)
+        LucaSupport::Code.readable(@state.bs_data.dig(code) || 0)
+      end
+
+      def 納付税額(税額, 中間納付額)
+        if 税額 > 中間納付額
+          税額 - 中間納付額
+        else
+          0
+        end
+      end
+
+      def 中間還付税額(税額, 中間納付額)
+        if 税額 < 中間納付額
+          中間納付額 - 税額
+        else
+          0
+        end
+      end
+
       def form_rdf(code)
         "<rdf:li><rdf:description about=\"##{code}\"/></rdf:li>"
       end

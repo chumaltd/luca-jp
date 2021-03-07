@@ -1,0 +1,207 @@
+<R0102AA190 xmlns="http://eltax.jp/HOJIN_DOFUKEN" vr="190" page="" seiseiSoft="<%= @software %>" seiseiVr="" seiseiDay="" seiseiNM="" koshinSoft="" koshinVr="" koshinDay="" koshinNM="" taari="">
+<AAA00100 idref="SEIRI_NUM" />
+        <AAA00200 idref="JIMUSHO_NUM"></AAA00200>
+        <AAA00300 idref="HOJIN_NUM"></AAA00300>
+        <AAA00400 />
+        <AAA00500 idref="HOJIN_NUMBER"></AAA00500>
+        <AAA01000>
+          <gen:era />
+          <gen:yy />
+          <gen:mm />
+          <gen:dd />
+          <gen:yyyymmdd />
+        </AAA01000>
+        <AAA01100 />
+<AAA00700 idref="RPT_DATE">
+            <gen:era></gen:era>
+            <gen:yy></gen:yy>
+            <gen:mm></gen:mm>
+            <gen:dd></gen:dd>
+          </AAA00700>
+        <AAA00800>
+          <gen:era />
+          <gen:yy />
+          <gen:mm />
+          <gen:dd />
+        </AAA00800>
+        <AAA00900 idref="ORG1_NAME"></AAA00900>
+        <AAA_HONTEN_ZIP idref="HONTEN_ZIP"></AAA_HONTEN_ZIP>
+        <AAA_HONTEN_ADDR idref="HONTEN_ADDR"></AAA_HONTEN_ADDR>
+        <AAA_HONTEN_TEL_NUM idref="HONTEN_TEL"></AAA_HONTEN_TEL_NUM>
+        <AAA_ZIP />
+        <AAA_ADDR />
+        <AAA_TEL_NUM />
+        <AAA_KANA idref="KANA"></AAA_KANA>
+        <AAA_NAME idref="NAME"></AAA_NAME>
+        <AAA_DAIHYO_KANA idref="DAIHYO_KANA"></AAA_DAIHYO_KANA>
+        <AAA_DAIHYO_NAME idref="DAIHYO_NAME"></AAA_DAIHYO_NAME>
+        <AAA_KEIRI_KANA></AAA_KEIRI_KANA>
+        <AAA_KEIRI_NAME></AAA_KEIRI_NAME>
+        <AAA_JIGYO_NAME idref="JIGYO_NAME"></AAA_JIGYO_NAME>
+        <AAA_SHIHON idref="SHIHON"></AAA_SHIHON>
+        <AAA_SHIHON3></AAA_SHIHON3>
+        <AAA_SHIHON4></AAA_SHIHON4>
+        <AAA_SHIHON2 />
+        <AAA_SHIHON5></AAA_SHIHON5>
+        <AAA_SHIHON6></AAA_SHIHON6>
+        <AAA_JIGYO_SDATE idref="SDATE">
+            <gen:era></gen:era>
+            <gen:yy></gen:yy>
+            <gen:mm></gen:mm>
+            <gen:dd></gen:dd>
+            <gen:yyyymmdd></gen:yyyymmdd>
+          </AAA_JIGYO_SDATE>
+        <AAA_JIGYO_EDATE idref="EDATE">
+            <gen:era></gen:era>
+            <gen:yy></gen:yy>
+            <gen:mm></gen:mm>
+            <gen:dd></gen:dd>
+            <gen:yyyymmdd></gen:yyyymmdd>
+          </AAA_JIGYO_EDATE>
+        <AAA_RPT_KBN idref="RPT_NAME">確定</AAA_RPT_KBN>
+        <AAA01200 />
+        <AAB00100 />
+        <AAB00110><%= 法人税割課税標準 %></AAB00110>
+        <AAB00200 />
+        <AAB00400 />
+        <AAB00500 />
+        <AAB00600><%= 法人税割課税標準 %></AAB00600>
+        <AAB00700 />
+        <AAB00800 />
+        <AAB00810 />
+        <AAB00810><%= 法人税割 %></AAB00810>
+        <AAB00820 />
+        <AAB00850 />
+        <AAB00900 />
+        <AAB01000 />
+        <AAB01200><%= @確定法人税割 %></AAB01200>
+        <AAB01300><%= @法人税割中間納付 %></AAB01300>
+        <AAB01400 />
+        <AAB01600><%= @確定法人税割 - @法人税割中間納付 %></AAB01600>
+        <AAB01700>12</AAB01700>
+        <AAB01800><%= @均等割 %></AAB01800>
+        <AAB01810><%= @均等割 %></AAB01810>
+        <AAB01900><%= @均等割中間納付 %></AAB01900>
+        <AAB02000><%= @均等割 - @均等割中間納付 %></AAB02000>
+        <AAB02100><%= 納付税額(@確定法人税割, @法人税割中間納付) + 納付税額(@均等割, @均等割中間納付) %></AAB02100>
+        <AAB02200 />
+        <AAB02300><%= 納付税額(@確定法人税割, @法人税割中間納付) + 納付税額(@均等割, @均等割中間納付) %></AAB02300>
+        <AAC00100><%= @法人税割課税標準 %></AAC00100>
+        <AAC00200>7.0</AAC00200>
+        <AAC00210><%= 法人税割 %></AAC00210>
+        <AAC00300 />
+        <AAC00400 />
+        <AAC00410 />
+        <AAE00100><%= 所得金額 %></AAE00100>
+        <AAE00200><%= 所得400万以下 %></AAE00200>
+        <AAE00210>3.5</AAE00210>
+        <AAE00220><%= 所得割400万以下 %></AAE00220>
+        <AAE00300><%= 所得800万以下 %></AAE00300>
+        <AAE00310>5.3</AAE00310>
+        <AAE00320><%= 所得割800万以下 %></AAE00320>
+        <AAE00400><%= 所得800万超 %></AAE00400>
+        <AAE00410>7.0</AAE00410>
+        <AAE00420><%= 所得割800万超 %></AAE00420>
+        <AAE00500><%= 所得400万以下 + 所得800万以下 + 所得800万超 %></AAE00500>
+        <AAE00510><%= @所得割 %></AAE00510>
+        <AAE00600 />
+        <AAE00610 />
+        <AAE00620 />
+        <AAE00630 />
+        <AAE00640 />
+        <AAE00645 />
+        <AAE00650 />
+        <AAE00660 />
+        <AAE00670 />
+        <AAE00680 />
+        <AAE00690 />
+        <AAE00700 />
+        <AAE00800 />
+        <AAE00810 />
+        <AAE00820 />
+        <AAE00900><%= @所得割 %></AAE00900>
+        <AAE00950 />
+        <AAE00960 />
+        <AAE01000 />
+        <AAE01050 />
+        <AAE01100><%= 事業税中間納付 %></AAE01100>
+        <AAE01200 />
+        <AAE01300><%= @所得割 - 事業税中間納付 %></AAE01300>
+        <AAE01310><%= @所得割 - 事業税中間納付 %></AAE01310>
+        <AAE01320 />
+        <AAE01330 />
+        <AAE01340 />
+        <AAE01400 />
+        <AAE01500><%= @所得割 - 事業税中間納付 %></AAE01500>
+        <AAK00100><%= @所得割 %></AAK00100>
+        <AAK00200>37</AAK00200>
+        <AAK00300><%= 地方法人特別税(@所得割) %></AAK00300>
+        <AAK00400 />
+        <AAK00500 />
+        <AAK00600 />
+        <AAK00700><%= 地方法人特別税(@所得割) %></AAK00700>
+        <AAK00800 />
+        <AAK00850><%= 地方法人特別税(@所得割) %></AAK00850>
+        <AAK00900><%= @地方特別法人事業税中間納付 %></AAK00900>
+        <AAK01000 />
+        <AAK01100><%= 地方法人特別税(@所得割) - @地方特別法人事業税中間納付 %></AAK01100>
+        <AAK01200 />
+        <AAK01300><%= 地方法人特別税(@所得割) - @地方特別法人事業税中間納付 %></AAK01300>
+        <AAF00100><%= 所得金額 %></AAF00100>
+        <AAF00200 />
+        <AAF00300 />
+        <AAF00500 />
+        <AAF00600 />
+        <AAF00800><%= 所得金額 %></AAF00800>
+        <AAF00700 />
+        <AAG00100 />
+        <AAH00100 />
+        <AAH00200 />
+        <AAH00400>
+          <gen:kubun_CD />
+          <gen:kinyukikan_NM></gen:kinyukikan_NM>
+          <gen:shiten_NM></gen:shiten_NM>
+          <gen:kinyukikan_CD />
+          <gen:shiten_CD />
+          <gen:yokin>1</gen:yokin>
+          <gen:koza></gen:koza>
+        </AAH00400>
+        <AAI00100>
+          <gen:era />
+          <gen:yy />
+          <gen:mm />
+          <gen:dd />
+        </AAI00100>
+        <AAI00900>
+          <gen:era />
+          <gen:yy />
+          <gen:mm />
+          <gen:dd />
+        </AAI00900>
+        <AAI01000>
+          <gen:era />
+          <gen:yy />
+          <gen:mm />
+          <gen:dd />
+        </AAI01000>
+        <AAI00600 />
+        <AAI00500 />
+        <AAI00200>
+          <gen:era />
+          <gen:yy />
+          <gen:mm />
+          <gen:dd />
+        </AAI00200>
+        <AAI00300>
+          <gen:era />
+          <gen:yy />
+          <gen:mm />
+          <gen:dd />
+        </AAI00300>
+        <AAI00400 />
+        <AAI00450 />
+        <AAI00700 />
+        <AAI00800 />
+        <AAJ_DAIRI_NAME></AAJ_DAIRI_NAME>
+        <AAJ_DAIRI_TEL_NUM></AAJ_DAIRI_TEL_NUM>
+</R0102AA190>

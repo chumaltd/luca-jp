@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SHINKOKU_UNIT xmlns:gen="http://eltax.jp/general" id="SHINKOKU_UNIT">
+    <KOUSEI_KANRI_INF id="KOUSEI_KANRI_INF">
+        <KOUSEI_KANRI id="KOUSEI_KANRI">
+            <KANRI_INF id="KANRI_INF">
+                <KOUSEI_KANRI_VR>0001</KOUSEI_KANRI_VR>
+                <ORG1_CD>13000</ORG1_CD>
+                <PROC_ID><%= @procedure_code %></PROC_ID>
+                <PROC_NAME><%= @procedure_name %></PROC_NAME>
+                <FIRST_RCPT_NUM></FIRST_RCPT_NUM>
+            </KANRI_INF>
+            <%= @form_sec %>
+            <GYOMU_PROC id="GYOMU_PROC">
+                <PROC_INF id="PROC_INF">
+                    <GYOMU_KBN id="GYOMU_KBN">R0</GYOMU_KBN>
+                    <ORG2_CD id="ORG2_CD"><%= @jimusho_code %></ORG2_CD>
+                    <ORG3_CD id="ORG3_CD">000000</ORG3_CD>
+                    <ORG1_NAME id="ORG1_NAME"><%= @jimusho_name %></ORG1_NAME>
+                    <SDATE id="SDATE">
+                        <gen:era><%= gengou(@start_date) %></gen:era>
+                        <gen:yy><%= wareki(@start_date) %></gen:yy>
+                        <gen:mm><%= @start_date.month %></gen:mm>
+                        <gen:dd><%= @start_date.day %></gen:dd>
+                        <gen:yyyymmdd></gen:yyyymmdd>
+                    </SDATE>
+                    <EDATE id="EDATE">
+                        <gen:era><%= gengou(@end_date) %></gen:era>
+                        <gen:yy><%= wareki(@end_date) %></gen:yy>
+                        <gen:mm><%= @end_date.month %></gen:mm>
+                        <gen:dd><%= @end_date.day %></gen:dd>
+                        <gen:yyyymmdd></gen:yyyymmdd >
+                    </EDATE>
+                    <RPT_DATE id="RPT_DATE">
+                        <gen:era><%= gengou(@issue_date) %></gen:era>
+                        <gen:yy><%= wareki(@issue_date) %></gen:yy>
+                        <gen:mm><%= @issue_date.month %></gen:mm>
+                        <gen:dd><%= @issue_date.day %></gen:dd>
+                    </RPT_DATE>
+                    <TAX_KBN id="TAX_KBN">102</TAX_KBN>
+                    <RPT_KBN id="RPT_KBN">100</RPT_KBN>
+                    <TAX_NAME id="TAX_NAME">法人都道府県民税・事業税・特別法人事業税又は地方法人特別税</TAX_NAME>
+                    <RPT_NAME id="RPT_NAME">確定</RPT_NAME>
+                    <MAKE_KBN id="MAKE_KBN">1</MAKE_KBN>
+                    <REV_RCPT_NUM id="REV_RCPT_NUM"></REV_RCPT_NUM>
+                </PROC_INF>
+                <%= @user_inf %>
+                <JIGYOSHO_INF id="JIGYOSHO_INF">
+                    <JIGYOSHO_KANA id="JIGYOSHO_KANA"></JIGYOSHO_KANA>
+                    <JIGYOSHO_NAME id="JIGYOSHO_NAME"></JIGYOSHO_NAME>
+                    <HONSHI_KBN id="HONSHI_KBN">11</HONSHI_KBN>
+                </JIGYOSHO_INF>
+                <DAIRI_INF id="DAIRI_INF">
+                    <DAIRI_ID id="DAIRI_ID"></DAIRI_ID>
+                    <DAIRI_NAME id="DAIRI_NAME"></DAIRI_NAME>
+                    <DAIRI_TEL id="DAIRI_TEL"></DAIRI_TEL>
+                </DAIRI_INF>
+                <RENTAI_INF id="RENTAI_INF">
+                    <RENTAI1_ID id="RENTAI1_ID"></RENTAI1_ID>
+                    <RENTAI2_ID id="RENTAI2_ID"></RENTAI2_ID>
+                    <RENTAI3_ID id="RENTAI3_ID"></RENTAI3_ID>
+                    <RENTAI4_ID id="RENTAI4_ID"></RENTAI4_ID>
+                    <RENTAI5_ID id="RENTAI5_ID"></RENTAI5_ID>
+                    <RENTAI6_ID id="RENTAI6_ID"></RENTAI6_ID>
+                    <RENTAI7_ID id="RENTAI7_ID"></RENTAI7_ID>
+                    <RENTAI8_ID id="RENTAI8_ID"></RENTAI8_ID>
+                    <RENTAI9_ID id="RENTAI9_ID"></RENTAI9_ID>
+                </RENTAI_INF>
+            </GYOMU_PROC>
+            <GYOMU_TAX id="GYOMU_TAX">
+                <ORG_INF id="ORG_INF">
+                    <ADDR_CD id="ADDR_CD" />
+                    <KAZEI_ADDR id="KAZEI_ADDR" />
+                    <KAZEI_ZIP id="KAZEI_ZIP" />
+                    <KAZEI_TEL id="KAZEI_TEL" />
+                    <HOGEN_NUM id="HOGEN_NUM" />
+                    <KANRI_NUM id="KANRI_NUM" />
+                    <KAZEI_NUM id="KAZEI_NUM"></KAZEI_NUM>
+                    <HOJO_NUM id="HOJO_NUM" />
+                    <STF_NUM id="STF_NUM" />
+                </ORG_INF>
+                <STIME id="STIME"></STIME>
+                <HOJIN_DOFUKEN id="HOJIN_DOFUKEN">
+                    <FORM_INF id="FORM_INF">
+                        <JIGYO_NAME id="JIGYO_NAME"></JIGYO_NAME>
+                        <SHIHON id="SHIHON"></SHIHON>
+                        <HOJIN_NUM id="HOJIN_NUM"></HOJIN_NUM>
+                        <JIMUSHO_NUM id="JIMUSHO_NUM"><%= @jimusho_code %></JIMUSHO_NUM>
+                        <SEIRI_NUM id="SEIRI_NUM" />
+                    </FORM_INF>
+                </HOJIN_DOFUKEN>
+            </GYOMU_TAX>
+        </KOUSEI_KANRI>
+        <TAX_DATA id="TAX_DATA">
+            <%= @form_data %>
+            <TENPU_INF>
+                <YUSO_KBN>0</YUSO_KBN>
+            </TENPU_INF>
+        </TAX_DATA>
+    </KOUSEI_KANRI_INF>
+    <Signature_INF id="Signature_INF">
+        <Signature_DATA id="Signature_DATA" />
+        <ATT_INF id="ATT_INF"></ATT_INF>
+    </Signature_INF>
+    <SYSTEM_INF id="SYSTEM_INF">
+        <SYSTEM_DATA id="SYSTEM_DATA"></SYSTEM_DATA>
+        <NOUZEI_UPDATE id="NOUZEI_UPDATE">
+            <SDATE></SDATE>
+            <UDATE></UDATE>
+            <SIGN_DATE></SIGN_DATE>
+            <SEND_DATE></SEND_DATE>
+            <RPT_INF>10</RPT_INF>
+            <CREATE_SYS>1</CREATE_SYS>
+            <INP_KBN>1</INP_KBN>
+            <USER_FILE_NM></USER_FILE_NM>
+        </NOUZEI_UPDATE>
+    </SYSTEM_INF>
+</SHINKOKU_UNIT>

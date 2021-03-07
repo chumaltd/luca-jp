@@ -5,11 +5,27 @@ require 'luca/jp'
 
 class LucaCmd
   def self.syouhizei(args, params)
-    puts Luca::Jp::Syouhizei.new(*args).kani
+    if params[:export]
+      Luca::Jp::Syouhizei.new(*args).export_json
+    else
+      puts Luca::Jp::Syouhizei.new(*args).kani
+    end
   end
 
   def self.houjinzei(args, params)
-    puts Luca::Jp::Aoiro.new(*args).kani
+    if params[:export]
+      Luca::Jp::Aoiro.new(*args).export_json
+    else
+      puts Luca::Jp::Aoiro.new(*args).kani
+    end
+  end
+
+  def self.chihouzei(args, params)
+    if params[:export]
+      Luca::Jp::Chihouzei.new(*args).export_json
+    else
+      puts Luca::Jp::Chihouzei.new(*args).kani
+    end
   end
 end
 
@@ -20,13 +36,22 @@ case cmd
 when /hou?jinzei/
   OptionParser.new do |opt|
     opt.banner = 'Usage: luca-jp houjinzei [options] yyyy mm yyyy mm'
+    opt.on('--export', 'export json') { |_v| params[:export] = true }
     args = opt.parse!(ARGV)
     LucaCmd.houjinzei(args, params)
   end
 when /s[yh]ou?hizei/
     OptionParser.new do |opt|
       opt.banner = 'Usage: luca-jp syouhizei [options] yyyy mm yyyy mm'
+      opt.on('--export', 'export json') { |_v| params[:export] = true }
       args = opt.parse!(ARGV)
       LucaCmd.syouhizei(args, params)
     end
+when /chihou?zei/
+  OptionParser.new do |opt|
+    opt.banner = 'Usage: luca-jp chihouzei [options] yyyy mm yyyy mm'
+    opt.on('--export', 'export json') { |_v| params[:export] = true }
+    args = opt.parse!(ARGV)
+    LucaCmd.chihouzei(args, params)
+  end
 end

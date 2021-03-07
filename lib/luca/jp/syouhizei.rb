@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'json'
 require 'cgi/escape'
 require 'luca_book'
 require 'luca_support'
@@ -25,13 +26,9 @@ module Luca
 
       # TODO: 軽減税率売上の識別
       #
-      def kani
+      def kani(export: false)
         @state.pl
-        @procedure_code = 'RSH0040'
-        @procedure_name = '消費税及び地方消費税申告(簡易課税・法人)'
-        @version = '20.0.0'
-        @form_sec = ['SHA020', 'SHB047', 'SHB067'].map{ |c| form_rdf(c) }.join('')
-
+        @state.bs
         税率 = BigDecimal('7.8') # percent
         地方税率 = BigDecimal('2.2')
 
@@ -40,13 +37,29 @@ module Luca
         @みなし仕入税額 = (@tax_amount * みなし仕入率(LucaSupport::CONFIG.dig('jp', 'syouhizei_kubun')) / 100).floor
         @税額 = LucaSupport::Code.readable(((@tax_amount - @みなし仕入税額) / 100).floor * 100)
         @譲渡割額 = (@税額 * 地方税率 / (税率*100)).floor * 100
-        # TODO: load 中間納付
-        @中間納付額 = 0
-        @地方税中間納付額 = 0
+        @中間納付額 = prepaid_tax('185B')
+        @地方税中間納付額 = prepaid_tax('185C')
 
-        @it = it_part
-        @form_data = [申告書簡易課税, 付表四の三, 付表五の三].join("\n")
-        render_erb(search_template('consumption.xtx.erb'))
+        if export
+          {
+            kokuzei: {
+              zeigaku: @税額,
+              chukan: @中間納付額
+            },
+            chihou: {
+              zeigaku: @譲渡割額,
+              chukan: @地方税中間納付額
+            }
+          }
+        else
+          @procedure_code = 'RSH0040'
+          @procedure_name = '消費税及び地方消費税申告(簡易課税・法人)'
+          @version = '20.0.0'
+          @form_sec = ['SHA020', 'SHB047', 'SHB067'].map{ |c| form_rdf(c) }.join('')
+          @it = it_part
+          @form_data = [申告書簡易課税, 付表四の三, 付表五の三].join("\n")
+          render_erb(search_template('consumption.xtx.erb'))
+        end
       end
 
       def 申告書簡易課税
@@ -61,23 +74,38 @@ module Luca
         render_erb(search_template('fuhyo53.xml.erb'))
       end
 
+      def export_json
+        dat = kani(export: true)
+        [].tap do |res|
+          item = {}
+          item['date'] = @end_date
+          item['debit'] = []
+          item['credit'] = []
+          if dat[:kokuzei][:chukan] > 0
+            item['credit'] << { 'label' => '仮払消費税', 'amount' => dat[:kokuzei][:chukan] }
+          end
+          if dat[:kokuzei][:chukan] > dat[:kokuzei][:zeigaku]
+            item['debit'] << { 'label' => '未収消費税等', 'amount' => dat[:kokuzei][:chukan] - dat[:kokuzei][:zeigaku] }
+          else
+            item['credit'] << { 'label' => '未払消費税等', 'amount' => dat[:kokuzei][:zeigaku] - dat[:kokuzei][:chukan] }
+          end
+          item['debit'] << { 'label' => '消費税', 'amount' => dat[:kokuzei][:zeigaku] }
+          if dat[:chihou][:chukan] > 0
+            item['credit'] << { 'label' => '仮払地方消費税', 'amount' => dat[:chihou][:chukan] }
+          end
+          if dat[:chihou][:chukan] > dat[:chihou][:zeigaku]
+            item['debit'] << { 'label' => '未収消費税等', 'amount' => dat[:chihou][:chukan] - dat[:chihou][:zeigaku] }
+          else
+            item['credit'] << { 'label' => '未払消費税等', 'amount' => dat[:chihou][:zeigaku] - dat[:chihou][:chukan] }
+          end
+          item['debit'] << { 'label' => '消費税', 'amount' => dat[:chihou][:zeigaku] }
+          item['x-editor'] = 'LucaJp'
+          res << item
+          puts JSON.dump(res)
+        end
+      end
+
       private
-
-      def 納付税額(税額, 中間納付額)
-        if 税額 > 中間納付額
-          税額 - 中間納付額
-        else
-          0
-        end
-      end
-
-      def 中間還付税額(税額, 中間納付額)
-        if 税額 < 中間納付額
-          中間納付額 - 税額
-        else
-          0
-        end
-      end
 
       def 課税標準額(課税資産の譲渡等の対価の額)
         (課税資産の譲渡等の対価の額 / 1000).floor * 1000
