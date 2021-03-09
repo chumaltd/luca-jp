@@ -1,0 +1,85 @@
+<HOA511 page="1" VR="13.0" id="HOA511" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <ICA00000>
+        <ICA00010>
+            <ICA00020 IDREF="JIGYO_NENDO_FROM"/>
+            <ICA00030 IDREF="JIGYO_NENDO_TO"/>
+        </ICA00010>
+        <ICA00040 IDREF="NOZEISHA_NM"/>
+    </ICA00000>
+    <ICB00000>
+        <ICB00400>
+            <%= render_attr('ICB00410', 期首繰越損益) %>
+            <ICB00420>
+                <%= render_attr('ICB00430', 期首繰越損益) %>
+                <%= render_attr('ICB00440', 期末繰越損益) %>
+            </ICB00420>
+            <%= render_attr('ICB00450', 期末繰越損益) %>
+        </ICB00400>
+        <ICB00460>
+            <%= render_attr('ICB00470', 期首納税充当金) %>
+            <ICB00480>
+                <%= render_attr('ICB00490', @納税充当金期中減) %>
+                <%= render_attr('ICB00500', @納税充当金期中増) %>
+            </ICB00480>
+            <%= render_attr('ICB00510', 期末納税充当金) %>
+        </ICB00460>
+        <ICB00520>
+            <ICB00530>
+                <%= render_attr('ICB00540', 期首未納法人税) %>
+                <ICB00550>
+                    <%= render_attr('ICB00560', @法人税期中減) %>
+                    <ICB00570>
+                        <%= render_attr('ICB00590', @法人税期中増) %>
+                    </ICB00570>
+                </ICB00550>
+                <%= render_attr('ICB00610', 期末未納法人税) %>
+            </ICB00530>
+            <ICB00620>
+                <%= render_attr('ICB00630', 期首未納都道府県民税) %>
+                <ICB00640>
+                    <%= render_attr('ICB00650', @都道府県民税期中減) %>
+                    <ICB00660>
+                        <%= render_attr('ICB00680', @都道府県民税期中増) %>
+                    </ICB00660>
+                </ICB00640>
+                <%= render_attr('ICB00700', 期末未納都道府県民税) %>
+            </ICB00620>
+            <ICB00710>
+                <%= render_attr('ICB00720', 期首未納市民税) %>
+                <ICB00730>
+                    <%= render_attr('ICB00740', @市民税期中減) %>
+                    <ICB00750>
+                        <%= render_attr('ICB00770', @市民税期中増) %>
+                    </ICB00750>
+                </ICB00730>
+                <%= render_attr('ICB00790', 期末未納市民税) %>
+            </ICB00710>
+        </ICB00520>
+        <ICB00800>
+            <%= render_attr('ICB00810', 別表五一期首差引金額) %>
+            <ICB00820>
+                <%= render_attr('ICB00830', 別表五一期中減差引金額) %>
+                <%= render_attr('ICB00840', 別表五一期中増差引金額) %>
+            </ICB00820>
+            <%= render_attr('ICB00850', 別表五一期末差引金額) %>
+        </ICB00800>
+    </ICB00000>
+    <ICC00000>
+        <ICC00010>
+            <%= render_attr('ICC00020', 期首資本金) %>
+            <ICC00030>
+                <%= render_attr('ICC00040', 期首資本金) %>
+                <%= render_attr('ICC00050', 期末資本金) %>
+            </ICC00030>
+            <%= render_attr('ICC00060', 期末資本金) %>
+        </ICC00010>
+        <ICC00200>
+            <%= render_attr('ICC00210', 別表五一期首資本) %>
+            <ICC00220>
+                <%= render_attr('ICC00230', 別表五一期首資本) %>
+                <%= render_attr('ICC00240', 別表五一期末資本) %>
+            </ICC00220>
+            <%= render_attr('ICC00250', 別表五一期末資本) %>
+        </ICC00200>
+    </ICC00000>
+</HOA511>

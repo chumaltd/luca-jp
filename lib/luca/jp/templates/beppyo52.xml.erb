@@ -1,0 +1,179 @@
+<HOA522 page="1" VR="6.0" id="HOA522" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <IEA00000>
+        <IEA00010>
+            <IEA00020 IDREF="JIGYO_NENDO_FROM"/>
+            <IEA00030 IDREF="JIGYO_NENDO_TO"/>
+        </IEA00010>
+        <IEA00040 IDREF="NOZEISHA_NM"/>
+    </IEA00000>
+    <IEB00000>
+        <IEB00010>
+            <%= render_attr('IEB00020', etax_date(@start_date.prev_year)) %>
+            <%= render_attr('IEB00030', etax_date(@end_date.prev_year)) %>
+            <%= render_attr('IEB00050', 期首未納法人税) %>
+            <IEB00060>
+                <IEB00070>
+                    <%= render_attr('IEB00090', @法人税期中減) %>
+                </IEB00070>
+            </IEB00060>
+            <%= render_attr('IEB00160', 期首未納法人税 - @法人税期中減) %>
+        </IEB00010>
+        <IEB00170>
+            <IEB00310>
+                <%= render_attr('IEB00320', @法人税期中増) %>
+                <IEB00330>
+                    <%= render_attr('IEB00350', 期末未納法人税) %>
+                </IEB00330>
+            </IEB00310>
+        </IEB00170>
+        <IEB00360>
+            <%= render_attr('IEB00380', 期首未納法人税) %>
+            <%= render_attr('IEB00390', @法人税期中増) %>
+            <IEB00400>
+                <IEB00410>
+                    <%= render_attr('IEB00430', @法人税期中減) %>
+                </IEB00410>
+            </IEB00400>
+            <IEB00500>
+                <%= render_attr('IEB00520', 期末未納法人税) %>
+            </IEB00500>
+        </IEB00360>
+    </IEB00000>
+    <IEC00000>
+        <IEC00010>
+            <%= render_attr('IEC00020', etax_date(@start_date.prev_year)) %>
+            <%= render_attr('IEC00030', etax_date(@end_date.prev_year)) %>
+            <%= render_attr('IEC00050', 期首未納都道府県民税) %>
+            <IEC00060>
+                <IEC00070>
+                    <%= render_attr('IEC00090', @都道府県民税期中減) %>
+                </IEC00070>
+            </IEC00060>
+            <%= render_attr('IEC00160', 期首未納都道府県民税 - @都道府県民税期中減) %>
+        </IEC00010>
+        <IEC00170>
+            <IEC00440>
+                <%= render_attr('IEC00450', @都道府県民税期中増) %>
+                <IEC00460>
+                    <%= render_attr('IEC00480', 期末未納都道府県民税) %>
+                </IEC00460>
+            </IEC00440>
+        </IEC00170>
+        <IEC00490>
+            <%= render_attr('IEC00510', 期首未納都道府県民税) %>
+            <%= render_attr('IEC00520', @都道府県民税期中増) %>
+            <IEC00530>
+                <IEC00540>
+                    <%= render_attr('IEC00560', @都道府県民税期中減) %>
+                </IEC00540>
+            </IEC00530>
+            <IEC00630>
+                <%= render_attr('IEC00650', 期末未納都道府県民税) %>
+            </IEC00630>
+        </IEC00490>
+    </IEC00000>
+    <IED00000>
+        <IED00010>
+            <%= render_attr('IED00020', etax_date(@start_date.prev_year)) %>
+            <%= render_attr('IED00030', etax_date(@end_date.prev_year)) %>
+            <%= render_attr('IED00050', 期首未納市民税) %>
+            <IED00060>
+                <IED00070>
+                    <%= render_attr('IED00090', @市民税期中減) %>
+                </IED00070>
+            </IED00060>
+            <%= render_attr('IED00160', 期首未納市民税 - @市民税期中減) %>
+        </IED00010>
+        <IED00170>
+            <IED00310>
+                <%= render_attr('IED00320', @市民税期中増) %>
+                <IED00330>
+                    <%= render_attr('IED00350', 期末未納市民税) %>
+                </IED00330>
+            </IED00310>
+        </IED00170>
+        <IED00360>
+            <%= render_attr('IED00380', 期首未納市民税) %>
+            <%= render_attr('IED00390', @市民税期中増) %>
+            <IED00400>
+                <IED00410>
+                    <%= render_attr('IED00430', @市民税期中減) %>
+                </IED00410>
+            </IED00400>
+            <IED00500>
+                <%= render_attr('IED00520', 期末未納市民税) %>
+            </IED00500>
+        </IED00360>
+    </IED00000>
+    <IEE00000>
+        <IEE00010>
+            <%= render_attr('IEE00020', etax_date(@start_date.prev_year)) %>
+            <%= render_attr('IEE00030', etax_date(@end_date.prev_year)) %>
+            <%= render_attr('IEE00040', 期首未納事業税) %>
+            <IEE00060>
+                <IEE00070>
+                    <%= render_attr('IEE00090', @事業税期中減) %>
+                </IEE00070>
+            </IEE00060>
+            <%= render_attr('IEE00160', 期首未納事業税 - @事業税期中減) %>
+        </IEE00010>
+        <IEE00170>
+            <%= render_attr('IEE00180', 当期事業税納付) %>
+            <IEE00190>
+                <IEE00260>
+                    <%= render_attr('IEE00280', 当期事業税納付) %>
+                </IEE00260>
+            </IEE00190>
+        </IEE00170>
+        <IEE00300>
+            <%= render_attr('IEE00310', 期首未納事業税) %>
+            <%= render_attr('IEE00320', 当期事業税納付) %>
+            <IEE00330>
+                <IEE00340>
+                    <%= render_attr('IEE00360', @事業税期中減) %>
+                </IEE00340>
+                <IEE00400>
+                    <%= render_attr('IEE00420', 当期事業税納付) %>
+                </IEE00400>
+            </IEE00330>
+            <%= render_attr('IEE00430', 期首未納事業税 - @事業税期中減) %>
+        </IEE00300>
+    </IEE00000>
+    <IEF00000>
+        <IEF00010>
+            <IEF00300>
+                <%= render_attr('IEF00310', '消費税') %>
+                <%= render_attr('IEF00320', 期首未納消費税) %>
+                <%= render_attr('IEF00330', @消費税期中増) %>
+                <IEF00340>
+                    <IEF00350>
+                        <%= render_attr('IEF00370', @消費税期中減) %>
+                    </IEF00350>
+                </IEF00340>
+                <%= render_attr('IEF00440', 期末未納消費税) %>
+            </IEF00300>
+            <IEF00300>
+                <%= render_attr('IEF00310', '印紙税等') %>
+                <%= render_attr('IEF00330', @その他事業税) %>
+                <IEF00340>
+                    <IEF00410>
+                        <%= render_attr('IEF00430', @その他事業税) %>
+                    </IEF00410>
+                </IEF00340>
+            </IEF00300>
+        </IEF00010>
+    </IEF00000>
+    <IEG00000>
+        <%= render_attr('IEG00010', 期首納税充当金) %>
+        <IEG00020>
+            <%= render_attr('IEG00030', @納税充当金期中増) %>
+            <%= render_attr('IEG00070', @納税充当金期中増) %>
+        </IEG00020>
+        <IEG00080>
+            <%= render_attr('IEG00090', @納税充当金期中減 - @事業税期中減) %>
+            <%= render_attr('IEG00100', @事業税期中減) %>
+            <%= render_attr('IEG00180', @納税充当金期中減) %>
+        </IEG00080>
+        <%= render_attr('IEG00190', 期末納税充当金) %>
+    </IEG00000>
+</HOA522>

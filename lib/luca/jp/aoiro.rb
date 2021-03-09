@@ -12,6 +12,7 @@ module Luca
   module Jp
     class Aoiro
       include LucaSupport::View
+      include LucaSupport::Code
       include Luca::Jp::Util
 
       def initialize(from_year, from_month, to_year = from_year, to_month = from_month)
@@ -26,7 +27,7 @@ module Luca
 
       def kani(export: false)
         @state.pl
-        @state.bs
+        @state.bs(4)
         @法人税中間納付 = prepaid_tax('1851')
         @地方法人税中間納付 = prepaid_tax('1852')
         @法人税額 = 中小企業の軽減税額 + 一般区分の税額
@@ -50,10 +51,15 @@ module Luca
           @procedure_code = 'RHO0012'
           @procedure_name = '内国法人の確定申告(青色)'
           @version = '20.0.2'
-          @form_sec = ['HOA112', 'HOA116'].map{ |c| form_rdf(c) }.join('')
+          @法人税期中増, @法人税期中減 = 未納法人税期中増減
+          @都道府県民税期中増, @都道府県民税期中減 = 未納都道府県民税期中増減
+          @市民税期中増, @市民税期中減 = 未納市民税期中増減
+          @事業税期中増, @事業税期中減 = 未納事業税期中増減
+          @納税充当金期中増, @納税充当金期中減 = 納税充当金期中増減
+          @form_sec = ['HOA112', 'HOA116', 'HOA420', 'HOA511', 'HOA522'].map{ |c| form_rdf(c) }.join('')
           #@form_sec = ['HOA201', 'HOE990', 'HOI010', 'HOI040', 'HOI060', 'HOI090', 'HOI100', 'HOI110'].map{ |c| form_rdf(c) }.join('')
           @it = it_part
-          @form_data = [別表一, 別表一次葉].join("\n")
+          @form_data = [別表一, 別表一次葉, 別表四簡易, 別表五一, 別表五二].join("\n")
           render_erb(search_template('aoiro.xtx.erb'))
         end
       end
@@ -71,7 +77,7 @@ module Luca
           if dat[:kokuzei][:chukan] > dat[:kokuzei][:zeigaku]
             item['debit'] << { 'label' => '未収法人税', 'amount' => dat[:kokuzei][:chukan] - dat[:kokuzei][:zeigaku] }
           else
-            item['credit'] << { 'label' => '未払法人税等', 'amount' => dat[:kokuzei][:zeigaku] - dat[:kokuzei][:chukan] }
+            item['credit'] << { 'label' => '未払法人税', 'amount' => dat[:kokuzei][:zeigaku] - dat[:kokuzei][:chukan] }
           end
           item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:kokuzei][:zeigaku] }
           if dat[:chihou][:chukan] > 0
@@ -80,7 +86,7 @@ module Luca
           if dat[:chihou][:chukan] > dat[:chihou][:zeigaku]
             item['debit'] << { 'label' => '未収法人税', 'amount' => dat[:chihou][:chukan] - dat[:chihou][:zeigaku] }
           else
-            item['credit'] << { 'label' => '未払法人税等', 'amount' => dat[:chihou][:zeigaku] - dat[:chihou][:chukan] }
+            item['credit'] << { 'label' => '未払法人税', 'amount' => dat[:chihou][:zeigaku] - dat[:chihou][:chukan] }
           end
           item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:chihou][:zeigaku] }
           item['x-editor'] = 'LucaJp'
@@ -94,7 +100,27 @@ module Luca
       end
 
       def 別表一次葉
+        @消費税期中増, @消費税期中減 = 未納消費税期中増減
         render_erb(search_template('beppyo1-next.xml.erb'))
+      end
+
+      def 別表四簡易
+        @当期純損益 = readable(@state.pl_data.dig('HA'))
+        @法人税等 = readable(@state.pl_data.dig('H0'))
+        _, @納付事業税 = 未納事業税期中増減
+        @還付事業税 = readable(還付事業税 || 0)
+        @別表四調整所得 = @当期純損益 + @法人税等 + @還付事業税 - @納付事業税
+
+        render_erb(search_template('beppyo4.xml.erb'))
+      end
+
+      def 別表五一
+        render_erb(search_template('beppyo51.xml.erb'))
+      end
+
+      def 別表五二
+        @その他事業税 = 租税公課
+        render_erb(search_template('beppyo52.xml.erb'))
       end
 
       private
@@ -104,9 +130,147 @@ module Luca
       # 未払/未収事業税は精算時に認識
       #
       def 所得金額
-        納付事業税 = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5152')[:debit]
-        還付事業税 = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '1504')[:credit]
-        LucaSupport::Code.readable(@state.pl_data.dig('GA') - 納付事業税 + 還付事業税)
+        _, 納付事業税 = 未納事業税期中増減
+        readable(@state.pl_data.dig('GA') - 納付事業税 + 還付事業税)
+      end
+
+      def 期首未納事業税
+        readable(@state.start_balance.dig('5152')) || 0
+      end
+
+      def 期末未納事業税
+        readable(@state.bs_data.dig('5152')) || 0
+      end
+
+      def 当期事業税納付
+        readable(@state.pl_data.dig('C1I2')) || 0
+      end
+
+      def 還付事業税
+        LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '1504')[:credit]
+      end
+
+      def 未納事業税期中増減
+        r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5152')
+        [readable(r[:credit] || 0), readable(r[:debit] || 0)]
+      end
+
+      def 租税公課
+        readable(LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: 'C1I')[:debit]) || 0
+      end
+
+      def 別表四還付事業税
+        return nil if @還付事業税 == 0
+
+        "<ARC00220><ARC00230>仮払事業税消却(未収計上した還付事業税)</ARC00230>#{render_attr('ARC00240', @還付事業税)}#{render_attr('ARC00250', @還付事業税)}</ARC00220>\n"
+      end
+
+      def 期首繰越損益
+        readable(@state.start_balance.dig('914')) || 0
+      end
+
+      def 期末繰越損益
+        readable(@state.bs_data.dig('914')) || 0
+      end
+
+      def 期首納税充当金
+        readable(@state.start_balance.dig('515')) || 0
+      end
+
+      def 期末納税充当金
+        readable(@state.bs_data.dig('515')) || 0
+      end
+
+      def 納税充当金期中増減
+        r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '515')
+        [
+          readable(r[:credit] || 0) + @法人税期中増 + @都道府県民税期中増 + @市民税期中増 + @事業税期中増,
+          readable(r[:debit] || 0) + @法人税期中減 + @都道府県民税期中減 + @市民税期中減 + @事業税期中減
+        ]
+      end
+
+      def 期首未納法人税
+        readable(@state.start_balance.dig('5151')) || 0
+      end
+
+      def 期末未納法人税
+        readable(@state.bs_data.dig('5151')) || 0
+      end
+
+      def 未納法人税期中増減
+        r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5151')
+        [readable(r[:credit] || 0), readable(r[:debit] || 0)]
+      end
+
+      def 期首未納都道府県民税
+        readable(@state.start_balance.dig('5153')) || 0
+      end
+
+      def 期末未納都道府県民税
+        readable(@state.bs_data.dig('5153')) || 0
+      end
+
+      def 未納都道府県民税期中増減
+        r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5153')
+        [readable(r[:credit] || 0), readable(r[:debit] || 0)]
+      end
+
+      def 期首未納市民税
+        readable(@state.start_balance.dig('5154')) || 0
+      end
+
+      def 期末未納市民税
+        readable(@state.bs_data.dig('5154')) || 0
+      end
+
+      def 未納市民税期中増減
+        r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5154')
+        [readable(r[:credit] || 0), readable(r[:debit] || 0)]
+      end
+
+      def 別表五一期首差引金額
+        期首繰越損益 + 期首納税充当金 - 期首未納法人税 - 期首未納都道府県民税 - 期首未納市民税
+      end
+
+      def 別表五一期末差引金額
+        期末繰越損益 + 期末納税充当金 - 期末未納法人税 - 期末未納都道府県民税 - 期末未納市民税
+      end
+
+      def 別表五一期中減差引金額
+        期首繰越損益 + @納税充当金期中減 - @法人税期中減 - @都道府県民税期中減 - @市民税期中減
+      end
+
+      def 別表五一期中増差引金額
+        期末繰越損益 + @納税充当金期中増 - @法人税期中増 - @都道府県民税期中増 - @市民税期中増
+      end
+
+      def 期首資本金
+        readable(@state.start_balance.dig('911')) || 0
+      end
+
+      def 期末資本金
+        readable(@state.bs_data.dig('911')) || 0
+      end
+
+      def 別表五一期首資本
+        期首資本金
+      end
+
+      def 別表五一期末資本
+        期末資本金
+      end
+
+      def 期首未納消費税
+        readable(@state.start_balance.dig('516')) || 0
+      end
+
+      def 期末未納消費税
+        readable(@state.bs_data.dig('516')) || 0
+      end
+
+      def 未納消費税期中増減
+        r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '516')
+        [readable(r[:credit] || 0), readable(r[:debit] || 0)]
       end
 
       def 中小企業の軽減税率対象所得

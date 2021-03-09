@@ -1,0 +1,54 @@
+<HOA420 page="1" VR="19.0" id="HOA420" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <ARA00000>
+        <ARA00010>
+            <ARA00020 IDREF="JIGYO_NENDO_FROM"/>
+            <ARA00030 IDREF="JIGYO_NENDO_TO"/>
+        </ARA00010>
+        <ARA00040 IDREF="NOZEISHA_NM"/>
+    </ARA00000>
+    <ARB00000>
+        <%= render_attr('ARB00010', @当期純損益) %>
+        <%= render_attr('ARB00020', @当期純損益) %>
+    </ARB00000>
+    <ARC00000>
+        <ARC00100>
+            <%= render_attr('ARC00110', @法人税等) %>
+            <%= render_attr('ARC00120', @法人税等) %>
+        </ARC00100>
+        <%= 別表四還付事業税 %>
+        <ARC00325>
+            <%= render_attr('ARC00330', @法人税等 + @還付事業税) %>
+            <%= render_attr('ARC00340', @法人税等 + @還付事業税) %>
+        </ARC00325>
+    </ARC00000>
+    <ARD00000>
+        <ARD00040>
+            <%= render_attr('ARD00050', @納付事業税) %>
+            <%= render_attr('ARD00060', @納付事業税) %>
+        </ARD00040>
+        <ARD00280>
+            <%= render_attr('ARD00290', @納付事業税) %>
+            <%= render_attr('ARD00300', @納付事業税) %>
+        </ARD00280>
+    </ARD00000>
+    <ARE00000>
+        <%= render_attr('ARE00010', @別表四調整所得) %>
+        <%= render_attr('ARE00020', @別表四調整所得) %>
+    </ARE00000>
+    <ARK00000>
+        <%= render_attr('ARK00010', @別表四調整所得) %>
+        <%= render_attr('ARK00020', @別表四調整所得) %>
+    </ARK00000>
+    <ARM00000>
+        <%= render_attr('ARM00010', @別表四調整所得) %>
+        <%= render_attr('ARM00020', @別表四調整所得) %>
+    </ARM00000>
+    <ARS00000>
+        <%= render_attr('ARS00010', @別表四調整所得) %>
+        <%= render_attr('ARS00020', @別表四調整所得) %>
+    </ARS00000>
+    <ARV00000>
+        <%= render_attr('ARV00010', @別表四調整所得) %>
+        <%= render_attr('ARV00020', @別表四調整所得) %>
+    </ARV00000>
+</HOA420>

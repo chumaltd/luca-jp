@@ -49,6 +49,9 @@ module Luca
         "<#{code}>#{val}</#{code}>"
       end
 
+      def etax_date(date)
+        "<gen:era>#{gengou(date)}</gen:era><gen:yy>#{wareki(date)}</gen:yy><gen:mm>#{date.month}</gen:mm><gen:dd>#{date.day}</gen:dd>"
+      end
       # TODO: supply instance variables related to each procedure
       #
       def it_part
