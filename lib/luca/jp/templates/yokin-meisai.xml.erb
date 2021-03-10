@@ -1,0 +1,13 @@
+<HOI010 page="1" VR="4.0" id="HOI010" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <% @預金.each do |k, v| %>
+    <HAB00000>
+        <HAB00100>
+            <%= render_attr('HAB00110', k) %>
+        </HAB00100>
+        <%= render_attr('HAB00400', v) %>
+    </HAB00000>
+    <% end %>
+    <HAC00000>
+        <%= render_attr('HAC00100', @預金.values.sum) %>
+    </HAC00000>
+</HOI010>

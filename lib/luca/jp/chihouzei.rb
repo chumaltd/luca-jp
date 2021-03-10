@@ -12,6 +12,7 @@ module Luca
   module Jp
     class Chihouzei
       include LucaSupport::View
+      include Luca::Jp::Common
       include Luca::Jp::Util
 
       def initialize(from_year, from_month, to_year = from_year, to_month = from_month)
@@ -128,10 +129,6 @@ module Luca
 
       def 地方法人特別税(事業税)
         ((事業税 * 37 / 100) / 100).floor * 100
-      end
-
-      def 所得金額
-        LucaSupport::Code.readable(@state.pl_data.dig('GA'))
       end
 
       def 所得400万以下

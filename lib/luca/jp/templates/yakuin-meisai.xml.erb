@@ -1,0 +1,13 @@
+<HOI141 page="1" VR="5.0" id="HOI141" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <ILB00000>
+        <ILB00010>
+            <%= render_attr('ILB00020', @役員報酬) %>
+        </ILB00010>
+        <ILB00040>
+            <%= render_attr('ILB00050', @給料) %>
+        </ILB00040>
+        <ILB00100>
+            <%= render_attr('ILB00110', @役員報酬 + @給料) %>
+        </ILB00100>
+    </ILB00000>
+</HOI141>

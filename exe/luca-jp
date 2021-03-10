@@ -14,9 +14,9 @@ class LucaCmd
 
   def self.houjinzei(args, params)
     if params[:export]
-      Luca::Jp::Aoiro.new(*args).export_json
+      Luca::Jp::Aoiro.range(*args).export_json
     else
-      puts Luca::Jp::Aoiro.new(*args).kani
+      puts Luca::Jp::Aoiro.range(*args).kani
     end
   end
 

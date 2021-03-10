@@ -1,0 +1,37 @@
+<HOI100 page="1" VR="5.0" id="HOI100" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <HJB00000>
+        <HJB01000>
+            <%= render_attr('HJB01100', '預り金') %>
+            <HJB01200>
+                <%= render_attr('HJB01210', '源泉所得税') %>
+            </HJB01200>
+            <%= render_attr('HJB01300', @源泉給与 + @源泉報酬) %>
+        </HJB01000>
+    </HJB00000>
+    <HJC00000>
+        <% if @源泉給与 > 0 %>
+        <HJC01000>
+            <HJC01100>
+                <HJC01110>
+                    <gen:era><%= gengou(@end_date) %></gen:era><gen:yy><%= wareki(@end_date) %></gen:yy>
+                </HJC01110>
+                <%= render_attr('HJC01120', @end_date.month) %>
+            </HJC01100>
+            <HJC01400><kubun_CD>1</kubun_CD></HJC01400>
+            <%= render_attr('HJC01300', @源泉給与) %>
+        </HJC01000>
+        <% end %>
+        <% if @源泉報酬 > 0 %>
+            <HJC01000>
+                <HJC01100>
+                    <HJC01110>
+                        <gen:era><%= gengou(@end_date) %></gen:era><gen:yy><%= wareki(@end_date) %></gen:yy>
+                    </HJC01110>
+                    <%= render_attr('HJC01120', @end_date.month) %>
+                </HJC01100>
+                <HJC01400><kubun_CD>3</kubun_CD></HJC01400>
+                <%= render_attr('HJC01300', @源泉報酬) %>
+            </HJC01000>
+        <% end %>
+    </HJC00000>
+</HOI100>

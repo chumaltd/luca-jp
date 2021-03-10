@@ -1,0 +1,35 @@
+<HOE990 page="1" VR="5.0" id="HOE990" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <MAA00000>
+        <MAA00010>
+            <MAA00020 IDREF="JIGYO_NENDO_FROM"/>
+            <MAA00030 IDREF="JIGYO_NENDO_TO"/>
+        </MAA00010>
+        <MAA00050 IDREF="TEISYUTSU_DAY"/>
+        <MAA00060 IDREF="ZEIMUSHO"/>
+        <MAA00070 IDREF="NOZEISHA_ADR"/>
+        <MAA00080 IDREF="NOZEISHA_TEL"/>
+        <MAA00090>
+            <MAA00100 IDREF="NOZEISHA_NM_KN"/>
+            <MAA00110 IDREF="NOZEISHA_NM"/>
+        </MAA00090>
+        <MAA00115 IDREF="NOZEISHA_BANGO"/>
+        <MAA00120 IDREF="SHIHON_KIN"/>
+        <MAA00140>
+            <%= render_attr('MAA00150', 1) %>
+            <%= render_attr('MAA00160', 1) %>
+        </MAA00140>
+        <MAA00170 IDREF="JIGYO_NAIYO"/>
+    </MAA00000>
+    <% if 所得金額 > 0 %>
+    <MAB00000>
+        <MAB00010>
+            <%= render_attr('MAB00020', 42) %>
+            <%= render_attr('MAB00030', 'の3の2') %>
+            <%= render_attr('MAB00040', 1) %>
+            <%= render_attr('MAB00050', 1) %>
+        </MAB00010>
+        <%= render_attr('MAB00070', '00380') %>
+        <%= render_attr('MAB00080', 中小企業の軽減税率対象所得) %>
+    </MAB00000>
+    <% end %>
+</HOE990>

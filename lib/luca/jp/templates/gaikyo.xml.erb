@@ -1,2 +1,89 @@
 <HOK010 page="1" VR="5.0" id="HOK010" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+<HOK010-1 page="1">
+    <IAA00000>
+        <IAA01000>
+            <IAA01200 IDREF="NOZEISHA_NM"/>
+            <IAA01300 IDREF="NOZEISHA_TEL"/>
+        </IAA01000>
+        <IAA02000>
+            <IAA02100 IDREF="JIGYO_NENDO_FROM"/>
+            <IAA02200 IDREF="JIGYO_NENDO_TO"/>
+        </IAA02000>
+        <IAA02300 IDREF="NOZEISHA_BANGO"/>
+    </IAA00000>
+    <IAF00000>
+        <IAF04000>
+            <%= render_attr('IAF04200', 消費税課税売上高) %>
+        </IAF04000>
+    </IAF00000>
+    <IAI00000>
+        <%= render_attr('IAI01100', @概況売上) %>
+        <%= render_attr('IAI01500', @概況粗利益) %>
+        <IAI01600>
+            <%= render_attr('IAI01610', @概況役員報酬) %>
+            <%= render_attr('IAI01620', @概況給料) %>
+            <%= render_attr('IAI01630', @概況交際費) %>
+            <%= render_attr('IAI01640', @概況減価償却) %>
+            <%= render_attr('IAI01650', @概況地代租税) %>
+        </IAI01600>
+        <%= render_attr('IAI01700', @概況営業損益) %>
+        <%= render_attr('IAI01800', @概況特別利益) %>
+        <%= render_attr('IAI01850', @概況特別損失) %>
+        <%= render_attr('IAI01900', @概況税引前損益) %>
+
+        <%= render_attr('IAI02000', @概況資産計) %>
+        <IAI02100>
+            <%= render_attr('IAI02110', @概況現預金) %>
+            <%= render_attr('IAI02120', @概況受取手形) %>
+            <%= render_attr('IAI02130', @概況売掛金) %>
+            <%= render_attr('IAI02140', @概況棚卸資産) %>
+            <%= render_attr('IAI02145', @概況貸付金) %>
+            <%= render_attr('IAI02150', @概況建物) %>
+            <%= render_attr('IAI02160', @概況機械) %>
+            <%= render_attr('IAI02165', @概況車船) %>
+            <%= render_attr('IAI02170', @概況土地) %>
+        </IAI02100>
+        <%= render_attr('IAI02200', @概況負債計) %>
+        <IAI02205>
+            <%= render_attr('IAI02210', @概況支払手形) %>
+            <%= render_attr('IAI02220', @概況買掛金) %>
+            <%= render_attr('IAI02230', @概況個人借入金) %>
+            <%= render_attr('IAI02240', @概況ほか借入金) %>
+        </IAI02205>
+        <%= render_attr('IAI02300', @概況純資産) %>
+    </IAI00000>
+    <IAI03000>
+        <%= render_attr('IAI03100', @代表者報酬) %>
+        <%= render_attr('IAI03600', @代表者借入) %>
+    </IAI03000>
+</HOK010-1>
+<HOK010-2>
+    <IAP00000>
+        <% 12.times do |i| %>
+            <IAP20000>
+                <%= render_attr('IAP20100', 概況月(i)) %>
+                <IAP20200>
+                    <%= render_attr('IAP20300', 概況月売上(i)) %>
+                </IAP20200>
+                <IAP20410>
+                    <%= render_attr('IAP20420', 概況月仕入(i)) %>
+                </IAP20410>
+                <%= render_attr('IAP20500', 概況月外注費(i)) %>
+                <%= render_attr('IAP20600', 概況月人件費(i)) %>
+                <%= render_attr('IAP20700', 概況月源泉徴収(i)) %>
+            </IAP20000>
+        <% end %>
+        <IAP30000>
+            <IAP30100>
+                <%= render_attr('IAP30200', @概況売上) %>
+            </IAP30100>
+            <IAP30310>
+                <%= render_attr('IAP30320', @概況仕入) %>
+            </IAP30310>
+            <%= render_attr('IAP30400', @概況外注費) %>
+            <%= render_attr('IAP30500', @概況人件費) %>
+            <%= render_attr('IAP30600', 概況源泉徴収) %>
+        </IAP30000>
+    </IAP00000>
+</HOK010-2>
 </HOK010>

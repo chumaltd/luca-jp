@@ -22,7 +22,7 @@ module Luca
       end
 
       def prepaid_tax(code)
-        LucaSupport::Code.readable(@state.bs_data.dig(code) || 0)
+        LucaSupport::Code.readable(@bs_data.dig(code) || 0)
       end
 
       def 納付税額(税額, 中間納付額)

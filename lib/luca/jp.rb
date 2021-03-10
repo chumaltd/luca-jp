@@ -8,6 +8,7 @@ module Luca
     autoload :Aoiro, 'luca/jp/aoiro'
     autoload :Syouhizei, 'luca/jp/syouhizei'
     autoload :Chihouzei, 'luca/jp/chihouzei'
+    autoload :Common, 'luca/jp/common'
     autoload :Util, 'luca/jp/util'
   end
 end

@@ -1,0 +1,30 @@
+<HOE200 page="1" VR="13.0" id="HOE200" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <EGA00000>
+        <EGA00010>
+            <EGA00020 IDREF="JIGYO_NENDO_FROM"/>
+            <EGA00030 IDREF="JIGYO_NENDO_TO"/>
+        </EGA00010>
+        <EGA00040 IDREF="NOZEISHA_NM"/>
+    </EGA00000>
+    <%= render_attr('EGB00000', @交際費) %>
+    <EGC00000>
+        <%= render_attr('EGC00020', 12) %>
+        <%= render_attr('EGC00030', @限度額) %>
+    </EGC00000>
+    <EGD00000>
+        <%= render_attr('EGD00020', @限度額) %>
+    </EGD00000>
+    <%= render_attr('EGE00000', @不算入額) %>
+    <EGF00000>
+        <EGF00010>
+            <%= render_attr('EGF00020', @交際費) %>
+            <%= render_attr('EGF00030', 0) %>
+            <%= render_attr('EGF00040', @交際費) %>
+        </EGF00010>
+        <EGF00100>
+            <%= render_attr('EGF00110', @交際費) %>
+            <%= render_attr('EGF00120', 0) %>
+            <%= render_attr('EGF00130', @交際費) %>
+        </EGF00100>
+    </EGF00000>
+</HOE200>
