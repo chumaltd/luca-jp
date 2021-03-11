@@ -27,14 +27,15 @@ module Luca
         @jimusho_code = LucaSupport::CONFIG.dig('jp', 'eltax', 'jimusho_code')
         @jimusho_name = '都税事務所長'
 
-        @均等割 = 70000
+        @税額 = 税額計算
+        @均等割 = @税額.dig(:kenmin, :kintou)
         @法人税割課税標準 = 法人税割課税標準
-        @確定法人税割 = (法人税割 / 100).floor * 100
+        @確定法人税割 = (@税額.dig(:kenmin, :houjinzei) / 100).floor * 100
         @地方特別法人事業税中間納付 = prepaid_tax('1854')
         @所得割中間納付 = prepaid_tax('1855')
         @法人税割中間納付 = prepaid_tax('1859')
         @均等割中間納付 = prepaid_tax('185A')
-        @所得割 = 所得割400万以下 + 所得割800万以下 + 所得割800万超
+        @所得割 = @税額.dig(:kenmin, :shotoku)
         if export
           {
             jigyouzei: {
@@ -43,7 +44,7 @@ module Luca
                 chukan: @所得割中間納付
               },
               tokubetsu: {
-                zeigaku: 地方法人特別税(@所得割),
+                zeigaku: @税額.dig(:kenmin, :tokubetsu),
                 chukan: @地方特別法人事業税中間納付
               },
             },
@@ -117,52 +118,6 @@ module Luca
       def 法人税割課税標準
         national_tax = Luca::Jp::Aoiro.range(@start_date.year, @start_date.month, @end_date.year, @end_date.month).kani(export: true)
         (national_tax[:kokuzei][:zeigaku] / 1000).floor * 1000
-      end
-
-      def 法人税割
-        (@法人税割課税標準 * 7 / 100).floor
-      end
-
-      def 地方法人特別税(事業税)
-        ((事業税 * 37 / 100) / 100).floor * 100
-      end
-
-      def 所得400万以下
-        if 所得金額 >= 4_000_000
-          4_000_000
-        else
-          (所得金額 / 1000).floor * 1000
-        end
-      end
-
-      def 所得割400万以下
-        ((所得400万以下 * 3.5 / 100) / 100).floor * 100
-      end
-
-      def 所得800万以下
-        if 所得金額 <= 4_000_000
-          0
-        elsif 所得金額 >= 8_000_000
-          4_000_000
-        else
-          ((所得金額 - 4_000_000) / 1000).floor * 1000
-        end
-      end
-
-      def 所得割800万以下
-        ((所得800万以下 * 5.3 / 100) / 100).floor * 100
-      end
-
-      def 所得800万超
-        if 所得金額 <= 8_000_000
-          0
-        else
-          ((所得金額 - 8_000_000) / 1000).floor * 1000
-        end
-      end
-
-      def 所得割800万超
-        ((所得800万超 * 7.0 / 100) / 100).floor * 100
       end
 
       def 事業税中間納付

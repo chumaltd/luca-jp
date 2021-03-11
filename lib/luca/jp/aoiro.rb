@@ -25,13 +25,14 @@ module Luca
         @issue_date = Date.today
         @company = CGI.escapeHTML(LucaSupport::CONFIG.dig('company', 'name'))
         @software = 'LucaJp'
-        @法人税中間納付 = prepaid_tax('1851')
-        @地方法人税中間納付 = prepaid_tax('1852')
+        @税額 = 税額計算
+        @確定法人税額 = @税額.dig(:houjin, :kokuzei)
         @法人税額 = 中小企業の軽減税額 + 一般区分の税額
-        @確定法人税額 = (@法人税額 / 100).floor * 100
         @地方法人税課税標準 = (@法人税額 / 1000).floor * 1000
         @地方法人税額 = 地方法人税額(@地方法人税課税標準)
-        @確定地方法人税額 = (@地方法人税額 / 100).floor * 100
+        @確定地方法人税額 = @税額.dig(:houjin, :chihou)
+        @法人税中間納付 = prepaid_tax('1851')
+        @地方法人税中間納付 = prepaid_tax('1852')
 
         if export
           {
@@ -48,6 +49,8 @@ module Luca
           @procedure_code = 'RHO0012'
           @procedure_name = '内国法人の確定申告(青色)'
           @version = '20.0.2'
+          @都道府県民税中間納付 = prepaid_tax('1859') +  prepaid_tax('185A')
+          @市民税中間納付 = prepaid_tax('185D') +  prepaid_tax('185E')
           @法人税期中増, @法人税期中減 = 未納法人税期中増減
           @都道府県民税期中増, @都道府県民税期中減 = 未納都道府県民税期中増減
           @市民税期中増, @市民税期中減 = 未納市民税期中増減
@@ -254,6 +257,22 @@ module Luca
         [readable(r[:credit] || 0), readable(r[:debit] || 0)]
       end
 
+      # 中間納付した金額のうち税額とならず、還付されるべき額
+      #
+      def 法人税仮払納付額
+        [(@法人税中間納付 + @地方法人税中間納付 - @確定法人税額 - @確定地方法人税額), 0].max
+      end
+
+      # 中間納付した金額のうち税額として確定した額
+      #
+      def 法人税損金納付額
+        [@法人税中間納付 + @地方法人税中間納付, @確定法人税額 + @確定地方法人税額].min
+      end
+
+      def 確定都道府県住民税
+        @税額.dig(:kenmin, :kintou) + @税額.dig(:kenmin, :houjinzei)
+      end
+
       def 期首未納都道府県民税
         readable(@start_balance.dig('5153')) || 0
       end
@@ -267,6 +286,18 @@ module Luca
         [readable(r[:credit] || 0), readable(r[:debit] || 0)]
       end
 
+      def 都道府県民税仮払納付
+        [(@都道府県民税中間納付 - 確定都道府県住民税), 0].max
+      end
+
+      def 都道府県民税損金納付
+        [確定都道府県住民税, @都道府県民税中間納付].min
+      end
+
+      def 確定市民税
+        @税額.dig(:shimin, :kintou) - @税額.dig(:shimin, :houjinzei)
+      end
+
       def 期首未納市民税
         readable(@start_balance.dig('5154')) || 0
       end
@@ -278,6 +309,14 @@ module Luca
       def 未納市民税期中増減
         r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5154')
         [readable(r[:credit] || 0), readable(r[:debit] || 0)]
+      end
+
+      def 市民税仮払納付
+        [0, (@市民税中間納付 - 確定市民税)].max
+      end
+
+      def 市民税損金納付
+        [@市民税中間納付, 確定市民税].min
       end
 
       def 別表五一期首差引金額
@@ -323,36 +362,6 @@ module Luca
       def 未納消費税期中増減
         r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '516')
         [readable(r[:credit] || 0), readable(r[:debit] || 0)]
-      end
-
-      def 中小企業の軽減税率対象所得
-        if 所得金額 >= 8_000_000
-          8_000_000
-        elsif 所得金額 < 0
-          0
-        else
-          (所得金額 / 1000).floor * 1000
-        end
-      end
-
-      def 中小企業の軽減税額
-        中小企業の軽減税率対象所得 * 15 / 100
-      end
-
-      def 中小企業の軽減税率対象を超える所得
-        if 所得金額 <= 8_000_000
-          0
-        else
-          ((所得金額 - 8_000_000) / 1000).floor * 1000
-        end
-      end
-
-      def 一般区分の税額
-        (中小企業の軽減税率対象を超える所得 * 23.2 / 100).to_i
-      end
-
-      def 地方法人税額(地方法人税課税標準)
-        (地方法人税課税標準 * 10.3 / 100).to_i
       end
 
       def 概況月(idx)
