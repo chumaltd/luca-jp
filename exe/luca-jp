@@ -6,9 +6,9 @@ require 'luca/jp'
 class LucaCmd
   def self.syouhizei(args, params)
     if params[:export]
-      Luca::Jp::Syouhizei.new(*args).export_json
+      Luca::Jp::Syouhizei.range(*args).export_json
     else
-      puts Luca::Jp::Syouhizei.new(*args).kani
+      puts Luca::Jp::Syouhizei.range(*args).kani
     end
   end
 
@@ -22,9 +22,9 @@ class LucaCmd
 
   def self.chihouzei(args, params)
     if params[:export]
-      Luca::Jp::Chihouzei.new(*args).export_json
+      Luca::Jp::Chihouzei.range(*args).export_json
     else
-      puts Luca::Jp::Chihouzei.new(*args).kani
+      puts Luca::Jp::Chihouzei.range(*args).kani
     end
   end
 end

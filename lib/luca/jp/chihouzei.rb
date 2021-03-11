@@ -10,26 +10,22 @@ require 'luca/jp'
 
 module Luca
   module Jp
-    class Chihouzei
+    class Chihouzei < LucaBook::State
       include LucaSupport::View
       include Luca::Jp::Common
       include Luca::Jp::Util
 
-      def initialize(from_year, from_month, to_year = from_year, to_month = from_month)
-        @start_date = Date.new(from_year.to_i, from_month.to_i, 1)
-        @end_date = Date.new(to_year.to_i, to_month.to_i, -1)
-        @issue_date = Date.today
-        @company = CGI.escapeHTML(LucaSupport::CONFIG.dig('company', 'name'))
-        @dict = LucaRecord::Dict.load('base.tsv')
-        @software = 'LucaJp'
-        @state = LucaBook::State.range(from_year, from_month, to_year, to_month)
-        @jimusho_code = LucaSupport::CONFIG.dig('jp', 'eltax', 'jimusho_code')
-        @jimusho_name = '都税事務所長'
-      end
+      @dirname = 'journals'
+      @record_type = 'raw'
 
       def kani(export: false)
-        @state.pl
-        @state.bs
+        set_pl(4)
+        set_bs(4)
+        @issue_date = Date.today
+        @company = CGI.escapeHTML(LucaSupport::CONFIG.dig('company', 'name'))
+        @software = 'LucaJp'
+        @jimusho_code = LucaSupport::CONFIG.dig('jp', 'eltax', 'jimusho_code')
+        @jimusho_name = '都税事務所長'
 
         @均等割 = 70000
         @法人税割課税標準 = 法人税割課税標準
@@ -119,7 +115,7 @@ module Luca
       private
 
       def 法人税割課税標準
-        national_tax = Luca::Jp::Aoiro.new(@start_date.year, @start_date.month, @end_date.year, @end_date.month).kani(export: true)
+        national_tax = Luca::Jp::Aoiro.range(@start_date.year, @start_date.month, @end_date.year, @end_date.month).kani(export: true)
         (national_tax[:kokuzei][:zeigaku] / 1000).floor * 1000
       end
 

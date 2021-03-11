@@ -10,29 +10,25 @@ require 'luca/jp/util'
 
 module Luca
   module Jp
-    class Syouhizei
+    class Syouhizei < LucaBook::State
       include LucaSupport::View
       include Luca::Jp::Util
 
-      def initialize(from_year, from_month, to_year = from_year, to_month = from_month)
-        @start_date = Date.new(from_year.to_i, from_month.to_i, 1)
-        @end_date = Date.new(to_year.to_i, to_month.to_i, -1)
-        @issue_date = Date.today
-        @company = CGI.escapeHTML(LucaSupport::CONFIG.dig('company', 'name'))
-        @dict = LucaRecord::Dict.load('base.tsv')
-        @software = 'LucaJp'
-        @state = LucaBook::State.range(from_year, from_month, to_year, to_month)
-      end
+      @dirname = 'journals'
+      @record_type = 'raw'
 
       # TODO: 軽減税率売上の識別
       #
       def kani(export: false)
-        @state.pl
-        @state.bs
+        set_pl(4)
+        set_bs(4)
+        @issue_date = Date.today
+        @company = CGI.escapeHTML(LucaSupport::CONFIG.dig('company', 'name'))
+        @software = 'LucaJp'
         税率 = BigDecimal('7.8') # percent
         地方税率 = BigDecimal('2.2')
 
-        @sales = @state.pl_data.dig('A0') * 100 / (100 + 税率 + 地方税率).floor
+        @sales = @pl_data.dig('A0') * 100 / (100 + 税率 + 地方税率).floor
         @tax_amount = (課税標準額(@sales) * 税率 / 100).floor
         @みなし仕入税額 = (@tax_amount * みなし仕入率(LucaSupport::CONFIG.dig('jp', 'syouhizei_kubun')) / 100).floor
         @税額 = LucaSupport::Code.readable(((@tax_amount - @みなし仕入税額) / 100).floor * 100)

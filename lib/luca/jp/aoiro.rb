@@ -19,13 +19,6 @@ module Luca
       @dirname = 'journals'
       @record_type = 'raw'
 
-      #def initialize(from_year, from_month, to_year = from_year, to_month = from_month)
-      #  @start_date = Date.new(from_year.to_i, from_month.to_i, 1)
-      #  @end_date = Date.new(to_year.to_i, to_month.to_i, -1)
-      #  @dict = LucaRecord::Dict.load('base.tsv')
-      #  @state = LucaBook::State.range(from_year, from_month, to_year, to_month)
-      #end
-
       def kani(export: false)
         set_pl(4)
         set_bs(4)
