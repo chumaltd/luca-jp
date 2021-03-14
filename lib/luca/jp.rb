@@ -9,6 +9,7 @@ module Luca
     autoload :Syouhizei, 'luca/jp/syouhizei'
     autoload :Chihouzei, 'luca/jp/chihouzei'
     autoload :Common, 'luca/jp/common'
+    autoload :ItPart, 'luca/jp/it_part'
     autoload :Util, 'luca/jp/util'
   end
 end

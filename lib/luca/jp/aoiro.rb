@@ -14,6 +14,7 @@ module Luca
       include LucaSupport::View
       include LucaSupport::Code
       include Luca::Jp::Common
+      include Luca::Jp::ItPart
       include Luca::Jp::Util
 
       @dirname = 'journals'
