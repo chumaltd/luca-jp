@@ -30,6 +30,9 @@ $ luca-jp [houjinzei|syouhizei|chihouzei] yyyy mm yyyy mm --export > export.json
 
 LucaBookの日本用標準勘定科目を利用した仕訳データを前提としている。税務署は内訳データを求めているため、税金納付などは種目を細かく分類して記帳しなくてはならない。
 
+* 中間納付の計算上、最終月は計算から除外する。決算仕訳により相殺される影響を受けない
+
+
 ## Config
 
 configはLucaBookの`config.yml`に加えて、Luca::Jp専用の`config-lucajp.yml`をロードする。

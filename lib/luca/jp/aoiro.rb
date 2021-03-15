@@ -141,7 +141,7 @@ module Luca
           next unless /^110[0-9A-Z]/.match(k)
           next unless readable(v || 0) > 0
 
-          h[@dict.dig(k)[:label]] = readable(v)
+          h[@@dict.dig(k)[:label]] = readable(v)
         end
         render_erb(search_template('yokin-meisai.xml.erb'))
       end
@@ -212,7 +212,7 @@ module Luca
       end
 
       def 租税公課
-        readable(LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: 'C1I')[:debit]) || 0
+        readable(LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: 'C1I')[:debit]['C1I']) || 0
       end
 
       def 別表四還付事業税
@@ -240,8 +240,8 @@ module Luca
       def 納税充当金期中増減
         r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '515')
         [
-          readable(r[:credit] || 0) + @法人税期中増 + @都道府県民税期中増 + @市民税期中増 + @事業税期中増,
-          readable(r[:debit] || 0) + @法人税期中減 + @都道府県民税期中減 + @市民税期中減 + @事業税期中減
+          readable(r[:credit]['515'] || 0) + @法人税期中増 + @都道府県民税期中増 + @市民税期中増 + @事業税期中増,
+          readable(r[:debit]['515'] || 0) + @法人税期中減 + @都道府県民税期中減 + @市民税期中減 + @事業税期中減
         ]
       end
 
@@ -255,7 +255,7 @@ module Luca
 
       def 未納法人税期中増減
         r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5151')
-        [readable(r[:credit] || 0), readable(r[:debit] || 0)]
+        [readable(r[:credit]['5151'] || 0), readable(r[:debit]['5151'] || 0)]
       end
 
       # 中間納付した金額のうち税額とならず、還付されるべき額
@@ -284,7 +284,7 @@ module Luca
 
       def 未納都道府県民税期中増減
         r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5153')
-        [readable(r[:credit] || 0), readable(r[:debit] || 0)]
+        [readable(r[:credit]['5153'] || 0), readable(r[:debit]['5153'] || 0)]
       end
 
       def 都道府県民税仮払納付
@@ -309,7 +309,7 @@ module Luca
 
       def 未納市民税期中増減
         r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5154')
-        [readable(r[:credit] || 0), readable(r[:debit] || 0)]
+        [readable(r[:credit]['5154'] || 0), readable(r[:debit]['5154'] || 0)]
       end
 
       def 市民税仮払納付
@@ -362,7 +362,7 @@ module Luca
 
       def 未納消費税期中増減
         r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '516')
-        [readable(r[:credit] || 0), readable(r[:debit] || 0)]
+        [readable(r[:credit]['516'] || 0), readable(r[:debit]['516'] || 0)]
       end
 
       def 概況月(idx)
@@ -387,13 +387,13 @@ module Luca
 
       def 概況月源泉徴収(idx)
         target = @start_date.next_month(idx)
-        readable(LucaBook::State.gross(target.year, target.month, code: '5191')[:credit] || 0)
-        + readable(LucaBook::State.gross(target.year, target.month, code: '5193')[:credit] || 0)
+        readable(LucaBook::State.gross(target.year, target.month, code: '5191')[:credit]['5191'] || 0)
+        + readable(LucaBook::State.gross(target.year, target.month, code: '5193')[:credit]['5193'] || 0)
       end
 
       def 概況源泉徴収
-        readable(LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5191')[:credit] || 0)
-        + readable(LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5193')[:credit] || 0)
+        readable(LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5191')[:credit]['5191'] || 0)
+        + readable(LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5193')[:credit]['5193'] || 0)
       end
 
       def gaikyo(code)

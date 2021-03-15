@@ -161,12 +161,12 @@ module Luca
       end
 
       def 還付事業税
-        LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '1504')[:credit]
+        LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '1504')[:credit]['1504']
       end
 
       def 未納事業税期中増減
         r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5152')
-        [LucaSupport::Code.readable(r[:credit] || 0), LucaSupport::Code.readable(r[:debit] || 0)]
+        [LucaSupport::Code.readable(r[:credit]['5152'] || 0), LucaSupport::Code.readable(r[:debit]['5152'] || 0)]
       end
     end
   end
