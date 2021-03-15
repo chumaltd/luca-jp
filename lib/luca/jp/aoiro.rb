@@ -24,7 +24,7 @@ module Luca
         set_pl(4)
         set_bs(4)
         @issue_date = Date.today
-        @company = CGI.escapeHTML(LucaSupport::CONFIG.dig('company', 'name'))
+        @company = CGI.escapeHTML(config.dig('company', 'name'))
         @software = 'LucaJp'
         @税額 = 税額計算
         @確定法人税額 = @税額.dig(:houjin, :kokuzei)

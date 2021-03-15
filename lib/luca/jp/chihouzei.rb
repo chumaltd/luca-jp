@@ -22,9 +22,9 @@ module Luca
         set_pl(4)
         set_bs(4)
         @issue_date = Date.today
-        @company = CGI.escapeHTML(LucaSupport::CONFIG.dig('company', 'name'))
+        @company = CGI.escapeHTML(config.dig('company', 'name'))
         @software = 'LucaJp'
-        @jimusho_code = LucaSupport::CONFIG.dig('jp', 'eltax', 'jimusho_code')
+        @jimusho_code = config.dig('jp', 'eltax', 'jimusho_code')
         @jimusho_name = '都税事務所長'
 
         @税額 = 税額計算
@@ -109,7 +109,7 @@ module Luca
       end
 
       def 別表四三
-        @office_23ku = LucaSupport::CONFIG.dig('jp', 'eltax', 'office_23ku')
+        @office_23ku = config.dig('jp', 'eltax', 'office_23ku')
         render_erb(search_template('el-no6-43.xml.erb'))
       end
 

@@ -1,3 +1,8 @@
+## Luca::Jp 0.1.3
+
+* config-lucajp.ymlを追加ロード。LucaBookとconfigを分割可能
+* IT部にeltax_idを追加
+
 ## Luca::Jp 0.1.2
 
 * 別表4, 別表5-2の中間納付の内訳を実装。仮払税金を分類できていることが条件

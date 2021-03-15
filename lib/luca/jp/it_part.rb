@@ -6,6 +6,8 @@ require 'luca_support/config'
 module Luca
   module Jp
     module ItPart
+      # タグの出現順序は順不同ではない。eTaxの定義に準拠
+      #
       def it_part
         entries = ['<IT VR="1.4" id="IT">']
         entries.concat(['zeimusho']
@@ -23,12 +25,13 @@ module Luca
         entries.concat([jigyo_nendo_from, jigyo_nendo_to, kazei_kikan_from, kazei_kikan_to])
         entries << render_it_tag('keiri_sekininsha')
         entries << '<SHINKOKU_KBN ID="SHINKOKU_KBN"><kubun_CD>1</kubun_CD></SHINKOKU_KBN>'
+        entries.concat(['eltax_id'].map{ |key| render_it_tag(key) })
         entries << '</IT>'
         entries.compact.join("\n")
       end
 
       def render_it_tag(key)
-        content = LucaSupport::CONFIG.dig('jp', 'it_part', key)
+        content = config.dig('jp', 'it_part', key)
         return nil if content.nil?
 
         case key

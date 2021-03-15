@@ -32,7 +32,7 @@ LucaBookの日本用標準勘定科目を利用した仕訳データを前提と
 
 ## Config
 
-configはLucaBookの`config.yml`をロードする。
+configはLucaBookの`config.yml`に加えて、Luca::Jp専用の`config-lucajp.yml`をロードする。
 
 IT部
 ------------
@@ -66,6 +66,7 @@ jp:
 | daihyo_tel       |                          |   |
 | keiri_sekininsha |                          |   |
 | kanpu_kinyukikan | 銀行名-支店名-1-口座番号 |   |
+| eltax_id         |                          |   |
 
 
 ## Format

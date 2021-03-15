@@ -52,6 +52,10 @@ module Luca
       def etax_date(date)
         "<gen:era>#{gengou(date)}</gen:era><gen:yy>#{wareki(date)}</gen:yy><gen:mm>#{date.month}</gen:mm><gen:dd>#{date.day}</gen:dd>"
       end
+
+      def config
+        EX_CONF.nil? ? LucaSupport::CONFIG : LucaSupport::CONFIG.merge(EX_CONF)
+      end
     end
   end
 end

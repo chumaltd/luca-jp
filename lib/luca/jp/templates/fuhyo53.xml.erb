@@ -16,7 +16,7 @@
         </DVB00130>
     </DVB00000>
     <DVC00000>
-        <DVC00010><kubun_CD><%= LucaSupport::CONFIG.dig('jp', 'syouhizei_kubun') %></kubun_CD>
+        <DVC00010><kubun_CD><%= config.dig('jp', 'syouhizei_kubun') %></kubun_CD>
         </DVC00010>
         <%= render_attr('DVC00030', @みなし仕入税額) %>
         <%= render_attr('DVC00040', @みなし仕入税額) %>

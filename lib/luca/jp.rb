@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'luca/jp/version'
+require 'luca_support/config'
 
 module Luca
   module Jp
@@ -12,4 +13,10 @@ module Luca
     autoload :ItPart, 'luca/jp/it_part'
     autoload :Util, 'luca/jp/util'
   end
+
+  EX_CONF = begin
+              YAML.load_file(Pathname(LucaSupport::PJDIR) / 'config-lucajp.yml')
+            rescue Errno::ENOENT
+              nil
+            end
 end

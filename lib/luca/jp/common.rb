@@ -75,7 +75,7 @@ module Luca
       # -----------------------------------------------------
 
       def 均等割
-        if LucaSupport::CONFIG.dig('jp', 'eltax', 'office_23ku')
+        if config.dig('jp', 'eltax', 'office_23ku')
           [70_000, 0]
         else
           [20_000, 50_000]
@@ -88,7 +88,7 @@ module Luca
                    else
                      @法人税割課税標準
                    end
-        if LucaSupport::CONFIG.dig('jp', 'eltax', 'office_23ku')
+        if config.dig('jp', 'eltax', 'office_23ku')
           [(課税標準 * 7 / 100).floor, 0]
         else
           [(課税標準 * 1 / 100).floor, (課税標準 * 6 / 100).floor]

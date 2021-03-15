@@ -23,14 +23,14 @@ module Luca
         set_pl(4)
         set_bs(4)
         @issue_date = Date.today
-        @company = CGI.escapeHTML(LucaSupport::CONFIG.dig('company', 'name'))
+        @company = CGI.escapeHTML(config.dig('company', 'name'))
         @software = 'LucaJp'
         税率 = BigDecimal('7.8') # percent
         地方税率 = BigDecimal('2.2')
 
         @sales = @pl_data.dig('A0') * 100 / (100 + 税率 + 地方税率).floor
         @tax_amount = (課税標準額(@sales) * 税率 / 100).floor
-        @みなし仕入税額 = (@tax_amount * みなし仕入率(LucaSupport::CONFIG.dig('jp', 'syouhizei_kubun')) / 100).floor
+        @みなし仕入税額 = (@tax_amount * みなし仕入率(config.dig('jp', 'syouhizei_kubun')) / 100).floor
         @税額 = LucaSupport::Code.readable(((@tax_amount - @みなし仕入税額) / 100).floor * 100)
         @譲渡割額 = (@税額 * 地方税率 / (税率*100)).floor * 100
         @中間納付額 = prepaid_tax('185B')
@@ -119,7 +119,7 @@ module Luca
       end
 
       def 事業区分
-        tags = case LucaSupport::CONFIG.dig('jp', 'syouhizei_kubun')
+        tags = case config.dig('jp', 'syouhizei_kubun')
                when 1
                  ['ABL00030', 'ABL00040', 'ABL00050']
                when 2
