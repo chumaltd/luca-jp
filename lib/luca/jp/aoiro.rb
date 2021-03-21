@@ -59,7 +59,7 @@ module Luca
           @事業税期中増, @事業税期中減 = 未納事業税期中増減
           @納税充当金期中増, @納税充当金期中減 = 納税充当金期中増減
           @概況売上 = gaikyo('A0')
-          @form_sec = ['HOA112', 'HOA116', 'HOA201', 'HOA420', 'HOA511', 'HOA522', 別表七フォーム, 'HOE200', 'HOE990', 'HOI010', 'HOI100', 'HOI141', 'HOK010'].compact.map{ |c| form_rdf(c) }.join('')
+          @form_sec = ['HOA112', 'HOA116', 'HOA201', 'HOA420', 'HOA511', 'HOA522', 別表七フォーム, 'HOE200', 適用額明細フォーム, 'HOI010', 'HOI100', 'HOI141', 'HOK010'].compact.map{ |c| form_rdf(c) }.join('')
           #@extra_form_sec = ['HOI040', 'HOI060', 'HOI090', 'HOI110']
           @it = it_part
           @form_data = [別表一, 別表一次葉, 別表二, 別表四簡易, 別表五一, 別表五二, 別表七, 別表十五, 適用額明細, 預貯金内訳, 仮受金内訳, 役員報酬内訳, 概況説明].compact.join("\n")
@@ -82,7 +82,7 @@ module Luca
           else
             item['credit'] << { 'label' => '未払法人税', 'amount' => dat[:kokuzei][:zeigaku] - dat[:kokuzei][:chukan] }
           end
-          item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:kokuzei][:zeigaku] }
+          item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:kokuzei][:zeigaku] } if dat[:kokuzei][:zeigaku] > 0
           if dat[:chihou][:chukan] > 0
             item['credit'] << { 'label' => '仮払法人税(地方)', 'amount' => dat[:chihou][:chukan] }
           end
@@ -91,7 +91,7 @@ module Luca
           else
             item['credit'] << { 'label' => '未払法人税', 'amount' => dat[:chihou][:zeigaku] - dat[:chihou][:chukan] }
           end
-          item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:chihou][:zeigaku] }
+          item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:chihou][:zeigaku] } if dat[:chihou][:zeigaku] > 0
           item['x-editor'] = 'LucaJp'
           res << item
           puts JSON.dump(res)
@@ -171,7 +171,15 @@ module Luca
         render_erb(search_template('yakuin-meisai.xml.erb'))
       end
 
+      def 適用額明細フォーム
+        return nil if @確定法人税額 == 0
+
+        'HOE990'
+      end
+
       def 適用額明細
+        return nil if @確定法人税額 == 0
+
         render_erb(search_template('tekiyougaku.xml.erb'))
       end
 
@@ -347,6 +355,10 @@ module Luca
 
       def 別表五一期中増差引金額
         期末繰越損益 + @納税充当金期中増 - @法人税期中増 - @都道府県民税期中増 - @市民税期中増
+      end
+
+      def 期末未収税金(code)
+        readable((@bs_data[code] || 0) * -1)
       end
 
       def 別表七各期青色損失

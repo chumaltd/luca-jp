@@ -134,6 +134,8 @@ module Luca
 
       def 所得400万以下(所得 = nil)
         所得 ||= 所得金額
+        return 0 if 所得 < 0
+
         if 所得 >= 4_000_000
           4_000_000
         else
@@ -147,6 +149,8 @@ module Luca
 
       def 所得800万以下(所得 = nil)
         所得 ||= 所得金額
+        return 0 if 所得 < 0
+
         if 所得 <= 4_000_000
           0
         elsif 所得 >= 8_000_000
@@ -162,6 +166,8 @@ module Luca
 
       def 所得800万超(所得 = nil)
         所得 ||= 所得金額
+        return 0 if 所得 < 0
+
         if 所得 <= 8_000_000
           0
         else

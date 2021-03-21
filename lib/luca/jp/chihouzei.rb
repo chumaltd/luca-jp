@@ -81,22 +81,22 @@ module Luca
               item['credit'] << { 'label' => karibarai_label(k), 'amount' => dat[:chukan] }
             end
             if dat[:chukan] > dat[:zeigaku]
-              item['debit'] << { 'label' => '未収法人税', 'amount' => dat[:chukan] - dat[:zeigaku] }
+              item['debit'] << { 'label' => '未収地方事業税', 'amount' => dat[:chukan] - dat[:zeigaku] }
             else
               item['credit'] << { 'label' => '未払地方事業税', 'amount' => dat[:zeigaku] - dat[:chukan] }
             end
-            item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:zeigaku] }
+            item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:zeigaku] } if dat[:zeigaku] > 0
           end
           records[:juminzei].each do |k, dat|
             if dat[:chukan] > 0
               item['credit'] << { 'label' => karibarai_label(k), 'amount' => dat[:chukan] }
             end
             if dat[:chukan] > dat[:zeigaku]
-              item['debit'] << { 'label' => '未収法人税', 'amount' => dat[:chukan] - dat[:zeigaku] }
+              item['debit'] << { 'label' => '未収都道府県住民税', 'amount' => dat[:chukan] - dat[:zeigaku] }
             else
               item['credit'] << { 'label' => '未払都道府県民税', 'amount' => dat[:zeigaku] - dat[:chukan] }
             end
-            item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:zeigaku] }
+            item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:zeigaku] } if dat[:zeigaku] > 0
           end
           item['x-editor'] = 'LucaJp'
           res << item
@@ -182,7 +182,7 @@ module Luca
           '仮払地方税資本割'
         when :fukakachi
           '仮払地方税付加価値割'
-        when :hojinzei
+        when :houjinzei
           '仮払地方税法人税割'
         when :kinto
           '仮払地方税均等割'
