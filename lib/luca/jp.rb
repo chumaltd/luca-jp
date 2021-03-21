@@ -11,6 +11,7 @@ module Luca
     autoload :Chihouzei, 'luca/jp/chihouzei'
     autoload :Common, 'luca/jp/common'
     autoload :ItPart, 'luca/jp/it_part'
+    autoload :Sonshitsu, 'luca/jp/sonshitsu'
     autoload :Util, 'luca/jp/util'
   end
 

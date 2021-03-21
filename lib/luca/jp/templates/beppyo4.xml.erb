@@ -55,8 +55,12 @@
         <%= render_attr('ARS00010', @別表四調整所得) %>
         <%= render_attr('ARS00020', @別表四調整所得) %>
     </ARS00000>
+    <ART00000>
+        <%= render_attr('ART00010', @繰越損失管理.deduction) %>
+        <%= render_attr('ART00020', @繰越損失管理.deduction) %>
+    </ART00000>
     <ARV00000>
-        <%= render_attr('ARV00010', @別表四調整所得) %>
-        <%= render_attr('ARV00020', @別表四調整所得) %>
+        <%= render_attr('ARV00010', @別表四調整所得 - @繰越損失管理.deduction) %>
+        <%= render_attr('ARV00020', @別表四調整所得 - @繰越損失管理.deduction) %>
     </ARV00000>
 </HOA420>

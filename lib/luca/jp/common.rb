@@ -31,6 +31,8 @@ module Luca
 
       def 中小企業の軽減税率対象所得(所得 = nil)
         所得 ||= 所得金額
+        return 0 if 所得 <= 0
+
         if 所得 >= 8_000_000
           8_000_000
         elsif 所得 < 0
@@ -41,11 +43,13 @@ module Luca
       end
 
       def 中小企業の軽減税額(所得 = nil)
-        中小企業の軽減税率対象所得(所得) * 15 / 100
+          中小企業の軽減税率対象所得(所得) * 15 / 100
       end
 
       def 中小企業の軽減税率対象を超える所得(所得 = nil)
         所得 ||= 所得金額
+        return 0 if 所得 <= 0
+
         if 所得 <= 8_000_000
           0
         else
@@ -61,14 +65,47 @@ module Luca
         (地方法人税課税標準 * 10.3 / 100).to_i
       end
 
+      # 繰越損失適用後の所得金額
+      #
+      def 所得金額
+        @繰越損失管理 = Sonshitsu.load(@end_date).update(当期所得金額).save if @繰越損失管理.nil?
+        @繰越損失管理.profit
+      end
+
       # 税引前当期利益をもとに計算
       # 消費税を租税公課に計上している場合、控除済みの金額
       # 未払/未収事業税は精算時に認識
       #
-      def 所得金額
+      def 当期所得金額
         _, 納付事業税 = 未納事業税期中増減
         LucaSupport::Code.readable(@pl_data.dig('GA') - 納付事業税 + 還付事業税)
       end
+
+      # -----------------------------------------------------
+      # :section: 繰越損失の計算
+      # -----------------------------------------------------
+
+      def 期首繰越損失
+        @繰越損失管理.records
+          .filter { |record| record['start_date'] > @end_date.prev_year(10) && record['end_date'] < @start_date }
+          .inject(0) { |sum, record| sum + (record['amount'] || 0) }
+      end
+
+      def 当期控除計
+        @繰越損失管理.deduction
+      end
+
+      def 翌期繰越損失
+        @繰越損失管理.records
+          .filter { |record| record['start_date'] > @end_date.prev_year(10) && record['end_date'] < @start_date }
+          .inject(0) { |sum, record| sum + (record['amount'] || 0) }
+      end
+
+      def 当期繰越損失
+        @繰越損失管理.records
+          .filter { |record| record['start_date'] == @start_date }.dig(0, 'increase') || 0
+      end
+
 
       # -----------------------------------------------------
       # :section: 地方税額の計算

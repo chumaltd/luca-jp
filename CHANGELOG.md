@@ -1,3 +1,7 @@
+## Luca::Jp 0.1.4
+
+* 繰越損失管理の初期実装。別表7 / 6号様式別表9
+
 ## Luca::Jp 0.1.3
 
 * config-lucajp.ymlを追加ロード。LucaBookとconfigを分割可能

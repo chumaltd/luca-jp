@@ -62,9 +62,9 @@ module Luca
         else
           @procedure_code = 'R0102100'
           @procedure_name = '法人都道府県民税・事業税・特別法人事業税又は地方法人特別税　確定申告'
-          @form_sec = ['R0102AA190', 'R0102AG120'].map{ |c| form_attr(c) }.join('')
+          @form_sec = ['R0102AA190', 'R0102AG120', 別表九フォーム].compact.map{ |c| form_attr(c) }.join('')
           @user_inf = render_erb(search_template('el-userinf.xml.erb'))
-          @form_data = [第六号, 別表四三].join("\n")
+          @form_data = [第六号, 別表四三, 別表九].compact.join("\n")
           render_erb(search_template('eltax.xml.erb'))
         end
       end
@@ -113,6 +113,18 @@ module Luca
         render_erb(search_template('el-no6-43.xml.erb'))
       end
 
+      def 別表九フォーム
+        return nil if @繰越損失管理.records.length == 0
+
+        'R0102AM190'
+      end
+
+      def 別表九
+        return nil if @繰越損失管理.records.length == 0
+
+        render_erb(search_template('el-no6-9.xml.erb'))
+      end
+
       private
 
       def 法人税割課税標準
@@ -122,6 +134,36 @@ module Luca
 
       def 事業税中間納付
         @所得割中間納付
+      end
+
+      # TODO: 損失の区分
+      #
+      def 別表九各期青色損失
+        tags = @繰越損失管理.records
+                 .filter { |record| record['start_date'] > @end_date.prev_year(10) && record['end_date'] < @start_date }
+                 .map do |record|
+          deduction = record['decrease']&.filter{ |r| r['date'] >= @start_date }&.dig(0, 'val') || 0
+          next if deduction == 0 && record['amount'] == 0
+
+          %Q(<AMB00200>
+          <AMB00210>#{etax_date(@start_date)}</AMB00210>
+          <AMB00220>#{etax_date(@end_date)}</AMB00220>
+          <AMB00225 />
+          #{render_attr('AMB00230', deduction + record['amount'])}
+          #{render_attr('AMB00240', deduction)}
+          #{render_attr('AMB00250', record['amount'])}
+          </AMB00200>)
+        end
+        return tags.compact.join("\n") if tags.length > 0
+
+        %Q(<AMB00200>
+        <AMB00210><gen:era /><gen:yy /><gen:mm /><gen:dd /></AMB00210>
+        <AMB00220><gen:era /><gen:yy /><gen:mm /><gen:dd /></AMB00220>
+        <AMB00225 />
+        <AMB00230 />
+        <AMB00240 />
+        <AMB00250 />
+        </AMB00200>)
       end
 
       def form_attr(code)

@@ -26,6 +26,7 @@ module Luca
         @issue_date = Date.today
         @company = CGI.escapeHTML(config.dig('company', 'name'))
         @software = 'LucaJp'
+
         @税額 = 税額計算
         @確定法人税額 = @税額.dig(:houjin, :kokuzei)
         @法人税額 = 中小企業の軽減税額 + 一般区分の税額
@@ -58,10 +59,10 @@ module Luca
           @事業税期中増, @事業税期中減 = 未納事業税期中増減
           @納税充当金期中増, @納税充当金期中減 = 納税充当金期中増減
           @概況売上 = gaikyo('A0')
-          @form_sec = ['HOA112', 'HOA116', 'HOA201', 'HOA420', 'HOA511', 'HOA522', 'HOE200', 'HOE990', 'HOI010', 'HOI100', 'HOI141', 'HOK010'].map{ |c| form_rdf(c) }.join('')
+          @form_sec = ['HOA112', 'HOA116', 'HOA201', 'HOA420', 'HOA511', 'HOA522', 別表七フォーム, 'HOE200', 'HOE990', 'HOI010', 'HOI100', 'HOI141', 'HOK010'].compact.map{ |c| form_rdf(c) }.join('')
           #@extra_form_sec = ['HOI040', 'HOI060', 'HOI090', 'HOI110']
           @it = it_part
-          @form_data = [別表一, 別表一次葉, 別表二, 別表四簡易, 別表五一, 別表五二, 別表十五, 適用額明細, 預貯金内訳, 仮受金内訳, 役員報酬内訳, 概況説明].join("\n")
+          @form_data = [別表一, 別表一次葉, 別表二, 別表四簡易, 別表五一, 別表五二, 別表七, 別表十五, 適用額明細, 預貯金内訳, 仮受金内訳, 役員報酬内訳, 概況説明].compact.join("\n")
           render_erb(search_template('aoiro.xtx.erb'))
         end
       end
@@ -127,6 +128,18 @@ module Luca
       def 別表五二
         @その他事業税 = 租税公課
         render_erb(search_template('beppyo52.xml.erb'))
+      end
+
+      def 別表七フォーム
+        return nil if @繰越損失管理.records.length == 0
+
+        'HOB710'
+      end
+
+      def 別表七
+        return nil if @繰越損失管理.records.length == 0
+
+        render_erb(search_template('beppyo7.xml.erb'))
       end
 
       def 別表十五
@@ -292,7 +305,7 @@ module Luca
       end
 
       def 都道府県民税損金納付
-        [確定都道府県住民税, @都道府県民税中間納付].min
+        [[確定都道府県住民税, 0].max, @都道府県民税中間納付].min
       end
 
       def 確定市民税
@@ -317,7 +330,7 @@ module Luca
       end
 
       def 市民税損金納付
-        [@市民税中間納付, 確定市民税].min
+        [@市民税中間納付, [確定市民税, 0].max].min
       end
 
       def 別表五一期首差引金額
@@ -334,6 +347,29 @@ module Luca
 
       def 別表五一期中増差引金額
         期末繰越損益 + @納税充当金期中増 - @法人税期中増 - @都道府県民税期中増 - @市民税期中増
+      end
+
+      def 別表七各期青色損失
+        tags = @繰越損失管理.records
+                 .filter { |record| record['start_date'] > @end_date.prev_year(10) && record['end_date'] < @start_date }
+                 .map do |record|
+          deduction = record['decrease']&.filter{ |r| r['date'] >= @start_date }&.dig(0, 'val') || 0
+          next if deduction == 0 && record['amount'] == 0
+
+          %Q(<MCB00110>
+          <MCB00120>
+          #{render_attr('MCB00130', etax_date(record['start_date']))}
+          #{render_attr('MCB00140', etax_date(record['end_date']))}
+          </MCB00120>
+          <MCB00150>
+            <MCB00160><kubun_CD>1</kubun_CD></MCB00160>
+          </MCB00150>
+          #{render_attr('MCB00190', deduction + record['amount'])}
+          #{render_attr('MCB00200', deduction)}
+          #{render_attr('MCB00210', record['amount'])}
+          </MCB00110)
+        end
+        tags.compact.join("\n")
       end
 
       def 期首資本金

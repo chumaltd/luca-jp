@@ -1,0 +1,31 @@
+<HOB710 page="1" VR="11.0" id="HOB710" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <MCA00000>
+        <MCA00010>
+            <MCA00020 IDREF="JIGYO_NENDO_FROM"/>
+            <MCA00030 IDREF="JIGYO_NENDO_TO"/>
+        </MCA00010>
+        <MCA00040 IDREF="NOZEISHA_NM"/>
+    </MCA00000>
+    <MCB00000>
+        <%= render_attr('MCB00002', 当期所得金額) %>
+        <MCB00004>
+            <%= render_attr('MCB00008', [当期所得金額, 0].max) %>
+        </MCB00004>
+        <%= 別表七各期青色損失 %>
+        <MCB00220>
+            <%= render_attr('MCB00230', 期首繰越損失) %>
+            <%= render_attr('MCB00240', 当期控除計) %>
+            <%= render_attr('MCB00250', 翌期繰越損失) %>
+        </MCB00220>
+        <MCB00260>
+            <%= render_attr('MCB00270', 当期繰越損失) %>
+            <MCB00280>
+                <MCB00330>
+                    <%= render_attr('MCB00340', 当期繰越損失) %>
+                    <%= render_attr('MCB00360', 当期繰越損失) %>
+                </MCB00330>
+            </MCB00280>
+        </MCB00260>
+        <%= render_attr('MCB00370', 翌期繰越損失 + 当期繰越損失) %>
+    </MCB00000>
+</HOB710>
