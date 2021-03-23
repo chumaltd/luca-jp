@@ -34,8 +34,8 @@ module Luca
         @みなし仕入税額 = (@tax_amount * みなし仕入率(config.dig('jp', 'syouhizei_kubun')) / 100).floor
         @税額 = LucaSupport::Code.readable(((@tax_amount - @みなし仕入税額) / 100).floor * 100)
         @譲渡割額 = (@税額 * 地方税率 / (税率*100)).floor * 100
-        @中間納付額 = prepaid_tax('185B')
-        @地方税中間納付額 = prepaid_tax('185C')
+        @中間納付額 = 消費税中間納付額
+        @地方税中間納付額 = 地方消費税中間納付額
 
         if export
           {

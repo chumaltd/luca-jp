@@ -51,16 +51,19 @@ module Luca
           @procedure_code = 'RHO0012'
           @procedure_name = '内国法人の確定申告(青色)'
           @version = '20.0.2'
-          @都道府県民税中間納付 = prepaid_tax('1859') +  prepaid_tax('185A')
-          @市民税中間納付 = prepaid_tax('185D') +  prepaid_tax('185E')
+          @都道府県民税法人税割中間納付 = prepaid_tax('1859')
+          @都道府県民税均等割中間納付 = prepaid_tax('185A')
+          @都道府県民税中間納付 = @都道府県民税法人税割中間納付 + @都道府県民税均等割中間納付
+          @市民税法人税割中間納付 = prepaid_tax('185D')
+          @市民税均等割中間納付 = prepaid_tax('185E')
+          @市民税中間納付 = @市民税法人税割中間納付 + @市民税均等割中間納付
           @法人税期中増, @法人税期中減 = 未納法人税期中増減
           @都道府県民税期中増, @都道府県民税期中減 = 未納都道府県民税期中増減
           @市民税期中増, @市民税期中減 = 未納市民税期中増減
           @事業税期中増, @事業税期中減 = 未納事業税期中増減
+          @事業税中間納付 = prepaid_tax('1854') + prepaid_tax('1855') + prepaid_tax('1856') + prepaid_tax('1857') + prepaid_tax('1858')
           @納税充当金期中増, @納税充当金期中減 = 納税充当金期中増減
-          @還付法人税 = refund_tax('1502')
-          @還付都道府県住民税 = refund_tax('1503')
-          @還付市民税 = refund_tax('1505')
+          @翌期還付法人税 = 中間還付税額(@確定法人税額 + @確定地方法人税額, @法人税中間納付 + @地方法人税中間納付)
           @概況売上 = gaikyo('A0')
           @form_sec = ['HOA112', 'HOA116', 'HOA201', 'HOA420', 'HOA511', 'HOA522', 別表七フォーム, 'HOE200', 適用額明細フォーム, 'HOI010', 'HOI100', 'HOI141', 'HOK010'].compact.map{ |c| form_rdf(c) }.join('')
           #@extra_form_sec = ['HOI040', 'HOI060', 'HOI090', 'HOI110']
@@ -118,8 +121,17 @@ module Luca
         @当期純損益 = readable(@pl_data.dig('HA'))
         @法人税等 = readable(@pl_data.dig('H0'))
         _, @納付事業税 = 未納事業税期中増減
-        @還付事業税 = readable(還付事業税 || 0)
-        @別表四調整所得 = @当期純損益 + @法人税等 + @還付事業税 - @納付事業税
+        @別表四調整所得 = @当期純損益 + @法人税等 - @納付事業税
+
+        @当期還付法人税 = refund_tax('1502')
+        @当期還付都道府県住民税 = refund_tax('1503')
+        @翌期還付都道府県住民税 = 中間還付税額(@税額.dig(:kenmin, :kintou), @都道府県民税均等割中間納付) + 中間還付税額(@税額.dig(:kenmin, :houjinzei), @都道府県民税法人税割中間納付)
+        @当期還付市民税 = refund_tax('1505')
+        @翌期還付市民税 = 中間還付税額(@税額.dig(:shimin, :kintou), @市民税均等割中間納付) + 中間還付税額(@税額.dig(:shimin, :houjinzei), @市民税法人税割中間納付)
+        @当期還付事業税 = 還付事業税
+        @事業税期首残高 = 期首未納事業税 > 0 ? 期首未納事業税 : (@当期還付事業税 * -1)
+        @翌期還付事業税 = 中間還付税額(確定事業税, @事業税中間納付)
+        @仮払税金 = @翌期還付法人税 + @翌期還付都道府県住民税 + @翌期還付事業税 + @翌期還付市民税
 
         render_erb(search_template('beppyo4.xml.erb'))
       end
@@ -129,6 +141,10 @@ module Luca
       end
 
       def 別表五二
+        @消費税中間納付額 = 消費税中間納付額 + 地方消費税中間納付額
+        @当期還付消費税 = refund_tax('1501')
+        @消費税期首残高 = 期首未納消費税 > 0 ? 期首未納消費税 : (@当期還付消費税 * -1)
+        @翌期還付消費税 = 中間還付税額(@消費税期中増, @消費税中間納付額)
         @その他事業税 = 租税公課
         render_erb(search_template('beppyo52.xml.erb'))
       end
@@ -239,10 +255,69 @@ module Luca
         readable(LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: 'C1I')[:debit]['C1I']) || 0
       end
 
-      def 別表四還付事業税
-        return nil if @還付事業税 == 0
+      def 別表四還付法人税等金額
+        refund_tax()
+      end
 
-        "<ARC00220><ARC00230>仮払事業税消却(未収計上した還付事業税)</ARC00230>#{render_attr('ARC00240', @還付事業税)}#{render_attr('ARC00250', @還付事業税)}</ARC00220>\n"
+      def 別表四還付事業税
+        return nil if @当期還付事業税 == 0
+
+        "<ARC00220><ARC00230>仮払事業税消却(未収計上した還付事業税)</ARC00230>#{render_attr('ARC00240', @当期還付事業税)}#{render_attr('ARC00250', @当期還付事業税)}</ARC00220>\n"
+      end
+
+      def 別表五一仮払税金
+        未収仮払税金 = [@start_balance['1502'], @start_balance['1503'], @start_balance['1504'], @start_balance['1505']].compact.sum
+        還付税金 = [@当期還付法人税, @当期還付都道府県住民税, @当期還付事業税, @当期還付市民税].compact.sum
+        return '' if 未収仮払税金 == 0 && 還付税金 == 0 && @仮払税金 == 0
+
+        %Q(<ICB00140>
+        #{render_attr('ICB00150', '仮払税金')}
+        #{render_attr('ICB00160', 未収仮払税金 * -1)}
+        <ICB00170>
+        #{render_attr('ICB00190', 還付税金 * -1)}
+        #{render_attr('ICB00200', @仮払税金 * -1)}
+        </ICB00170>
+        #{render_attr('ICB00210', @仮払税金 * -1)}
+        </ICB00140>)
+      end
+
+      def 別表五一還付法人税
+        return '' if (@start_balance['1502']||0) == 0 && @翌期還付法人税 == 0
+
+        %Q(<ICB00220>
+        #{render_attr('ICB00230', @start_balance['1502'] || 0)}
+        <ICB00240>
+        #{render_attr('ICB00250', @当期還付法人税)}
+        #{render_attr('ICB00260', @翌期還付法人税)}
+        </ICB00240>
+        #{render_attr('ICB00270', @翌期還付法人税)}
+        </ICB00220>)
+      end
+
+      def 別表五一還付都道府県住民税
+        return '' if (@start_balance['1503']||0) == 0 && @翌期還付都道府県住民税 == 0
+
+        %Q(<ICB00280>
+        #{render_attr('ICB00290', @start_balance['1503'] || 0)}
+        <ICB00300>
+        #{render_attr('ICB00310', @当期還付都道府県住民税)}
+        #{render_attr('ICB00320', @翌期還付都道府県住民税)}
+        </ICB00300>
+        #{render_attr('ICB00330', @翌期還付都道府県住民税)}
+        </ICB00280>)
+      end
+
+      def 別表五一還付市民税
+        return '' if (@start_balance['1505']||0) == 0 && @翌期還付市民税 == 0
+
+        %Q(<ICB00340>
+        #{render_attr('ICB00350', @start_balance['1505'] || 0)}
+        <ICB00360>
+        #{render_attr('ICB00370', @当期還付市民税)}
+        #{render_attr('ICB00380', @翌期還付市民税)}
+        </ICB00360>
+        #{render_attr('ICB00390', @翌期還付市民税)}
+        </ICB00340>)
       end
 
       def 期首繰越損益
@@ -257,16 +332,11 @@ module Luca
         readable(@start_balance.dig('515')) || 0
       end
 
-      def 期末納税充当金
-        readable(@bs_data.dig('515')) || 0
-      end
-
       def 納税充当金期中増減
-        r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '515')
-        [
-          readable(r[:credit]['515'] || 0) + @法人税期中増 + @都道府県民税期中増 + @市民税期中増 + @事業税期中増,
-          readable(r[:debit]['515'] || 0) + @法人税期中減 + @都道府県民税期中減 + @市民税期中減 + @事業税期中減
-        ]
+        r = debit_amount('515', @start_date.year, @start_date.month, @end_date.year, @end_date.month)
+        納付 = 納付税額(@確定法人税額 + @確定地方法人税額, @法人税中間納付 + @地方法人税中間納付) + 期末未納都道府県民税 + 期末未納市民税 + 納付税額(確定事業税, @事業税中間納付)
+
+        [納付, readable(r)]
       end
 
       def 期首未納法人税
@@ -274,12 +344,12 @@ module Luca
       end
 
       def 期末未納法人税
-        readable(@bs_data.dig('5151')) || 0
+        納付税額(@確定法人税額 + @確定地方法人税額, @法人税中間納付 + @地方法人税中間納付)
       end
 
       def 未納法人税期中増減
-        r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5151')
-        [readable(r[:credit]['5151'] || 0), readable(r[:debit]['5151'] || 0)]
+        r = debit_amount('5151', @start_date.year, @start_date.month, @end_date.year, @end_date.month)
+        [(@確定法人税額 + @確定地方法人税額), readable(r)]
       end
 
       # 中間納付した金額のうち税額とならず、還付されるべき額
@@ -303,20 +373,21 @@ module Luca
       end
 
       def 期末未納都道府県民税
-        readable(@bs_data.dig('5153')) || 0
+        納付税額(@税額.dig(:kenmin, :kintou), @都道府県民税均等割中間納付) + 納付税額(@税額.dig(:kenmin, :houjinzei), @都道府県民税法人税割中間納付)
       end
 
       def 未納都道府県民税期中増減
-        r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5153')
-        [readable(r[:credit]['5153'] || 0), readable(r[:debit]['5153'] || 0)]
+        r = debit_amount('5153', @start_date.year, @start_date.month, @end_date.year, @end_date.month)
+        [確定都道府県住民税, readable(r)]
       end
 
       def 都道府県民税仮払納付
         [(@都道府県民税中間納付 - 確定都道府県住民税), 0].max
+        中間還付税額(@税額.dig(:kenmin, :kintou), @都道府県民税均等割中間納付) + 中間還付税額(@税額.dig(:kenmin, :houjinzei), @都道府県民税法人税割中間納付)
       end
 
       def 都道府県民税損金納付
-        [[確定都道府県住民税, 0].max, @都道府県民税中間納付].min
+        [@都道府県民税均等割中間納付, @税額.dig(:kenmin, :kintou)].min + [@都道府県民税法人税割中間納付, @税額.dig(:kenmin, :houjinzei)].min
       end
 
       def 確定市民税
@@ -328,20 +399,28 @@ module Luca
       end
 
       def 期末未納市民税
-        readable(@bs_data.dig('5154')) || 0
+        納付税額(@税額.dig(:shimin, :kintou), @市民税均等割中間納付) + 納付税額(@税額.dig(:shimin, :houjinzei), @市民税法人税割中間納付)
       end
 
       def 未納市民税期中増減
-        r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5154')
-        [readable(r[:credit]['5154'] || 0), readable(r[:debit]['5154'] || 0)]
+        r = debit_amount('5154', @start_date.year, @start_date.month, @end_date.year, @end_date.month)
+        [確定市民税, readable(r)]
       end
 
       def 市民税仮払納付
-        [0, (@市民税中間納付 - 確定市民税)].max
+        中間還付税額(@税額.dig(:shimin, :kintou), @市民税均等割中間納付) + 中間還付税額(@税額.dig(:shimin, :houjinzei), @市民税法人税割中間納付)
       end
 
       def 市民税損金納付
-        [@市民税中間納付, [確定市民税, 0].max].min
+        [@市民税均等割中間納付, @税額.dig(:shimin, :kintou)].min + [@市民税法人税割中間納付, @税額.dig(:shimin, :houjinzei)].min
+      end
+
+      def 確定事業税
+        @税額.dig(:kenmin, :shotoku) + @税額.dig(:kenmin, :tokubetsu)
+      end
+
+      def 事業税損金納付
+        [@事業税中間納付, 確定事業税].min
       end
 
       def 別表五一期首差引金額
@@ -349,15 +428,15 @@ module Luca
       end
 
       def 別表五一期末差引金額
-        期末繰越損益 + 期末納税充当金 - 期末未納法人税 - 期末未納都道府県民税 - 期末未納市民税
+        期末繰越損益 + @納税充当金期中増 - 期末未納法人税 - 期末未納都道府県民税 - 期末未納市民税 - @翌期還付事業税
       end
 
       def 別表五一期中減差引金額
-        期首繰越損益 + @納税充当金期中減 - @法人税期中減 - @都道府県民税期中減 - @市民税期中減
+        期首繰越損益 + @納税充当金期中減 - @法人税期中減 - @都道府県民税期中減 - @市民税期中減 - @翌期還付法人税 - @翌期還付都道府県住民税 - @翌期還付市民税
       end
 
       def 別表五一期中増差引金額
-        期末繰越損益 + @納税充当金期中増 - @法人税期中増 - @都道府県民税期中増 - @市民税期中増
+        期末繰越損益 + 納付税額(確定事業税, @事業税中間納付) - @法人税中間納付 - @地方法人税中間納付 - @都道府県民税中間納付 - @市民税中間納付 - @翌期還付事業税
       end
 
       def 期末未収税金(code)
@@ -412,8 +491,9 @@ module Luca
       end
 
       def 未納消費税期中増減
-        r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '516')
-        [readable(r[:credit]['516'] || 0), readable(r[:debit]['516'] || 0)]
+        increase = debit_amount('C1I1', @start_date.year, @start_date.month, @end_date.year, @end_date.month)
+        r = debit_amount('516', @start_date.year, @start_date.month, @end_date.year, @end_date.month)
+        [readable(increase), readable(r)]
       end
 
       def 概況月(idx)

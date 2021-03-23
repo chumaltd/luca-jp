@@ -7,6 +7,10 @@
         <ICA00040 IDREF="NOZEISHA_NM"/>
     </ICA00000>
     <ICB00000>
+        <%= 別表五一仮払税金 %>
+        <%= 別表五一還付法人税 %>
+        <%= 別表五一還付都道府県住民税 %>
+        <%= 別表五一還付市民税 %>
         <ICB00400>
             <%= render_attr('ICB00410', 期首繰越損益) %>
             <ICB00420>
@@ -21,15 +25,16 @@
                 <%= render_attr('ICB00490', @納税充当金期中減) %>
                 <%= render_attr('ICB00500', @納税充当金期中増) %>
             </ICB00480>
-            <%= render_attr('ICB00510', 期末納税充当金) %>
+            <%= render_attr('ICB00510', @納税充当金期中増) %>
         </ICB00460>
         <ICB00520>
             <ICB00530>
                 <%= render_attr('ICB00540', 期首未納法人税) %>
                 <ICB00550>
-                    <%= render_attr('ICB00560', @法人税期中減) %>
+                    <%= render_attr('ICB00560', @法人税期中減 + @翌期還付法人税) %>
                     <ICB00570>
-                        <%= render_attr('ICB00590', @法人税期中増) %>
+                        <%= render_attr('ICB00580', @法人税中間納付 + @地方法人税中間納付) %>
+                        <%= render_attr('ICB00590', 期末未納法人税) %>
                     </ICB00570>
                 </ICB00550>
                 <%= render_attr('ICB00610', 期末未納法人税) %>
@@ -37,9 +42,10 @@
             <ICB00620>
                 <%= render_attr('ICB00630', 期首未納都道府県民税) %>
                 <ICB00640>
-                    <%= render_attr('ICB00650', @都道府県民税期中減) %>
+                    <%= render_attr('ICB00650', @都道府県民税期中減 + @翌期還付都道府県住民税) %>
                     <ICB00660>
-                        <%= render_attr('ICB00680', @都道府県民税期中増) %>
+                        <%= render_attr('ICB00670', @都道府県民税中間納付) %>
+                        <%= render_attr('ICB00680', 期末未納都道府県民税) %>
                     </ICB00660>
                 </ICB00640>
                 <%= render_attr('ICB00700', 期末未納都道府県民税) %>
@@ -47,9 +53,10 @@
             <ICB00710>
                 <%= render_attr('ICB00720', 期首未納市民税) %>
                 <ICB00730>
-                    <%= render_attr('ICB00740', @市民税期中減) %>
+                    <%= render_attr('ICB00740', @市民税期中減 + @翌期還付市民税) %>
                     <ICB00750>
-                        <%= render_attr('ICB00770', @市民税期中増) %>
+                        <%= render_attr('ICB00760', @市民税中間納付) %>
+                        <%= render_attr('ICB00770', 期末未納市民税) %>
                     </ICB00750>
                 </ICB00730>
                 <%= render_attr('ICB00790', 期末未納市民税) %>
