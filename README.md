@@ -72,6 +72,12 @@ jp:
 | eltax_id         |                          |   |
 
 
+userinf
+------------
+
+eltaxのuserinfは、テンプレート化未済。eLtaxの出力タグから切り出して、プロジェクトディレクトリの`templates/el-userinf.xml.erb`に置く。
+
+
 ## Format
 
 各種書類に出力するデータは会計により出力可能な範囲に限り、eTaxソフトなどで追加編集のうえ提出。また、特定の法人を前提としている
