@@ -28,6 +28,11 @@ module Luca
         LucaSupport::Code.readable(amount[code] || 0)
       end
 
+      def refund_tax(code)
+        credit = credit_amount(code, @start_date.year, @start_date.month, @end_date.year, @end_date.month)
+        LucaSupport::Code.readable(credit)
+      end
+
       def 納付税額(税額, 中間納付額)
         if 税額 > 中間納付額
           税額 - 中間納付額

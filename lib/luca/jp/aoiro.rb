@@ -58,6 +58,9 @@ module Luca
           @市民税期中増, @市民税期中減 = 未納市民税期中増減
           @事業税期中増, @事業税期中減 = 未納事業税期中増減
           @納税充当金期中増, @納税充当金期中減 = 納税充当金期中増減
+          @還付法人税 = refund_tax('1502')
+          @還付都道府県住民税 = refund_tax('1503')
+          @還付市民税 = refund_tax('1505')
           @概況売上 = gaikyo('A0')
           @form_sec = ['HOA112', 'HOA116', 'HOA201', 'HOA420', 'HOA511', 'HOA522', 別表七フォーム, 'HOE200', 適用額明細フォーム, 'HOI010', 'HOI100', 'HOI141', 'HOK010'].compact.map{ |c| form_rdf(c) }.join('')
           #@extra_form_sec = ['HOI040', 'HOI060', 'HOI090', 'HOI110']
