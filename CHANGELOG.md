@@ -1,3 +1,7 @@
+## Luca::Jp 0.1.7
+
+* implement USERINF template
+
 ## Luca::Jp 0.1.6
 
 * refine 別表四、別表5-1、別表5-2

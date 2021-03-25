@@ -64,6 +64,14 @@ module Luca
       def config
         EX_CONF.nil? ? LucaSupport::CONFIG : LucaSupport::CONFIG.merge(EX_CONF)
       end
+
+      def it_part_config(key)
+        config.dig('jp', 'it_part', key)
+      end
+
+      def eltax_config(key)
+        config.dig('jp', 'eltax', key)
+      end
     end
   end
 end

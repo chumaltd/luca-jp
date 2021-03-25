@@ -72,10 +72,22 @@ jp:
 | eltax_id         |                          |   |
 
 
-userinf
+USERINF
 ------------
 
-eltaxのuserinfは、テンプレート化未済。eLtaxの出力タグから切り出して、プロジェクトディレクトリの`templates/el-userinf.xml.erb`に置く。
+地方税の納税者情報は概ねIT部の設定を参照するが、地方税特有の設定は`jp.eltax`以下に記載する。
+
+```yaml
+jp:
+  eltax:
+    jimusho_name: 東京都芝都税事務所長
+```
+
+| key          | Description          |   |
+|--------------|----------------------|---|
+| jimusho_code | 都道府県税事務所番号 |   |
+| jimusho_name |                      |   |
+| receipt_num  | eLtaxのID            |   |
 
 
 ## Format

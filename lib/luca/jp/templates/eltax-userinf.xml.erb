@@ -1,0 +1,20 @@
+<USER_INF id="USER_INF">
+    <USER_ID id="USER_ID"><%= it_part_config('eltax_id') %></USER_ID>
+  <KANA id="KANA"><%= it_part_config('nozeisha_nm_kn') %></KANA>
+  <NAME id="NAME"><%= it_part_config('nozeisha_nm') %></NAME>
+  <HONTEN id="HONTEN">
+      <HONTEN_ADDR id="HONTEN_ADDR"><%= it_part_config('nozeisha_adr') %></HONTEN_ADDR>
+      <HONTEN_ZIP id="HONTEN_ZIP"><%= it_part_config('nozeisha_zip').gsub('-', '') %></HONTEN_ZIP>
+      <HONTEN_TEL id="HONTEN_TEL"><%= it_part_config('nozeisha_tel').gsub('-', '') %></HONTEN_TEL>
+  </HONTEN>
+  <DAIHYO id="DAIHYO">
+    <DAIHYOKAKU_CD id="DAIHYOKAKU_CD">01</DAIHYOKAKU_CD>
+    <DAIHYO_KANA id="DAIHYO_KANA"><%= it_part_config('daihyo_nm_kn') %></DAIHYO_KANA>
+    <DAIHYO_NAME id="DAIHYO_NAME"><%= it_part_config('daihyo_nm') %></DAIHYO_NAME>
+    <DAIHYO_ADDR id="DAIHYO_ADDR"><%= it_part_config('daihyo_adr') %></DAIHYO_ADDR>
+    <DAIHYO_ZIP id="DAIHYO_ZIP"><%= it_part_config('daihyo_zip').gsub('-', '') %></DAIHYO_ZIP>
+    <DAIHYO_TEL id="DAIHYO_TEL"></DAIHYO_TEL>
+  </DAIHYO>
+  <T_RCPT_NUM id="T_RCPT_NUM"><%= eltax_config('receipt_num') %></T_RCPT_NUM>
+  <HOJIN_NUMBER id="HOJIN_NUMBER"><%= it_part_config('nozeisha_bango') %></HOJIN_NUMBER>
+</USER_INF>

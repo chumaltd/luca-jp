@@ -156,15 +156,7 @@
         <%= render_attr('AAG00100', 所得金額) %>
         <AAH00100 />
         <AAH00200 />
-        <AAH00400>
-          <gen:kubun_CD />
-          <gen:kinyukikan_NM></gen:kinyukikan_NM>
-          <gen:shiten_NM></gen:shiten_NM>
-          <gen:kinyukikan_CD />
-          <gen:shiten_CD />
-          <gen:yokin>1</gen:yokin>
-          <gen:koza></gen:koza>
-        </AAH00400>
+        <AAH00400><%= eltax_kouza %></AAH00400>
         <AAI00100>
           <gen:era />
           <gen:yy />

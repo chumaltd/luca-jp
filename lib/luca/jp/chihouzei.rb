@@ -24,8 +24,8 @@ module Luca
         @issue_date = Date.today
         @company = CGI.escapeHTML(config.dig('company', 'name'))
         @software = 'LucaJp'
-        @jimusho_code = config.dig('jp', 'eltax', 'jimusho_code')
-        @jimusho_name = '都税事務所長'
+        @jimusho_code = eltax_config('jimusho_code')
+        @jimusho_name = eltax_config('jimusho_name')
 
         @税額 = 税額計算
         @均等割 = @税額.dig(:kenmin, :kintou)
@@ -63,7 +63,7 @@ module Luca
           @procedure_code = 'R0102100'
           @procedure_name = '法人都道府県民税・事業税・特別法人事業税又は地方法人特別税　確定申告'
           @form_sec = ['R0102AA190', 'R0102AG120', 別表九フォーム].compact.map{ |c| form_attr(c) }.join('')
-          @user_inf = render_erb(search_template('el-userinf.xml.erb'))
+          @user_inf = render_erb(search_template('eltax-userinf.xml.erb'))
           @form_data = [第六号, 別表四三, 別表九].compact.join("\n")
           render_erb(search_template('eltax.xml.erb'))
         end
@@ -166,8 +166,24 @@ module Luca
         </AMB00200>)
       end
 
+     def eltax_kouza
+       items = it_part_config('kanpu_kinyukikan').split('-')
+       %Q(<gen:kubun_CD />
+       <gen:kinyukikan_NM>#{items[0]}</gen:kinyukikan_NM>
+          <gen:shiten_NM>#{items[1]}</gen:shiten_NM>
+       <gen:kinyukikan_CD />
+       <gen:shiten_CD />
+       <gen:yokin>1</gen:yokin>
+          <gen:koza>#{items[3]}</gen:koza>)
+     end
+
       def form_attr(code)
-        "<FORM_ATTR><FORM_ID>#{code}</FORM_ID><FORM_NAME></FORM_NAME><FORM_FILE_NAME></FORM_FILE_NAME><FORM_XSL_NAME></FORM_XSL_NAME></FORM_ATTR>"
+        name = {
+          'R0102AA' => '中間・確定申告書',
+          'R0102AG' => '均等割額の計算に関する明細書',
+          'R0102AM' => '欠損金額等及び災害損失金の控除明細書'
+        }[code[0,7]]
+        "<FORM_ATTR><FORM_ID>#{code}</FORM_ID><FORM_NAME>#{name}</FORM_NAME><FORM_FILE_NAME></FORM_FILE_NAME><FORM_XSL_NAME></FORM_XSL_NAME></FORM_ATTR>"
       end
 
       def karibarai_label(key)
