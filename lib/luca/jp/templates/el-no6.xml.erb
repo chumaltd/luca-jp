@@ -41,9 +41,9 @@
         <AAA_SHIHON idref="SHIHON"></AAA_SHIHON>
         <AAA_SHIHON3></AAA_SHIHON3>
         <AAA_SHIHON4></AAA_SHIHON4>
-        <AAA_SHIHON2 />
-        <AAA_SHIHON5></AAA_SHIHON5>
-        <AAA_SHIHON6></AAA_SHIHON6>
+        <AAA_SHIHON2><%= @資本金準備金 %></AAA_SHIHON2>
+        <AAA_SHIHON5><%= @資本金準備金 %></AAA_SHIHON5>
+        <AAA_SHIHON6><%= @資本金準備金 %></AAA_SHIHON6>
         <AAA_JIGYO_SDATE idref="SDATE">
             <gen:era></gen:era>
             <gen:yy></gen:yy>
@@ -155,7 +155,7 @@
         <%= render_attr('AAF00700', @繰越損失管理.deduction) %>
         <%= render_attr('AAG00100', 所得金額) %>
         <AAH00100 />
-        <AAH00200 />
+        <AAH00200><%= 中間還付税額(@確定法人税割, @法人税割中間納付) + 中間還付税額(@所得割, 事業税中間納付) + 中間還付税額(地方法人特別税(@所得割), @地方特別法人事業税中間納付) %></AAH00200>
         <AAH00400><%= eltax_kouza %></AAH00400>
         <AAI00100>
           <gen:era />
@@ -175,8 +175,8 @@
           <gen:mm />
           <gen:dd />
         </AAI01000>
-        <AAI00600 />
-        <AAI00500 />
+        <AAI00600>2</AAI00600>
+        <AAI00500>2</AAI00500>
         <AAI00200>
           <gen:era />
           <gen:yy />
@@ -189,9 +189,9 @@
           <gen:mm />
           <gen:dd />
         </AAI00300>
-        <AAI00400 />
-        <AAI00450 />
-        <AAI00700 />
+        <AAI00400>1</AAI00400>
+        <AAI00450><%= @税額.dig(:houjin, :kokuzei) %></AAI00450>
+        <AAI00700><%= @税額.dig(:houjin, :kokuzei) > 200000 ? 1 : 2 %></AAI00700>
         <AAI00800 />
         <AAJ_DAIRI_NAME></AAJ_DAIRI_NAME>
         <AAJ_DAIRI_TEL_NUM></AAJ_DAIRI_TEL_NUM>

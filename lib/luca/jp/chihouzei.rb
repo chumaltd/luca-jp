@@ -105,6 +105,7 @@ module Luca
       end
 
       def 第六号
+        @資本金準備金 = eltax_config('shihon') || it_part_config('shihon_kin')
         render_erb(search_template('el-no6.xml.erb'))
       end
 
@@ -128,8 +129,7 @@ module Luca
       private
 
       def 法人税割課税標準
-        national_tax = Luca::Jp::Aoiro.range(@start_date.year, @start_date.month, @end_date.year, @end_date.month).kani(export: true)
-        (national_tax[:kokuzei][:zeigaku] / 1000).floor * 1000
+        (@税額.dig(:houjin, :kokuzei) / 1000).floor * 1000
       end
 
       def 事業税中間納付

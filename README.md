@@ -83,11 +83,12 @@ jp:
     jimusho_name: 東京都芝都税事務所長
 ```
 
-| key          | Description          |   |
-|--------------|----------------------|---|
-| jimusho_code | 都道府県税事務所番号 |   |
-| jimusho_name |                      |   |
-| receipt_num  | eLtaxのID            |   |
+| key          | Description                             |   |
+|--------------|-----------------------------------------|---|
+| jimusho_code | 都道府県税事務所番号                    |   |
+| jimusho_name |                                         |   |
+| receipt_num  | eLtaxのID                               |   |
+| shihon       | 資本金と資本準備金の合計額。様式6に記載 |   |
 
 
 ## Format
