@@ -4,6 +4,7 @@
             <MAA00020 IDREF="JIGYO_NENDO_FROM"/>
             <MAA00030 IDREF="JIGYO_NENDO_TO"/>
         </MAA00010>
+        <MAA00040><kubun_CD>1</kubun_CD></MAA00040>
         <MAA00050 IDREF="TEISYUTSU_DAY"/>
         <MAA00060 IDREF="ZEIMUSHO"/>
         <MAA00070 IDREF="NOZEISHA_ADR"/>
@@ -14,6 +15,7 @@
         </MAA00090>
         <MAA00115 IDREF="NOZEISHA_BANGO"/>
         <MAA00120 IDREF="SHIHON_KIN"/>
+        <%= render_attr('MAA00130', @別表四調整所得 - @繰越損失管理.deduction) %>
         <MAA00140>
             <%= render_attr('MAA00150', 1) %>
             <%= render_attr('MAA00160', 1) %>

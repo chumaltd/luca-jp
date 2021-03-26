@@ -54,6 +54,8 @@ module Luca
       end
 
       def render_attr(code, val)
+        return '' if val.nil? || val.to_s.length == 0
+
         "<#{code}>#{val}</#{code}>"
       end
 
