@@ -1,6 +1,7 @@
-## Luca::Jp master
+## Luca::Jp 0.1.8
 
 * implement 別表二 template
+* implement `luca-jp urikake` for LucaDeal
 
 ## Luca::Jp 0.1.7
 
