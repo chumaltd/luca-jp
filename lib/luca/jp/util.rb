@@ -75,6 +75,10 @@ module Luca
         config.dig('jp', 'beppyo2', key)
       end
 
+      def gaikyo_config(key)
+        config.dig('jp', 'gaikyo', key)
+      end
+
       def eltax_config(key)
         config.dig('jp', 'eltax', key)
       end

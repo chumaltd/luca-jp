@@ -1,3 +1,7 @@
+## Luca::Jp main
+
+* implement 概況説明 config
+
 ## Luca::Jp 0.1.8
 
 * implement 別表二 template

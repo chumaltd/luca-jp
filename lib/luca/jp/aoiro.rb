@@ -549,6 +549,19 @@ module Luca
         [readable(increase), readable(r)]
       end
 
+      def 概況源泉徴収種類
+        tags = []
+        if credit_count('5191', @start_date.year, @start_date.month, @end_date.year, @end_date.month)
+          tags << render_attr('IAF03100', '<kubun_CD>1</kubun_CD>')
+        end
+        if credit_count('5193', @start_date.year, @start_date.month, @end_date.year, @end_date.month)
+          tags << render_attr('IAF03200', '<kubun_CD>1</kubun_CD>')
+        elsif credit_count('5194', @start_date.year, @start_date.month, @end_date.year, @end_date.month)
+          tags << render_attr('IAF03200', '<kubun_CD>1</kubun_CD>')
+        end
+        tags.compact.join("\n")
+      end
+
       def 概況月(idx)
         @start_date.next_month(idx).month
       end

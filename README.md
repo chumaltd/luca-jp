@@ -86,6 +86,23 @@ jp:
 |              | shares  | 持株数                                    |   |
 |              | votes   | 保有議決権数                              |   |
 
+法人事業概況説明書
+------------
+
+法人事業概況説明書は、`jp.gaikyo`以下のconfig参照項目がある。
+
+| key              | Description       |   |
+|------------------|-------------------|---|
+| homepage         | ホームページのURL |   |
+| shiten_kokunai   | 国内の支店数      |   |
+| shiten_kaigai    | 海外の支店数      |   |
+| kogaisha_kokunai | 国内の子会社数    |   |
+| kogaisha_kaigai  | 海外の子会社数    |   |
+| genkin_kanrisha  | 現金管理者氏名    |   |
+| tsucho_kanrisha  | 通帳管理者氏名    |   |
+| genkin_share     | 現金売上の割合(%) |   |
+| kake_share       | 掛売上の割合(%)   |   |
+
 
 USERINF
 ------------
