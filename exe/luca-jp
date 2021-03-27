@@ -27,6 +27,11 @@ class LucaCmd
       puts Luca::Jp::Chihouzei.range(*args).kani
     end
   end
+
+  def self.urikake(args, params)
+    date = "#{args[0]}-#{args[1]}-1"
+    Luca::Jp::Urikake.new(date).report(params[:total])
+  end
 end
 
 cmd = ARGV.shift
@@ -53,5 +58,12 @@ when /chihou?zei/
     opt.on('--export', 'export json') { |_v| params[:export] = true }
     args = opt.parse!(ARGV)
     LucaCmd.chihouzei(args, params)
+  end
+when /urikake/
+  OptionParser.new do |opt|
+    opt.banner = 'Usage: luca-jp urikake [options] yyyy mm'
+    opt.on('--total VAL', '売掛金総額') { |v| params[:total] = v&.to_i }
+    args = opt.parse!(ARGV)
+    LucaCmd.urikake(args, params)
   end
 end
