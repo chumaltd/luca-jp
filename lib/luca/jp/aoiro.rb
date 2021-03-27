@@ -255,6 +255,59 @@ module Luca
         readable(LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: 'C1I')[:debit]['C1I']) || 0
       end
 
+      def 別表二株主リスト
+        return '' if beppyo2_config('owners').nil?
+
+        tags = beppyo2_config('owners')[1..-1]&.map.with_index(2) do |owner, i|
+          %Q(<VAE00170>
+          <VAE00180>
+            <VAE00190>#{i}</VAE00190>
+            <VAE00200>#{i}</VAE00200>
+          </VAE00180>
+            <VAE00210>
+              #{render_attr('VAE00220', owner['address'])}
+              #{render_attr('VAE00230', owner['name'])}
+              #{render_attr('VAE00235', owner['relation'] || 'その他')}
+            </VAE00210>
+          <VAE00250>
+          <VAE00290>
+          #{render_attr('VAE00300', owner['shares'])}
+                      <VAE00310>
+                          #{render_attr('VAE00330', owner['votes'])}
+                      </VAE00310>
+          </VAE00290>
+              </VAE00250>
+          </VAE00170>)
+        end
+        tags.compact.join("\n")
+      end
+
+      def 別表二上位株数
+        return nil if beppyo2_config('owners').nil?
+
+        beppyo2_config('owners')[0..2].map{ |owner| owner['shares']&.to_i || 0 }.sum
+      end
+
+      def 別表二上位株割合
+        return nil if beppyo2_config('total_shares').nil?
+        return nil if beppyo2_config('owners').nil?
+
+        (別表二上位株数 * 100.0 / beppyo2_config('total_shares')).round(1).to_s
+      end
+
+      def 別表二上位議決権数
+        return nil if beppyo2_config('owners').nil?
+
+        beppyo2_config('owners')[0..2].map{ |owner| owner['votes']&.to_i || 0 }.sum
+      end
+
+      def 別表二上位議決権割合
+        return nil if beppyo2_config('total_votes').nil?
+        return nil if beppyo2_config('owners').nil?
+
+        (別表二上位議決権数 * 100.0 / beppyo2_config('total_votes')).round(1).to_s
+      end
+
       def 別表四還付法人税等金額
         refund_tax()
       end

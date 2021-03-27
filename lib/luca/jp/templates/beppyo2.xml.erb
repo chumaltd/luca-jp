@@ -6,4 +6,35 @@
         </VAA00010>
         <VAA00040 IDREF="NOZEISHA_NM"/>
     </VAA00000>
+    <VAB00000>
+        <%= render_attr('VAB00010', beppyo2_config('total_shares')) %>
+        <%= render_attr('VAB00020', 別表二上位株数) %>
+        <%= render_attr('VAB00030', 別表二上位株割合) %>
+        <VAB00040>
+            <%= render_attr('VAB00060', beppyo2_config('total_votes')) %>
+        </VAB00040>
+        <%= render_attr('VAB00070', 別表二上位議決権数) %>
+        <%= render_attr('VAB00080', 別表二上位議決権割合) %>
+    </VAB00000>
+    <VAE00000>
+        <VAE00010>
+            <VAE00020>
+                <VAE00030>1</VAE00030>
+                <VAE00040>1</VAE00040>
+            </VAE00020>
+            <VAE00050>
+                <%= render_attr('VAE00060', beppyo2_config('owners')&.dig(0, 'address')) %>
+                <%= render_attr('VAE00070', beppyo2_config('owners')&.dig(0, 'name')) %>
+            </VAE00050>
+            <VAE00080>
+                <VAE00120>
+                    <%= render_attr('VAE00130', beppyo2_config('owners')&.dig(0, 'shares')) %>
+                    <VAE00140>
+                        <%= render_attr('VAE00160', beppyo2_config('owners')&.dig(0, 'votes')) %>
+                    </VAE00140>
+                </VAE00120>
+            </VAE00080>
+        </VAE00010>
+        <%= 別表二株主リスト %>
+    </VAE00000>
 </HOA201>

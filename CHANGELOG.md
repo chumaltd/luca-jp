@@ -1,3 +1,7 @@
+## Luca::Jp master
+
+* implement 別表二 template
+
 ## Luca::Jp 0.1.7
 
 * implement USERINF template
