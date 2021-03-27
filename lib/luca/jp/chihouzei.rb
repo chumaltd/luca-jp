@@ -26,6 +26,7 @@ module Luca
         @software = 'LucaJp'
         @jimusho_code = eltax_config('jimusho_code')
         @jimusho_name = eltax_config('jimusho_name')
+        @app_version = eltax_config('app_version')
 
         @税額 = 税額計算
         @均等割 = @税額.dig(:kenmin, :kintou)

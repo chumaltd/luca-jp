@@ -21,14 +21,14 @@
                         <gen:yy><%= wareki(@start_date) %></gen:yy>
                         <gen:mm><%= @start_date.month %></gen:mm>
                         <gen:dd><%= @start_date.day %></gen:dd>
-                        <gen:yyyymmdd></gen:yyyymmdd>
+                        <gen:yyyymmdd><%= @start_date.strftime('%Y%m%d') %></gen:yyyymmdd>
                     </SDATE>
                     <EDATE id="EDATE">
                         <gen:era><%= gengou(@end_date) %></gen:era>
                         <gen:yy><%= wareki(@end_date) %></gen:yy>
                         <gen:mm><%= @end_date.month %></gen:mm>
                         <gen:dd><%= @end_date.day %></gen:dd>
-                        <gen:yyyymmdd></gen:yyyymmdd >
+                        <gen:yyyymmdd><%= @end_date.strftime('%Y%m%d') %></gen:yyyymmdd >
                     </EDATE>
                     <RPT_DATE id="RPT_DATE">
                         <gen:era><%= gengou(@issue_date) %></gen:era>
@@ -74,11 +74,11 @@
                     <KAZEI_TEL id="KAZEI_TEL" />
                     <HOGEN_NUM id="HOGEN_NUM" />
                     <KANRI_NUM id="KANRI_NUM" />
-                    <KAZEI_NUM id="KAZEI_NUM"></KAZEI_NUM>
+                    <KAZEI_NUM id="KAZEI_NUM"><%= eltax_config('x_houjin_bango') %></KAZEI_NUM>
                     <HOJO_NUM id="HOJO_NUM" />
                     <STF_NUM id="STF_NUM" />
                 </ORG_INF>
-                <STIME id="STIME"></STIME>
+                <STIME id="STIME"><%= @app_version %></STIME>
                 <HOJIN_DOFUKEN id="HOJIN_DOFUKEN">
                     <FORM_INF id="FORM_INF">
                         <JIGYO_NAME id="JIGYO_NAME"><%= it_part_config('jigyo_naiyo') %></JIGYO_NAME>
@@ -104,7 +104,7 @@
     <SYSTEM_INF id="SYSTEM_INF">
         <SYSTEM_DATA id="SYSTEM_DATA"></SYSTEM_DATA>
         <NOUZEI_UPDATE id="NOUZEI_UPDATE">
-            <SDATE></SDATE>
+            <SDATE><%= DateTime.now.strftime('%Y%m%d%H%M%S') %></SDATE>
             <UDATE></UDATE>
             <SIGN_DATE></SIGN_DATE>
             <SEND_DATE></SEND_DATE>

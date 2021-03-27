@@ -1,4 +1,4 @@
-<R0102AA190 xmlns="http://eltax.jp/HOJIN_DOFUKEN" vr="190" page="" seiseiSoft="<%= @software %>" seiseiVr="" seiseiDay="" seiseiNM="" koshinSoft="" koshinVr="" koshinDay="" koshinNM="" taari="">
+<R0102AA190 xmlns="http://eltax.jp/HOJIN_DOFUKEN" vr="190" page="" seiseiSoft="<%= @software %>" seiseiVr="1" seiseiDay="<%= Date.today.strftime('%Y%m%d') %>" seiseiNM="<%= it_part_config('nozeisha_nm') %>" koshinSoft="" koshinVr="" koshinDay="" koshinNM="" taari="">
 <AAA00100 idref="SEIRI_NUM" />
         <AAA00200 idref="JIMUSHO_NUM"></AAA00200>
         <AAA00300 idref="HOJIN_NUM"></AAA00300>

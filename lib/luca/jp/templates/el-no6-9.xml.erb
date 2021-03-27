@@ -1,4 +1,4 @@
-<R0102AM190 xmlns="http://eltax.jp/HOJIN_DOFUKEN" vr="190" page="" seiseiSoft="<%= @software %>" seiseiVr="" seiseiDay="" seiseiNM="" koshinSoft="" koshinVr="" koshinDay="" koshinNM="" taari="">
+<R0102AM190 xmlns="http://eltax.jp/HOJIN_DOFUKEN" vr="190" page="" seiseiSoft="<%= @software %>" seiseiVr="1" seiseiDay="<%= Date.today.strftime('%Y%m%d') %>" seiseiNM="<%= it_part_config('nozeisha_nm') %>" koshinSoft="" koshinVr="" koshinDay="" koshinNM="" taari="">
         <AMA_JIGYO_SDATE idref="SDATE">
             <gen:era></gen:era><gen:yy></gen:yy><gen:mm></gen:mm><gen:dd></gen:dd>
             <gen:yyyymmdd></gen:yyyymmdd>
