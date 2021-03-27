@@ -24,7 +24,7 @@ module Luca
         entries << %Q(<TETSUZUKI ID="TETSUZUKI"><procedure_CD>#{@procedure_code}</procedure_CD><procedure_NM>#{@procedure_name}</procedure_NM></TETSUZUKI>)
         entries.concat([jigyo_nendo_from, jigyo_nendo_to, kazei_kikan_from, kazei_kikan_to])
         entries << render_it_tag('keiri_sekininsha')
-        entries << '<SHINKOKU_KBN ID="SHINKOKU_KBN"><kubun_CD>1</kubun_CD></SHINKOKU_KBN>'
+        entries << '<SHINKOKU_KBN ID="SHINKOKU_KBN"><kubun_CD>30</kubun_CD></SHINKOKU_KBN>'
         entries.concat(['eltax_id'].map{ |key| render_it_tag(key) })
         entries << '</IT>'
         entries.compact.join("\n")
