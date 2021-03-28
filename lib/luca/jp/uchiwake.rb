@@ -26,6 +26,49 @@ module Luca #:nodoc:
         render_erb(search_template('yokin-meisai.xml.erb'))
       end
 
+      def 有価証券内訳フォーム
+        accounts = uchiwake_account_config('331')
+        accounts.concat uchiwake_account_config('332')
+        return nil if accounts.length == 0
+
+        'HOI060'
+      end
+
+      def 有価証券内訳
+        account_codes = uchiwake_account_config('331').map { |account| account['code'].to_s }
+        account_codes.concat uchiwake_account_config('332').map { |account| account['code'].to_s }
+        return nil if account_codes.length == 0
+
+        @有価証券 = @bs_data.each.with_object({}) do |(k, v), h|
+          next unless account_codes.include?(k.to_s)
+          next unless readable(v || 0) > 0
+
+          h[k] = {
+            name: self.class.dict.dig(k)[:label],
+            amount: readable(v)
+          }
+          metadata = uchiwake_account_config(k).first
+          if metadata && metadata['name']
+            h[k][:name] = metadata['name'][0..9] if metadata['name']
+            h[k][:security_purpose] = metadata['security_purpose']
+            h[k][:security_genre] = metadata['security_genre']
+            h[k][:security_units] = metadata['security_units']
+            h[k][:note] = metadata['note']
+          end
+          h[k][:security_purpose] ||= 'その他' if /^332/.match(k.to_s)
+          h[k][:security_genre] ||= '株式' if /^33[12]/.match(k.to_s)
+          h[k][:note] ||= '関係会社株式' if /^332/.match(k.to_s)
+        end
+
+        render_erb(search_template('shoken-meisai.xml.erb'))
+      end
+
+      def 有価証券合計
+        @bs_data.filter { |k, _v| ['331', '332'].include?(k.to_s) }
+          .map { |_k, v| readable(v) || 0 }
+          .sum
+      end
+
       def 買掛金内訳フォーム
         accounts = uchiwake_account_config('511')
         accounts.concat uchiwake_account_config('514')

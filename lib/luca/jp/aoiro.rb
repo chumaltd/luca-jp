@@ -69,15 +69,15 @@ module Luca
           @form_sec = [
             'HOA112', 'HOA116', 'HOA201', 'HOA420', 'HOA511', 'HOA522', 別表七フォーム,
             'HOE200', 適用額明細フォーム,
-            'HOI010', 買掛金内訳フォーム, 'HOI100', 借入金内訳フォーム, 地代家賃内訳フォーム, 'HOI141',
+            'HOI010', 有価証券内訳フォーム, 買掛金内訳フォーム, 'HOI100', 借入金内訳フォーム, 'HOI141', 地代家賃内訳フォーム,
             'HOK010'
             ].compact.map{ |c| form_rdf(c) }.join('')
-          #@extra_form_sec = ['HOI040', 'HOI060']
+          #@extra_form_sec = ['HOI040']
           @it = it_part
           @form_data = [
             別表一, 別表一次葉, 別表二, 別表四簡易, 別表五一, 別表五二, 別表七, 別表十五,
             適用額明細,
-            預貯金内訳, 買掛金内訳, 仮受金内訳, 借入金内訳, 地代家賃内訳, 役員報酬内訳,
+            預貯金内訳, 有価証券内訳, 買掛金内訳, 仮受金内訳, 借入金内訳, 役員報酬内訳, 地代家賃内訳,
             概況説明
             ].compact.join("\n")
           render_erb(search_template('aoiro.xtx.erb'))
@@ -260,8 +260,8 @@ module Luca
             <VAE00210>
               #{render_attr('VAE00220', owner['address'])}
               #{render_attr('VAE00230', owner['name'])}
-              #{render_attr('VAE00235', owner['relation'] || 'その他')}
             </VAE00210>
+            #{render_attr('VAE00235', owner['relation'] || '<kubun_CD>90</kubun_CD>')}
           <VAE00250>
           <VAE00290>
           #{render_attr('VAE00300', owner['shares'])}
@@ -318,9 +318,9 @@ module Luca
 
         %Q(<ICB00140>
         #{render_attr('ICB00150', '仮払税金')}
-        #{render_attr('ICB00160', 未収仮払税金 * -1)}
+        #{render_attr('ICB00160', readable(未収仮払税金) * -1)}
         <ICB00170>
-        #{render_attr('ICB00190', 還付税金 * -1)}
+        #{render_attr('ICB00190', readable(還付税金) * -1)}
         #{render_attr('ICB00200', @仮払税金 * -1)}
         </ICB00170>
         #{render_attr('ICB00210', @仮払税金 * -1)}

@@ -10,7 +10,7 @@
             <IAA02200 IDREF="JIGYO_NENDO_TO"/>
         </IAA02000>
         <IAA02300 IDREF="NOZEISHA_BANGO"/>
-        <IAA2400><kubun_CD><%= gaikyo_config('homepage') ? 1 : 2 %></kubun_CD></IAA2400>
+        <IAA02400><kubun_CD><%= gaikyo_config('homepage') ? 1 : 2 %></kubun_CD></IAA02400>
         <%= render_attr('IAA02500', gaikyo_config('homepage')) %>
     </IAA00000>
     <%= render_attr('IAS00000', it_part_config('jigyo_naiyo')) %>

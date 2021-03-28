@@ -1,0 +1,21 @@
+<HOI060 page="1" VR="4.0" id="HOI060" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <% @有価証券.values.each do |scurity| %>
+        <HFB00000>
+            <HFB00110>
+                <%= render_attr('HFB00120', scurity[:security_purpose]) %>
+                <%= render_attr('HFB00130', scurity[:security_genre]) %>
+                <%= render_attr('HFB00140', scurity[:name]) %>
+            </HFB00110>
+            <HFB00200>
+                <%= render_attr('HFB00210', scurity[:security_units]) %>
+                <HFB00215>
+                    <%= render_attr('HFB00230', scurity[:amount]) %>
+                </HFB00215>
+            </HFB00200>
+            <%= render_attr('HFB00400', scurity[:note]) %>
+        </HFB00000>
+    <% end %>
+    <HFC00000>
+        <%= render_attr('HFC00100', 有価証券合計) %>
+    </HFC00000>
+</HOI060>
