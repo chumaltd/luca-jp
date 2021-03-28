@@ -1,0 +1,16 @@
+<HOI090 page="1" VR="4.0" id="HOI090" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <% @買掛金.values.each do |payable| %>
+        <HIB00000>
+            <%= render_attr('HIB00100', payable[:payable_type]) %>
+            <HIB00200>
+                <%= render_attr('HIB00210', payable[:name]) %>
+                <%= render_attr('HIB00220', payable[:address]) %>
+            </HIB00200>
+            <%= render_attr('HIB00300', payable[:amount]) %>
+            <%= render_attr('HIB00400', payable[:note]) %>
+        </HIB00000>
+    <% end %>
+    <HIC00000>
+        <%= render_attr('HIC00100', 買掛金等合計) %>
+    </HIC00000>
+</HOI090>

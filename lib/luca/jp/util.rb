@@ -79,6 +79,13 @@ module Luca
         config.dig('jp', 'gaikyo', key)
       end
 
+      def uchiwake_account_config(key)
+        account_list = config.dig('jp', 'accounts')
+        return [] if account_list.nil?
+
+        Array(account_list).filter { |account| /^#{key}/.match(account['code'].to_s) }
+      end
+
       def eltax_config(key)
         config.dig('jp', 'eltax', key)
       end

@@ -13,6 +13,7 @@ module Luca
     autoload :ItPart, 'luca/jp/it_part'
     autoload :Sonshitsu, 'luca/jp/sonshitsu'
     autoload :Urikake, 'luca/jp/urikake'
+    autoload :Uchiwake, 'luca/jp/uchiwake'
     autoload :Util, 'luca/jp/util'
   end
 

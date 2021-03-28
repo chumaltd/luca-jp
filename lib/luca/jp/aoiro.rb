@@ -16,6 +16,7 @@ module Luca
       include Luca::Jp::Common
       include Luca::Jp::ItPart
       include Luca::Jp::Util
+      include Luca::Jp::Uchiwake
 
       @dirname = 'journals'
       @record_type = 'raw'
@@ -65,10 +66,20 @@ module Luca
           @納税充当金期中増, @納税充当金期中減 = 納税充当金期中増減
           @翌期還付法人税 = 中間還付税額(@確定法人税額 + @確定地方法人税額, @法人税中間納付 + @地方法人税中間納付)
           @概況売上 = gaikyo('A0')
-          @form_sec = ['HOA112', 'HOA116', 'HOA201', 'HOA420', 'HOA511', 'HOA522', 別表七フォーム, 'HOE200', 適用額明細フォーム, 'HOI010', 'HOI100', 'HOI141', 'HOK010'].compact.map{ |c| form_rdf(c) }.join('')
-          #@extra_form_sec = ['HOI040', 'HOI060', 'HOI090', 'HOI110']
+          @form_sec = [
+            'HOA112', 'HOA116', 'HOA201', 'HOA420', 'HOA511', 'HOA522', 別表七フォーム,
+            'HOE200', 適用額明細フォーム,
+            'HOI010', 買掛金内訳フォーム, 'HOI100', 借入金内訳フォーム, 地代家賃内訳フォーム, 'HOI141',
+            'HOK010'
+            ].compact.map{ |c| form_rdf(c) }.join('')
+          #@extra_form_sec = ['HOI040', 'HOI060']
           @it = it_part
-          @form_data = [別表一, 別表一次葉, 別表二, 別表四簡易, 別表五一, 別表五二, 別表七, 別表十五, 適用額明細, 預貯金内訳, 仮受金内訳, 役員報酬内訳, 概況説明].compact.join("\n")
+          @form_data = [
+            別表一, 別表一次葉, 別表二, 別表四簡易, 別表五一, 別表五二, 別表七, 別表十五,
+            適用額明細,
+            預貯金内訳, 買掛金内訳, 仮受金内訳, 借入金内訳, 地代家賃内訳, 役員報酬内訳,
+            概況説明
+            ].compact.join("\n")
           render_erb(search_template('aoiro.xtx.erb'))
         end
       end
@@ -168,28 +179,6 @@ module Luca
         render_erb(search_template('beppyo15.xml.erb'))
       end
 
-      def 預貯金内訳
-        @預金 = @bs_data.each.with_object({}) do |(k, v), h|
-          next unless /^110[0-9A-Z]/.match(k)
-          next unless readable(v || 0) > 0
-
-          h[@@dict.dig(k)[:label]] = readable(v)
-        end
-        render_erb(search_template('yokin-meisai.xml.erb'))
-      end
-
-      def 仮受金内訳
-        @源泉給与 = readable(@bs_data.dig('5191') || 0)
-        @源泉報酬 = readable(@bs_data.dig('5193') || 0)
-        render_erb(search_template('kariuke-meisai.xml.erb'))
-      end
-
-      def 役員報酬内訳
-        @役員報酬 = readable(@pl_data.dig('C11') || 0)
-        @給料 = readable(@pl_data.dig('C12') || 0)
-        render_erb(search_template('yakuin-meisai.xml.erb'))
-      end
-
       def 適用額明細フォーム
         return nil if @確定法人税額 == 0
 
@@ -235,6 +224,10 @@ module Luca
         @概況外注費 = gaikyo('C10')
         @概況人件費 = gaikyo('C11') + gaikyo('C12') + gaikyo('C13')
         render_erb(search_template('gaikyo.xml.erb'))
+      end
+
+      def self.dict
+        @@dict
       end
 
       private

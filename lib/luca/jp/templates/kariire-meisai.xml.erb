@@ -1,0 +1,13 @@
+<HOI110 page="1" VR="3.0" id="HOI110" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <% @借入金.values.each do |debt| %>
+        <HKB00000>
+            <%= render_attr('HKB00100', debt[:name]) %>
+            <%= render_attr('HKB00300', debt[:address]) %>
+            <%= render_attr('HKB00400', debt[:amount]) %>
+            <%= render_attr('HKB00800', debt[:note]) %>
+        </HKB00000>
+    <% end %>
+    <HKC00000>
+        <%= render_attr('HKC00100', 借入金合計) %>
+    </HKC00000>
+</HOI110>

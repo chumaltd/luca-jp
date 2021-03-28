@@ -1,6 +1,7 @@
 ## Luca::Jp main
 
 * implement 概況説明 config
+* implement 買掛金内訳明細、借入金内訳明細、地代家賃内訳明細
 
 ## Luca::Jp 0.1.8
 

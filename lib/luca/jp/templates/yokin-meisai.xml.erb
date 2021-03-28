@@ -1,13 +1,16 @@
 <HOI010 page="1" VR="4.0" id="HOI010" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
-    <% @預金.each do |k, v| %>
+    <% @預金.values.each do |bank| %>
     <HAB00000>
         <HAB00100>
-            <%= render_attr('HAB00110', k) %>
+            <%= render_attr('HAB00110', bank[:name]) %>
+            <%= render_attr('HAB00120', bank[:branch]) %>
         </HAB00100>
-        <%= render_attr('HAB00400', v) %>
+        <%= render_attr('HAB00200', bank[:account_type]) %>
+        <%= render_attr('HAB00300', bank[:account_no]) %>
+        <%= render_attr('HAB00400', bank[:amount]) %>
     </HAB00000>
     <% end %>
     <HAC00000>
-        <%= render_attr('HAC00100', @預金.values.sum) %>
+        <%= render_attr('HAC00100', @預金.values.map { |b| b[:amount] }.sum) %>
     </HAC00000>
 </HOI010>
