@@ -114,17 +114,30 @@ jp:
 
 法人事業概況説明書は、`jp.gaikyo`以下のconfig参照項目がある。
 
-| key              | Description       |   |
-|------------------|-------------------|---|
-| homepage         | ホームページのURL |   |
-| shiten_kokunai   | 国内の支店数      |   |
-| shiten_kaigai    | 海外の支店数      |   |
-| kogaisha_kokunai | 国内の子会社数    |   |
-| kogaisha_kaigai  | 海外の子会社数    |   |
-| genkin_kanrisha  | 現金管理者氏名    |   |
-| tsucho_kanrisha  | 通帳管理者氏名    |   |
-| genkin_share     | 現金売上の割合(%) |   |
-| kake_share       | 掛売上の割合(%)   |   |
+| key               | Description        |   |
+|-------------------|--------------------|---|
+| homepage          | ホームページのURL  |   |
+| shiten_kokunai    | 国内の支店数       |   |
+| shiten_kaigai     | 海外の支店数       |   |
+| kogaisha_kokunai  | 国内の子会社数     |   |
+| kogaisha_kaigai   | 海外の子会社数     |   |
+| yakuin            | 常勤役員の人数     |   |
+| software_kaikei   | 会計ソフトの名称   |   |
+| software_mail     | メールソフトの名称 |   |
+| genkin_kanrisha   | 現金管理者氏名     |   |
+| tsucho_kanrisha   | 通帳管理者氏名     |   |
+| genkin_share      | 現金売上の割合(%)  |   |
+| kake_share        | 掛売上の割合(%)    |   |
+| shimekiri         | 締切日(共通指定)   |   |
+| shimekiri_uriage  | 売上の締切日       |   |
+| shimekiri_shiire  | 仕入の締切日       |   |
+| shimekiri_gaichu  | 外注の締切日       |   |
+| shimekiri_kyuryou | 給料の締切日       |   |
+| kessai            | 決済日(共通指定)   |   |
+| kessai_uriage     | 売上の決済日       |   |
+| kessai_shiire     | 仕入の決済日       |   |
+| kessai_gaichu     | 外注の決済日       |   |
+| kessai_kyuryou    | 給料の決済日       |   |
 
 
 USERINF

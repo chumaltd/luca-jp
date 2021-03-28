@@ -1,3 +1,7 @@
+## Luca::Jp 0.2.1
+
+* implement additional fields
+
 ## Luca::Jp 0.2.0
 
 * implement 概況説明 config

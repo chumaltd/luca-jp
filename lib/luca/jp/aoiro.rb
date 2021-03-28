@@ -245,7 +245,29 @@ module Luca
       end
 
       def 租税公課
-        readable(LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: 'C1I')[:debit]['C1I']) || 0
+        readable(debit_amount('C1I', @start_date.year, @start_date.month, @end_date.year, @end_date.month))
+      end
+
+      def 別表一同族区分
+        case 同族会社?
+        when nil
+          nil
+        when true
+          '<kubun_CD>1</kubun_CD>'
+        else
+          '<kubun_CD>3</kubun_CD>'
+        end
+      end
+
+      def 別表二同族区分
+        case 同族会社?
+        when nil
+          nil
+        when true
+          '<kubun_CD>2</kubun_CD>'
+        else
+          '<kubun_CD>3</kubun_CD>'
+        end
       end
 
       def 別表二株主リスト
@@ -285,7 +307,7 @@ module Luca
         return nil if beppyo2_config('total_shares').nil?
         return nil if beppyo2_config('owners').nil?
 
-        (別表二上位株数 * 100.0 / beppyo2_config('total_shares')).round(1).to_s
+        (別表二上位株数 * 100.0 / beppyo2_config('total_shares')).round(1)
       end
 
       def 別表二上位議決権数
@@ -298,7 +320,16 @@ module Luca
         return nil if beppyo2_config('total_votes').nil?
         return nil if beppyo2_config('owners').nil?
 
-        (別表二上位議決権数 * 100.0 / beppyo2_config('total_votes')).round(1).to_s
+        (別表二上位議決権数 * 100.0 / beppyo2_config('total_votes')).round(1)
+      end
+
+      # TODO: 特定同族会社の判定
+      #
+      def 同族会社?
+        return nil if it_part_config('shihon_kin') > 100_000_000
+
+        return true if 別表二上位議決権割合 > 50 || 別表二上位株割合 > 50
+        false
       end
 
       def 別表四還付法人税等金額
@@ -577,13 +608,17 @@ module Luca
 
       def 概況月源泉徴収(idx)
         target = @start_date.next_month(idx)
-        readable(LucaBook::State.gross(target.year, target.month, code: '5191')[:credit]['5191'] || 0)
-        + readable(LucaBook::State.gross(target.year, target.month, code: '5193')[:credit]['5193'] || 0)
+        [
+          readable(credit_amount('5191', target.year, target.month, target.year, target.month)),
+          readable(credit_amount('5193', target.year, target.month, target.year, target.month))
+        ].sum
       end
 
       def 概況源泉徴収
-        readable(LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5191')[:credit]['5191'] || 0)
-        + readable(LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5193')[:credit]['5193'] || 0)
+        [
+          readable(credit_amount('5191', @start_date.year, @start_date.month, @end_date.year, @end_date.month)),
+          readable(credit_amount('5193', @start_date.year, @start_date.month, @end_date.year, @end_date.month))
+        ].sum
       end
 
       def gaikyo(code)

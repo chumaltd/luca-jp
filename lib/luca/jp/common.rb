@@ -208,8 +208,8 @@ module Luca
       end
 
       def 未納事業税期中増減
-        r = LucaBook::State.gross(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: '5152')
-        [LucaSupport::Code.readable(r[:credit]['5152'] || 0), LucaSupport::Code.readable(r[:debit]['5152'] || 0)]
+        r = gross_amount('5152', @start_date.year, @start_date.month, @end_date.year, @end_date.month)
+        [LucaSupport::Code.readable(r[0]), LucaSupport::Code.readable(r[1])]
       end
 
 

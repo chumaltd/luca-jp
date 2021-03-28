@@ -24,6 +24,20 @@
             <%= render_attr('IAC02100', gaikyo_config('kogaisha_kaigai')) %>
         </IAC02000>
     </IAC00000>
+    <IAD00000>
+        <IAD01000>
+            <%= render_attr('IAD01100', gaikyo_config('yakuin')) %>
+        </IAD01000>
+    </IAD00000>
+    <IAE00000>
+        <%= render_attr('IAE01000', gaikyo_config('software_kaikei') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+        <IAE03000>
+            <%= render_attr('IAE03600', gaikyo_config('software_kaikei') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+        </IAE03000>
+        <%= render_attr('IAE04300', gaikyo_config('software_kaikei') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+        <%= render_attr('IAE04500', gaikyo_config('software_kaikei')) %>
+        <%= render_attr('IAE04600', gaikyo_config('software_mail')) %>
+    </IAE00000>
     <IAF00000>
         <IAF01000>
             <IAF01100>
@@ -88,6 +102,24 @@
             <%= render_attr('IAJ03200', gaikyo_config('kake_share')) %>
         </IAJ03000>
     </IAJ00000>
+    <IAL00000>
+        <IAL01000>
+            <%= render_attr('IAL01100', gaikyo_config('shimekiri_uriage')||gaikyo_config('shimekiri')) %>
+            <%= render_attr('IAL01200', gaikyo_config('kessai_uriage')||gaikyo_config('kessai')) %>
+        </IAL01000>
+        <IAL02000>
+            <%= render_attr('IAL02100', gaikyo_config('shimekiri_shiire')||gaikyo_config('shimekiri')) %>
+            <%= render_attr('IAL02200', gaikyo_config('kessai_shiire')||gaikyo_config('kessai')) %>
+        </IAL02000>
+        <IAL03000>
+            <%= render_attr('IAL03100', gaikyo_config('shimekiri_gaichu')||gaikyo_config('shimekiri')) %>
+            <%= render_attr('IAL03200', gaikyo_config('kessai_gaichu')||gaikyo_config('kessai')) %>
+        </IAL03000>
+        <IAL04000>
+            <%= render_attr('IAL04100', gaikyo_config('shimekiri_kyuryou')||gaikyo_config('shimekiri')) %>
+            <%= render_attr('IAL04200', gaikyo_config('kessai_kyuryou')||gaikyo_config('kessai')) %>
+        </IAL04000>
+    </IAL00000>
     <IAM00000>
         <%= render_attr('IAM01000', '総勘定元帳') %>
     </IAM00000>
