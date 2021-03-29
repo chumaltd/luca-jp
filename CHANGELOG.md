@@ -1,3 +1,7 @@
+## Luca::Jp 0.2.2
+
+* Fix: Include Common from Syouhizei
+
 ## Luca::Jp 0.2.1
 
 * implement additional fields

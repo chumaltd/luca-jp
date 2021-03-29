@@ -12,6 +12,7 @@ module Luca
   module Jp
     class Syouhizei < LucaBook::State
       include LucaSupport::View
+      include Luca::Jp::Common
       include Luca::Jp::ItPart
       include Luca::Jp::Util
 
