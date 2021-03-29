@@ -209,7 +209,7 @@ module Luca
 
       def 未納事業税期中増減
         r = gross_amount('5152', @start_date.year, @start_date.month, @end_date.year, @end_date.month)
-        [LucaSupport::Code.readable(r[0]), LucaSupport::Code.readable(r[1])]
+        [LucaSupport::Code.readable(r[1]), LucaSupport::Code.readable(r[0])]
       end
 
 

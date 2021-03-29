@@ -1,3 +1,7 @@
+## Luca::Jp 0.2.3
+
+* Fix: 別表五一期中減、別表五二事業税中間納付
+
 ## Luca::Jp 0.2.2
 
 * Fix: Include Common from Syouhizei
