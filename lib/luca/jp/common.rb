@@ -123,7 +123,7 @@ module Luca
         課税標準 = if 法人税
                      (法人税 / 1000).floor * 1000
                    else
-                     @法人税割課税標準
+                     法人税割課税標準
                    end
         if config.dig('jp', 'eltax', 'office_23ku')
           [(課税標準 * 7 / 100).floor, 0]

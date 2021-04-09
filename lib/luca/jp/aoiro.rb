@@ -326,7 +326,9 @@ module Luca
       # TODO: 特定同族会社の判定
       #
       def 同族会社?
+        return nil if it_part_config('shihon_kin').nil?
         return nil if it_part_config('shihon_kin') > 100_000_000
+        return nil if 別表二上位議決権割合.nil? || 別表二上位株割合.nil?
 
         return true if 別表二上位議決権割合 > 50 || 別表二上位株割合 > 50
         false
