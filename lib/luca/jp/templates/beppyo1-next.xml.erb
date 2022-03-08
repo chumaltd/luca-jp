@@ -1,4 +1,4 @@
-<HOA116 page="1" VR="1.0" id="HOA116" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+<HOA116 page="1" VR="<%= @form_vers['HOA116'] %>" id="HOA116" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
 
     <QHA00000><QHA00010>
         <QHA00020 IDREF="JIGYO_NENDO_FROM"/>
@@ -24,7 +24,9 @@
     <QHC00000>
         <%= render_attr('QHC00010', @地方法人税課税標準) %>
         <QHC00030>
-            <QHC00040><kubun_CD>2</kubun_CD></QHC00040><%# 10.3% %>
+            <% if @form_vers['HOA116'] == '1.0' %>
+                <QHC00040><kubun_CD>2</kubun_CD></QHC00040><%# 10.3% %>
+            <% end %>
             <%= render_attr('QHC00050', 地方法人税額(@地方法人税課税標準)) %>
         </QHC00030>
     </QHC00000>

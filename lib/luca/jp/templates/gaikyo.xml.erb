@@ -1,4 +1,4 @@
-<HOK010 page="1" VR="5.0" id="HOK010" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+<HOK010 page="1" VR="<%= @form_vers['HOK010'] %>" id="HOK010" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
 <HOK010-1 page="1">
     <IAA00000>
         <IAA01000>
@@ -13,7 +13,7 @@
         <IAA02400><kubun_CD><%= gaikyo_config('homepage') ? 1 : 2 %></kubun_CD></IAA02400>
         <%= render_attr('IAA02500', gaikyo_config('homepage')) %>
     </IAA00000>
-    <%= render_attr('IAS00000', it_part_config('jigyo_naiyo')) %>
+    <%= render_attr('IAB00000', it_part_config('jigyo_naiyo')) %>
     <IAC00000>
         <IAC01000>
             <%= render_attr('IAC01100', gaikyo_config('shiten_kokunai')) %>

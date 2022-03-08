@@ -52,7 +52,8 @@ module Luca
         else
           @procedure_code = 'RHO0012'
           @procedure_name = '内国法人の確定申告(青色)'
-          @version = '20.0.2'
+          @form_vers = proc_version
+          @version = @form_vers['proc']
           @都道府県民税法人税割中間納付 = prepaid_tax('1859')
           @都道府県民税均等割中間納付 = prepaid_tax('185A')
           @都道府県民税中間納付 = @都道府県民税法人税割中間納付 + @都道府県民税均等割中間納付
@@ -637,6 +638,14 @@ module Luca
 
       def gaikyo_month(index, code)
         readable(@monthly.dig(index, code) || 0)
+      end
+
+      def proc_version
+        if @end_date >= Date.parse('2021-4-1')
+          { 'proc' => '21.0.2', 'HOA112' => '3.1', 'HOA116' => '2.0', 'HOA420' => '20.0', 'HOA522' => '7.0', 'HOK010' => '6.0' }
+        else
+          { 'proc' => '20.0.2', 'HOA112' => '2.0', 'HOA116' => '1.0', 'HOA420' => '19.0', 'HOA522' => '6.0', 'HOK010' => '5.0' }
+        end
       end
 
       def lib_path
