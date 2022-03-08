@@ -27,6 +27,7 @@ module Luca
         @issue_date = Date.today
         @company = CGI.escapeHTML(config.dig('company', 'name'))
         @software = 'LucaJp'
+        @shinkoku_kbn = '30' # 確定申告
 
         @税額 = 税額計算
         @確定法人税額 = @税額.dig(:houjin, :kokuzei)

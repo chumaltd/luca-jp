@@ -27,6 +27,7 @@ module Luca
         @issue_date = Date.today
         @company = CGI.escapeHTML(config.dig('company', 'name'))
         @software = 'LucaJp'
+        @shinkoku_kbn = '1' # 確定申告
         税率 = BigDecimal('7.8') # percent
         地方税率 = BigDecimal('2.2')
 
@@ -52,7 +53,8 @@ module Luca
         else
           @procedure_code = 'RSH0040'
           @procedure_name = '消費税及び地方消費税申告(簡易課税・法人)'
-          @version = '20.0.0'
+          @form_vers = proc_version
+          @version = @form_vers['proc']
           @form_sec = ['SHA020', 'SHB047', 'SHB067'].map{ |c| form_rdf(c) }.join('')
           @it = it_part
           @form_data = [申告書簡易課税, 付表四の三, 付表五の三].join("\n")
@@ -140,6 +142,14 @@ module Luca
         amount = render_attr(tags[1], LucaSupport::Code.readable(@sales))
         share = render_attr(tags[2], '100.0')
         render_attr(tags[0], [amount, share].join(''))
+      end
+
+      def proc_version
+        if @end_date >= Date.parse('2021-4-1')
+          { 'proc' => '20.0.1', 'SHA020' => '7.1' }
+        else
+          { 'proc' => '20.0.0', 'SHA020' => '7.0' }
+        end
       end
 
       def lib_path
