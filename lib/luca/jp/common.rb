@@ -224,6 +224,17 @@ module Luca
       def 地方消費税中間納付額
         prepaid_tax('185C')
       end
+
+      # -----------------------------------------------------
+      # :section: 外形標準の計算
+      # -----------------------------------------------------
+      def 資本金等の額
+        readable(@bs_data.dig('911') + @bs_data.dig('913'))
+      end
+
+      def 期末資本金
+        readable(@bs_data.dig('911'))
+      end
     end
   end
 end

@@ -3,8 +3,8 @@
     <KOUSEI_KANRI_INF id="KOUSEI_KANRI_INF">
         <KOUSEI_KANRI id="KOUSEI_KANRI">
             <KANRI_INF id="KANRI_INF">
-                <KOUSEI_KANRI_VR>0001</KOUSEI_KANRI_VR>
-                <ORG1_CD>13000</ORG1_CD>
+                <KOUSEI_KANRI_VR>0001</KOUSEI_KANRI_VR><%# 固定値 %>
+                <ORG1_CD>13000</ORG1_CD><%# 地方公共団体コード %>
                 <PROC_ID><%= @procedure_code %></PROC_ID>
                 <PROC_NAME><%= @procedure_name %></PROC_NAME>
                 <FIRST_RCPT_NUM></FIRST_RCPT_NUM>
@@ -12,9 +12,9 @@
             <%= @form_sec %>
             <GYOMU_PROC id="GYOMU_PROC">
                 <PROC_INF id="PROC_INF">
-                    <GYOMU_KBN id="GYOMU_KBN">R0</GYOMU_KBN>
-                    <ORG2_CD id="ORG2_CD"><%= @jimusho_code %></ORG2_CD>
-                    <ORG3_CD id="ORG3_CD">000000</ORG3_CD>
+                    <GYOMU_KBN id="GYOMU_KBN">R0</GYOMU_KBN><%# 申告 %>
+                    <ORG2_CD id="ORG2_CD"><%= @jimusho_code %></ORG2_CD><%# 税務事務所 %>
+                    <ORG3_CD id="ORG3_CD">000000</ORG3_CD><%# 固定値 %>
                     <ORG1_NAME id="ORG1_NAME"><%= @jimusho_name %></ORG1_NAME>
                     <SDATE id="SDATE">
                         <gen:era><%= gengou(@start_date) %></gen:era>
@@ -40,7 +40,7 @@
                     <RPT_KBN id="RPT_KBN">100</RPT_KBN>
                     <TAX_NAME id="TAX_NAME">法人都道府県民税・事業税・特別法人事業税又は地方法人特別税</TAX_NAME>
                     <RPT_NAME id="RPT_NAME">確定</RPT_NAME>
-                    <MAKE_KBN id="MAKE_KBN">1</MAKE_KBN>
+                    <MAKE_KBN id="MAKE_KBN">1</MAKE_KBN><%# 新規 %>
                     <REV_RCPT_NUM id="REV_RCPT_NUM"></REV_RCPT_NUM>
                 </PROC_INF>
                 <%= @user_inf %>
@@ -78,11 +78,11 @@
                     <HOJO_NUM id="HOJO_NUM" />
                     <STF_NUM id="STF_NUM" />
                 </ORG_INF>
-                <STIME id="STIME"><%= @app_version %></STIME>
+                <STIME id="STIME"><%# @app_version %></STIME>
                 <HOJIN_DOFUKEN id="HOJIN_DOFUKEN">
                     <FORM_INF id="FORM_INF">
                         <JIGYO_NAME id="JIGYO_NAME"><%= it_part_config('jigyo_naiyo') %></JIGYO_NAME>
-                        <SHIHON id="SHIHON"><%= it_part_config('shihon_kin') %></SHIHON>
+                        <SHIHON id="SHIHON"><%= 期末資本金 %></SHIHON>
                         <HOJIN_NUM id="HOJIN_NUM"></HOJIN_NUM>
                         <JIMUSHO_NUM id="JIMUSHO_NUM"><%= @jimusho_code %></JIMUSHO_NUM>
                         <SEIRI_NUM id="SEIRI_NUM" />
@@ -93,7 +93,7 @@
         <TAX_DATA id="TAX_DATA">
             <%= @form_data %>
             <TENPU_INF>
-                <YUSO_KBN>0</YUSO_KBN>
+                <YUSO_KBN>0</YUSO_KBN><%# 郵送添付書類なし %>
             </TENPU_INF>
         </TAX_DATA>
     </KOUSEI_KANRI_INF>
@@ -108,9 +108,9 @@
             <UDATE></UDATE>
             <SIGN_DATE></SIGN_DATE>
             <SEND_DATE></SEND_DATE>
-            <RPT_INF>10</RPT_INF>
-            <CREATE_SYS>1</CREATE_SYS>
-            <INP_KBN>1</INP_KBN>
+            <RPT_INF>10</RPT_INF><%# 未入力 %>
+            <CREATE_SYS>1</CREATE_SYS><%# PCDesk作成 %>
+            <INP_KBN>1</INP_KBN><%# 通常入力モード %>
             <USER_FILE_NM></USER_FILE_NM>
         </NOUZEI_UPDATE>
     </SYSTEM_INF>

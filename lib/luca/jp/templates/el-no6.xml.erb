@@ -1,4 +1,4 @@
-<R0102AA190 xmlns="http://eltax.jp/HOJIN_DOFUKEN" vr="190" page="" seiseiSoft="<%= @software %>" seiseiVr="1" seiseiDay="<%= Date.today.strftime('%Y%m%d') %>" seiseiNM="<%= it_part_config('nozeisha_nm') %>" koshinSoft="" koshinVr="" koshinDay="" koshinNM="" taari="">
+<R0102AA<%= @form_vers['R0102AA'] %> xmlns="http://eltax.jp/HOJIN_DOFUKEN" vr="<%= @form_vers['R0102AA'] %>" page="" seiseiSoft="<%= @software %>" seiseiVr="1" seiseiDay="<%= Date.today.strftime('%Y%m%d') %>" seiseiNM="<%= it_part_config('nozeisha_nm') %>" koshinSoft="" koshinVr="" koshinDay="" koshinNM="" taari="">
 <AAA00100 idref="SEIRI_NUM" />
         <AAA00200 idref="JIMUSHO_NUM"></AAA00200>
         <AAA00300 idref="HOJIN_NUM"></AAA00300>
@@ -19,10 +19,10 @@
             <gen:dd></gen:dd>
           </AAA00700>
         <AAA00800>
-          <gen:era />
-          <gen:yy />
-          <gen:mm />
-          <gen:dd />
+          <gen:era><%= gengou(@issue_date) %></gen:era>
+          <gen:yy><%= wareki(@issue_date) %></gen:yy>
+          <gen:mm><%= @issue_date.month %></gen:mm>
+          <gen:dd><%= @issue_date.day %></gen:dd>
         </AAA00800>
         <AAA00900 idref="ORG1_NAME"></AAA00900>
         <AAA_HONTEN_ZIP idref="HONTEN_ZIP"></AAA_HONTEN_ZIP>
@@ -41,9 +41,9 @@
         <AAA_SHIHON idref="SHIHON"></AAA_SHIHON>
         <AAA_SHIHON3></AAA_SHIHON3>
         <AAA_SHIHON4></AAA_SHIHON4>
-        <AAA_SHIHON2><%= @資本金準備金 %></AAA_SHIHON2>
+        <AAA_SHIHON2><%= 資本金等の額 %></AAA_SHIHON2>
         <AAA_SHIHON5><%= @資本金準備金 %></AAA_SHIHON5>
-        <AAA_SHIHON6><%= @資本金準備金 %></AAA_SHIHON6>
+        <AAA_SHIHON6><%= 資本金等の額 %></AAA_SHIHON6>
         <AAA_JIGYO_SDATE idref="SDATE">
             <gen:era></gen:era>
             <gen:yy></gen:yy>
@@ -119,7 +119,9 @@
         <AAE00810 />
         <AAE00820 />
         <%= render_attr('AAE00900', @所得割) %>
-        <AAE00950 />
+        <% if @form_vers['R0102AA'] == '190' %>
+            <AAE00950 />
+        <% end %>
         <AAE00960 />
         <AAE01000 />
         <AAE01050 />
@@ -195,4 +197,4 @@
         <AAI00800 />
         <AAJ_DAIRI_NAME></AAJ_DAIRI_NAME>
         <AAJ_DAIRI_TEL_NUM></AAJ_DAIRI_TEL_NUM>
-</R0102AA190>
+</R0102AA<%= @form_vers['R0102AA'] %>>

@@ -27,6 +27,7 @@ module Luca
         @jimusho_code = eltax_config('jimusho_code')
         @jimusho_name = eltax_config('jimusho_name')
         @app_version = eltax_config('app_version')
+        @form_vers = proc_version
 
         @税額 = 税額計算
         @均等割 = @税額.dig(:kenmin, :kintou)
@@ -62,7 +63,7 @@ module Luca
         else
           @procedure_code = 'R0102100'
           @procedure_name = '法人都道府県民税・事業税・特別法人事業税又は地方法人特別税　確定申告'
-          @form_sec = ['R0102AA190', 'R0102AG120', 別表九フォーム].compact.map{ |c| form_attr(c) }.join('')
+          @form_sec = ["R0102AA#{@form_vers['R0102AA']}", "R0102AG120", 別表九フォーム].compact.map{ |c| form_attr(c) }.join('')
           @user_inf = render_erb(search_template('eltax-userinf.xml.erb'))
           @form_data = [第六号, 別表四三, 別表九].compact.join("\n")
           render_erb(search_template('eltax.xml.erb'))
@@ -117,7 +118,7 @@ module Luca
       def 別表九フォーム
         return nil if @繰越損失管理.records.length == 0
 
-        'R0102AM190'
+        "R0102AM#{@form_vers['R0102AM']}"
       end
 
       def 別表九
@@ -202,6 +203,14 @@ module Luca
           '仮払地方税法人税割'
         when :kinto
           '仮払地方税均等割'
+        end
+      end
+
+      def proc_version
+        if @start_date >= Date.parse('2020-4-1')
+          { 'R0102AA' => '200', 'R0102AM' => '200' }
+        else
+          { 'R0102AA' => '190', 'R0102AM' => '190' }
         end
       end
 
