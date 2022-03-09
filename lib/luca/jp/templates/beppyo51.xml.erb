@@ -73,20 +73,50 @@
     </ICB00000>
     <ICC00000>
         <ICC00010>
-            <%= render_attr('ICC00020', 期首資本金) %>
+            <%= render_attr('ICC00020', @期首資本金) %>
             <ICC00030>
-                <%= render_attr('ICC00040', 期首資本金) %>
-                <%= render_attr('ICC00050', 期末資本金) %>
+                <%= render_attr('ICC00040', @資本金期中減) %>
+                <%= render_attr('ICC00050', @資本金期中増) %>
             </ICC00030>
             <%= render_attr('ICC00060', 期末資本金) %>
         </ICC00010>
+        <ICC00070>
+            <%= render_attr('ICC00080', @期首資本準備金) %>
+            <ICC00090>
+                <%= render_attr('ICC00100', @資本準備金期中減) %>
+                <%= render_attr('ICC00110', @資本準備金期中増) %>
+            </ICC00090>
+            <%= render_attr('ICC00120', @期末資本準備金) %>
+        </ICC00070>
+        <% unless [@期首その他資本剰余金, @その他資本剰余金期中減, @その他資本剰余金期中増, @期末その他資本剰余金].reject { |i| i == 0 }.compact.empty? %>
+        <ICC00130>
+            <%= render_attr('ICC00140', 'その他資本剰余金') %>
+            <%= render_attr('ICC00150', @期首その他資本剰余金) %>
+            <ICC00160>
+                <%= render_attr('ICC00170', @その他資本剰余金期中減) %>
+                <%= render_attr('ICC00180', @その他資本剰余金期中増) %>
+            </ICC00160>
+            <%= render_attr('ICC00190', @期末その他資本剰余金) %>
+        </ICC00130>
+        <% end %>
+        <% unless [@期首自己株式, @自己株式期中減, @自己株式期中増, @期末自己株式].reject { |i| i == 0 }.compact.empty? %>
+            <ICC00130>
+                <%= render_attr('ICC00140', '自己株式') %>
+                <%= render_attr('ICC00150', @期首自己株式) %>
+                <ICC00160>
+                    <%= render_attr('ICC00170', @自己株式期中減) %>
+                    <%= render_attr('ICC00180', @自己株式期中増) %>
+                </ICC00160>
+                <%= render_attr('ICC00190', @期末自己株式) %>
+            </ICC00130>
+        <% end %>
         <ICC00200>
             <%= render_attr('ICC00210', 別表五一期首資本) %>
             <ICC00220>
-                <%= render_attr('ICC00230', 別表五一期首資本) %>
-                <%= render_attr('ICC00240', 別表五一期末資本) %>
+                <%= render_attr('ICC00230', @資本金等の額期中減) %>
+                <%= render_attr('ICC00240', @資本金等の額期中増) %>
             </ICC00220>
-            <%= render_attr('ICC00250', 別表五一期末資本) %>
+            <%= render_attr('ICC00250', 資本金等の額) %>
         </ICC00200>
     </ICC00000>
 </HOA511>

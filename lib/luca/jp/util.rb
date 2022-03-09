@@ -89,6 +89,19 @@ module Luca
       def eltax_config(key)
         config.dig('jp', 'eltax', key)
       end
+
+      def 期首期末残高(code)
+        pre = readable(@start_balance.dig(code))
+        post = readable(@bs_data.dig(code))
+        [readable(pre), readable(post)]
+      end
+
+      def 純資産期中増減(code)
+        inc = credit_amount(code, @start_date.year, @start_date.month, @end_date.year, @end_date.month)
+        dec = debit_amount(code, @start_date.year, @start_date.month, @end_date.year, @end_date.month)
+
+        [readable(dec), readable(inc)]
+      end
     end
   end
 end

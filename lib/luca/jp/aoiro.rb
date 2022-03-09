@@ -150,6 +150,15 @@ module Luca
       end
 
       def 別表五一
+        @期首資本金 = readable(@start_balance.dig('911'))
+        @資本金期中減, @資本金期中増 = 純資産期中増減('911')
+        @期首資本準備金, @期末資本準備金 = 期首期末残高('9131')
+        @資本準備金期中減, @資本準備金期中増 = 純資産期中増減('9131')
+        @期首その他資本剰余金, @期末その他資本剰余金 = 期首期末残高('9132')
+        @その他資本剰余金期中減, @その他資本剰余金期中増 = 純資産期中増減('9132')
+        @期首自己株式, @期末自己株式 = 期首期末残高('916')
+        @自己株式期中減, @自己株式期中増 = 純資産期中増減('916')
+        @資本金等の額期中減, @資本金等の額期中増 = 資本金等の額期中増減
         render_erb(search_template('beppyo51.xml.erb'))
       end
 
@@ -524,6 +533,23 @@ module Luca
         readable((@bs_data[code] || 0) * -1)
       end
 
+      def 別表五一期首資本
+        readable(@start_balance.dig('911')||0 + @start_balance.dig('913')||0)
+      end
+
+      # 資本金、資本準備金、その他資本剰余金、自己株式（控除）の合算
+      #
+      def 資本金等の額期中増減
+        inc = ['911', '913', '916'].map do |code|
+          credit_amount(code, @start_date.year, @start_date.month, @end_date.year, @end_date.month) || 0
+        end
+        dec = ['911', '913', '916'].map do |code|
+          debit_amount(code, @start_date.year, @start_date.month, @end_date.year, @end_date.month) || 0
+        end
+
+        [readable(dec.sum), readable(inc.sum)]
+      end
+
       def 別表七各期青色損失
         tags = @繰越損失管理.records
                  .filter { |record| record['start_date'] > @end_date.prev_year(10) && record['end_date'] < @start_date }
@@ -545,22 +571,6 @@ module Luca
           </MCB00110)
         end
         tags.compact.join("\n")
-      end
-
-      def 期首資本金
-        readable(@start_balance.dig('911')) || 0
-      end
-
-      def 期末資本金
-        readable(@bs_data.dig('911')) || 0
-      end
-
-      def 別表五一期首資本
-        期首資本金
-      end
-
-      def 別表五一期末資本
-        期末資本金
       end
 
       def 期首未納消費税

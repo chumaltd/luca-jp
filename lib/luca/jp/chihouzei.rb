@@ -31,7 +31,7 @@ module Luca
 
         @税額 = 税額計算
         @均等割 = @税額.dig(:kenmin, :kintou)
-        @確定法人税割 = (@税額.dig(:kenmin, :houjinzei) / 100).floor * 100
+        @確定法人税割 = @税額.dig(:kenmin, :houjinzei)
         @地方特別法人事業税中間納付 = prepaid_tax('1854')
         @所得割中間納付 = prepaid_tax('1855')
         @法人税割中間納付 = prepaid_tax('1859')
