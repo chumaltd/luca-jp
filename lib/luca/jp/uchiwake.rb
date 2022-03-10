@@ -41,18 +41,23 @@ module Luca #:nodoc:
 
         @有価証券 = @bs_data.each.with_object({}) do |(k, v), h|
           next unless account_codes.include?(k.to_s)
-          next unless readable(v || 0) > 0
+          next if v.nil? || v <= 0
 
+          inc = debit_amount(k, @start_date.year, @start_date.month, @end_date.year, @end_date.month) || 0
+          dec = credit_amount(k, @start_date.year, @start_date.month, @end_date.year, @end_date.month) || 0
           h[k] = {
             name: self.class.dict.dig(k)[:label],
-            amount: readable(v)
+            amount: readable(v),
+            diff: readable(inc - dec)
           }
+          STDERR.puts "勘定科目内訳書（有価証券）異動の追記が必要： #{h[k][:name]}" unless (inc - dec).zero?
+
           metadata = uchiwake_account_config(k).first
           if metadata && metadata['name']
             h[k][:name] = metadata['name'][0..9] if metadata['name']
             h[k][:security_purpose] = metadata['security_purpose']
             h[k][:security_genre] = metadata['security_genre']
-            h[k][:security_units] = metadata['security_units']
+            h[k][:security_units] = (h[:amount].nil? || h[:amount].zero?) ? 0 : metadata['security_units']
             h[k][:note] = metadata['note']
           end
           h[k][:security_purpose] ||= 'その他' if /^332/.match(k.to_s)

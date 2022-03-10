@@ -118,6 +118,7 @@ module Luca
       end
 
       def 別表一
+        STDERR.puts "別表一： 「決算確定の日」などの追記が必要"
         render_erb(search_template('beppyo1.xml.erb'))
       end
 
@@ -232,7 +233,7 @@ module Luca
         @代表者報酬 = gaikyo('C11')
         @代表者借入 = gaikyo('5121')
         @概況仕入 = gaikyo('B11') + gaikyo('B12')
-        @概況外注費 = gaikyo('C10')
+        @概況外注費 = gaikyo('C1O')
         @概況人件費 = gaikyo('C11') + gaikyo('C12') + gaikyo('C13')
         render_erb(search_template('gaikyo.xml.erb'))
       end
@@ -589,10 +590,10 @@ module Luca
 
       def 概況源泉徴収種類
         tags = []
-        if credit_count('5191', @start_date.year, @start_date.month, @end_date.year, @end_date.month)
+        if credit_count('5191', @start_date.year, @start_date.month, @end_date.year, @end_date.month) > 0
           tags << render_attr('IAF03100', '<kubun_CD>1</kubun_CD>')
         end
-        if credit_count('5193', @start_date.year, @start_date.month, @end_date.year, @end_date.month)
+        if credit_count('5193', @start_date.year, @start_date.month, @end_date.year, @end_date.month) > 0
           tags << render_attr('IAF03200', '<kubun_CD>1</kubun_CD>')
         elsif credit_count('5194', @start_date.year, @start_date.month, @end_date.year, @end_date.month)
           tags << render_attr('IAF03200', '<kubun_CD>1</kubun_CD>')
@@ -617,7 +618,7 @@ module Luca
       end
 
       def 概況月外注費(idx)
-        gaikyo_month(idx, 'C10')
+        gaikyo_month(idx, 'C1O')
       end
 
       def 概況月源泉徴収(idx)

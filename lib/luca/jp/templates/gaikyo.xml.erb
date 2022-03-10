@@ -23,21 +23,65 @@
             <%= render_attr('IAC02050', gaikyo_config('kogaisha_kokunai')) %>
             <%= render_attr('IAC02100', gaikyo_config('kogaisha_kaigai')) %>
         </IAC02000>
+        <IAC03000>
+            <%= render_attr('IAC03100', gaikyo_config('yunyu') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <%= render_attr('IAC03200', gaikyo_config('yushutsu') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <%= render_attr('IAC03300', (!gaikyo_config('yunyu') && !gaikyo_config('yushutsu')) ? '<kubun_CD>1</kubun_CD>' : nil) %>
+        </IAC03000>
+        <IAC04000>
+            <% if gaikyo_config('kaigai_torihiki') %>
+                <%= render_attr('IAC04100', '<kubun_CD>1</kubun_CD>') %>
+            <% elsif gaikyo_config('kaigai_torihiki') == false %>
+                <%= render_attr('IAC04100', '<kubun_CD>2</kubun_CD>') %>
+            <% end %>
+        </IAC04000>
     </IAC00000>
     <IAD00000>
         <IAD01000>
             <%= render_attr('IAD01100', gaikyo_config('yakuin')) %>
         </IAD01000>
+        <% if gaikyo_config('chingin_kotei') && gaikyo_config('chingin_buai') %>
+            <%= render_attr('IAD02000', '<kubun_CD>3</kubun_CD>') %>
+        <% elsif gaikyo_config('chingin_kotei') %>
+            <%= render_attr('IAD02000', '<kubun_CD>1</kubun_CD>') %>
+        <% elsif gaikyo_config('chingin_buai') %>
+            <%= render_attr('IAD02000', '<kubun_CD>2</kubun_CD>') %>
+        <% end %>
+        <% if gaikyo_config('shataku') %>
+            <%= render_attr('IAD03000', '<kubun_CD>1</kubun_CD>') %>
+        <% elsif gaikyo_config('shataku') == false %>
+            <%= render_attr('IAD03000', '<kubun_CD>2</kubun_CD>') %>
+        <% end %>
     </IAD00000>
     <IAE00000>
         <%= render_attr('IAE01000', gaikyo_config('software_kaikei') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+        <IAE02100>
+            <%= render_attr('IAE02200', gaikyo_config('windows') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <%= render_attr('IAE02300', gaikyo_config('mac') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <%= render_attr('IAE02400', gaikyo_config('linux') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+        </IAE02100>
         <IAE03000>
+            <%= render_attr('IAE03100', gaikyo_config('pc_kyuuyo') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <%= render_attr('IAE03300', gaikyo_config('pc_hanbai') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <%= render_attr('IAE03400', gaikyo_config('pc_seisan') ? '<kubun_CD>1</kubun_CD>' : nil) %>
             <%= render_attr('IAE03600', gaikyo_config('software_kaikei') ? '<kubun_CD>1</kubun_CD>' : nil) %>
         </IAE03000>
         <%= render_attr('IAE04300', gaikyo_config('software_kaikei') ? '<kubun_CD>1</kubun_CD>' : nil) %>
         <%= render_attr('IAE04500', gaikyo_config('software_kaikei')) %>
         <%= render_attr('IAE04600', gaikyo_config('software_mail')) %>
+        <IAE07000>
+            <%= render_attr('IAE07700', gaikyo_config('data_cloud') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <%= render_attr('IAE07800', gaikyo_config('data_media') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <%= render_attr('IAE07900', gaikyo_config('data_server') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+        </IAE07000>
     </IAE00000>
+    <IAT00000>
+        <IAT01000>
+            <%= render_attr('IAT01100', gaikyo_config('ec_uriage') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <%= render_attr('IAT01200', gaikyo_config('ec_shiire') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <%= render_attr('IAT01300', gaikyo_config('ec_keihi') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+        </IAT01000>
+    </IAT00000>
     <IAF00000>
         <IAF01000>
             <IAF01100>
@@ -47,12 +91,44 @@
                 <%= render_attr('IAF01210', gaikyo_config('tsucho_kanrisha')) %>
             </IAF01200>
         </IAF01000>
+        <IAF02000>
+            <% if gaikyo_config('shisanhyou') == 1 %>
+                <%= render_attr('IAF02100', '<kubun_CD>1</kubun_CD>') %>
+                <%= render_attr('IAF02200', '<kubun_CD>2</kubun_CD>') %>
+                <%= render_attr('IAF02300', '<kubun_CD>2</kubun_CD>') %>
+            <% elsif gaikyo_config('shisanhyou') == 12 %>
+                <%= render_attr('IAF02100', '<kubun_CD>2</kubun_CD>') %>
+                <%= render_attr('IAF02200', '<kubun_CD>2</kubun_CD>') %>
+                <%= render_attr('IAF02300', '<kubun_CD>1</kubun_CD>') %>
+            <% elsif gaikyo_config('shisanhyou') < 12 %>
+                <%= render_attr('IAF02100', '<kubun_CD>2</kubun_CD>') %>
+                <%= render_attr('IAF02200', '<kubun_CD>1</kubun_CD>') %>
+                <%= render_attr('IAF02250', gaikyo_config('shisanhyou')) %>
+                <%= render_attr('IAF02300', '<kubun_CD>2</kubun_CD>') %>
+            <% end %>
+        </IAF02000>
         <IAF03000>
             <%= 概況源泉徴収種類 %>
+            <%= render_attr('IAF03300', gaikyo_config('gensen_rishi') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <%= render_attr('IAF03400', gaikyo_config('gensen_haitou') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <%= render_attr('IAF03500', gaikyo_config('gensen_hikyoju') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <%= render_attr('IAF03600', gaikyo_config('gensen_taishoku') ? '<kubun_CD>1</kubun_CD>' : nil) %>
         </IAF03000>
         <IAF04000>
             <%= render_attr('IAF04200', 消費税課税売上高) %>
+            <% if gaikyo_config('keiri_zeinuki') %>
+                <%= render_attr('IAF04300', '<kubun_CD>1</kubun_CD>') %>
+            <% elsif gaikyo_config('keiri_zeikomi') %>
+                <%= render_attr('IAF04300', '<kubun_CD>2</kubun_CD>') %>
+            <% end %>
         </IAF04000>
+        <IAF04400>
+            <% if gaikyo_config('kansa') %>
+                <%= render_attr('IAF04500', '<kubun_CD>1</kubun_CD>') %>
+            <% elsif gaikyo_config('kansa') == false %>
+                <%= render_attr('IAF04500', '<kubun_CD>2</kubun_CD>') %>
+            <% end %>
+        </IAF04400>
     </IAF00000>
     <IAI00000>
         <%= render_attr('IAI01100', @概況売上) %>

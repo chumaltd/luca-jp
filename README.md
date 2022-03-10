@@ -18,19 +18,51 @@ $ bundle
 
 ## Usage
 
-`luca-jp`コマンドに期間指定してeTax用のxtxまたはeLtax用のXMLを出力。
+`luca-jp`コマンドに期間指定して税額計算、仕訳データ、申告データを生成。
+
+あらかじめ、`--export`オプションで確定税額の仕訳を生成し、LucaBookにインポートしておく必要がある。  
+消費税課税事業者は、`luca-jp syouhizei --export`を最初に実行する。
+
+仕訳を一式インポートしたうえで、`luca-jp`コマンドでeTax用のxtxまたはeLtax用のXMLを出力。
 
 ```bash
-$ luca-jp [houjinzei|syouhizei] yyyy mm yyyy mm > tax.xtx
-$ luca-jp chihouzei yyyy mm yyyy mm > tax.xml
+# LucaBookのディレクトリトップで実行する
+$ cd </path/to/project-dir>
 
 # exportオプションはLucaBookインポート用の仕訳を出力
-$ luca-jp [houjinzei|syouhizei|chihouzei] yyyy mm yyyy mm --export > export.json
+$ luca-jp [houjinzei|syouhizei|chihouzei] <yyyy> <mm> <yyyy> <mm> --export > <export.json>
+$ cat <export.json> | luca-book journals import --json
+
+$ luca-jp [houjinzei|syouhizei] <yyyy> <mm> <yyyy> <mm> > <tax.xtx>
+# 地方税はPCDeskが拡張子.xmlを要求する。また、日本語のファイル名はインポート時エラー
+$ luca-jp chihouzei <yyyy> <mm> <yyyy> <mm> > <tax.xml>
 ```
+
+* xtxファイルはeTaxソフトの「作成」->「申告・申請等」->「組み込み」からインポート可能
+
 
 LucaBookの日本用標準勘定科目を利用した仕訳データを前提としている。税務署は内訳データを求めているため、税金納付などは種目を細かく分類して記帳しなくてはならない。
 
 * 中間納付の計算上、最終月は計算から除外する。決算仕訳により相殺される影響を受けない
+
+
+### 財務諸表
+
+`luca-book`がXBRL2.1の財務諸表を出力する。
+
+```bash
+$ luca-book report xbrl <yyyy> <mm> <yyyy> <mm>
+```
+
+eTaxソフトで「帳票追加」->「財務諸表(XBRL2.1)」を追加したうえで、財務諸表編集画面から「組み込み」可能。  
+xbrl(財務データ)とxsd(企業別タクソノミ)の両方のファイルを同じフォルダに置く必要がある。
+
+「勘定科目選択」画面でチェックされている科目しか表示されないのはeTaxソフトの仕様。  
+プレゼンテーションXMLを定義することで表示可能ではあるが、インスタンスに数値は入っており税務署の関心のある科目のみ表示していると考えられるため、追加の対処は不要であろう。  
+eTaxの表示順序仕様はブラックボックスであり、それを理解したうえで項目順を指定することには無理がある。
+
+通達と反する点があるのであれば、まずeTaxソフトのデフォルト挙動を修正すべきと考える。  
+特殊な技術操作をしなければ目的を達しない通達があるなら、違法の疑いがある。
 
 
 ## Config
@@ -114,30 +146,58 @@ jp:
 
 法人事業概況説明書は、`jp.gaikyo`以下のconfig参照項目がある。
 
-| key               | Description        |   |
-|-------------------|--------------------|---|
-| homepage          | ホームページのURL  |   |
-| shiten_kokunai    | 国内の支店数       |   |
-| shiten_kaigai     | 海外の支店数       |   |
-| kogaisha_kokunai  | 国内の子会社数     |   |
-| kogaisha_kaigai   | 海外の子会社数     |   |
-| yakuin            | 常勤役員の人数     |   |
-| software_kaikei   | 会計ソフトの名称   |   |
-| software_mail     | メールソフトの名称 |   |
-| genkin_kanrisha   | 現金管理者氏名     |   |
-| tsucho_kanrisha   | 通帳管理者氏名     |   |
-| genkin_share      | 現金売上の割合(%)  |   |
-| kake_share        | 掛売上の割合(%)    |   |
-| shimekiri         | 締切日(共通指定)   |   |
-| shimekiri_uriage  | 売上の締切日       |   |
-| shimekiri_shiire  | 仕入の締切日       |   |
-| shimekiri_gaichu  | 外注の締切日       |   |
-| shimekiri_kyuryou | 給料の締切日       |   |
-| kessai            | 決済日(共通指定)   |   |
-| kessai_uriage     | 売上の決済日       |   |
-| kessai_shiire     | 仕入の決済日       |   |
-| kessai_gaichu     | 外注の決済日       |   |
-| kessai_kyuryou    | 給料の決済日       |   |
+| key               | Description                                                 |            |
+|-------------------+-------------------------------------------------------------+------------|
+| homepage          | ホームページのURL                                           |            |
+| shiten_kokunai    | 国内の支店数                                                |            |
+| shiten_kaigai     | 海外の支店数                                                |            |
+| kogaisha_kokunai  | 国内の子会社数                                              |            |
+| kogaisha_kaigai   | 海外の子会社数                                              |            |
+| yunyu             | 輸入取引                                                    | true/false |
+| yushutsu          | 輸出取引                                                    | true/false |
+| kaigai_torihiki   | 輸出入以外の海外取引                                        | true/false |
+| yakuin            | 常勤役員の人数                                              |            |
+| chingin_kotei     | 固定給                                                      | true/false |
+| chingin_buai      | 歩合給                                                      | true/false |
+| shataku           | 社宅・寮                                                    | true/false |
+| windows           | Windows利用                                                 | true/false |
+| mac               | Mac利用                                                     | true/false |
+| linux             | Linux利用                                                   | true/false |
+| pc_kyuuyo         | PC利用 給与管理                                             | true/false |
+| pc_hanbai         | PC利用 在庫・販売管理                                       | true/false |
+| pc_seisan         | PC利用 生産管理                                             | true/false |
+| software_kaikei   | 会計ソフトの名称                                            |            |
+| software_mail     | メールソフトの名称                                          |            |
+| data_cloud        | クラウドにデータ保存                                        | true/false |
+| data_media        | 外部記憶媒体にデータ保存                                    | true/false |
+| data_server       | PCサーバにデータ保存                                        | true/false |
+| ec_uriage         | 電子商取引・売上                                            | true/false |
+| ec_shiire         | 電子商取引・仕入                                            | true/false |
+| ec_keihi          | 電子商取引・経費                                            | true/false |
+| ec_jisha          | 電子商取引・売上 自社HP                                     | true/false |
+| ec_tasha          | 電子商取引・売上 他社HP                                     | true/false |
+| genkin_kanrisha   | 現金管理者氏名                                              |            |
+| tsucho_kanrisha   | 通帳管理者氏名                                              |            |
+| shisanhyou        | 試算表作成頻度(月単位の間隔で指定。1は毎月、12は決算時のみ) | 1 - 12     |
+| gensen_rishi      | 源泉徴収 利子等                                             | true/false |
+| gensen_haitou     | 源泉徴収 配当                                               | true/false |
+| gensen_hikyoju    | 源泉徴収 非居住者                                           | true/false |
+| gensen_taishoku   | 源泉徴収 退職                                               | true/false |
+| keiri_zeinuki     | 経理方式 税抜                                               | true/false |
+| keiri_zeikomi     | 経理方式 税込                                               | true/false |
+| kansa             | 社内監査実施                                                | true/false |
+| genkin_share      | 現金売上の割合(%)                                           |            |
+| kake_share        | 掛売上の割合(%)                                             |            |
+| shimekiri         | 締切日(共通指定)                                            |            |
+| shimekiri_uriage  | 売上の締切日                                                |            |
+| shimekiri_shiire  | 仕入の締切日                                                |            |
+| shimekiri_gaichu  | 外注の締切日                                                |            |
+| shimekiri_kyuryou | 給料の締切日                                                |            |
+| kessai            | 決済日(共通指定)                                            |            |
+| kessai_uriage     | 売上の決済日                                                |            |
+| kessai_shiire     | 仕入の決済日                                                |            |
+| kessai_gaichu     | 外注の決済日                                                |            |
+| kessai_kyuryou    | 給料の決済日                                                |            |
 
 
 USERINF
