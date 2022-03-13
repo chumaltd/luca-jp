@@ -234,7 +234,7 @@ module Luca
       # :section: 外形標準の計算
       # -----------------------------------------------------
       def 資本金等の額
-        readable(@bs_data.dig('911') + @bs_data.dig('913'))
+        readable(@bs_data.dig('911')||0 + @bs_data.dig('913')||0 + @bs_data.dig('916')||0)
       end
 
       def 期末資本金
