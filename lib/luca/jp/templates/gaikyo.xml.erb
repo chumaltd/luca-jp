@@ -81,6 +81,10 @@
             <%= render_attr('IAT01200', gaikyo_config('ec_shiire') ? '<kubun_CD>1</kubun_CD>' : nil) %>
             <%= render_attr('IAT01300', gaikyo_config('ec_keihi') ? '<kubun_CD>1</kubun_CD>' : nil) %>
         </IAT01000>
+        <IAT01500>
+            <%= render_attr('IAT01600', gaikyo_config('ec_jisha') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <%= render_attr('IAT01700', gaikyo_config('ec_tasha') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+        </IAT01500>
     </IAT00000>
     <IAF00000>
         <IAF01000>

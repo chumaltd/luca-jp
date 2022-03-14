@@ -7,10 +7,12 @@
         <VAA00040 IDREF="NOZEISHA_NM"/>
     </VAA00000>
     <VAB00000>
+        <%= render_attr('VAB00005', beppyo2_config('own_shares')) %>
         <%= render_attr('VAB00010', beppyo2_config('total_shares')) %>
         <%= render_attr('VAB00020', 別表二上位株数) %>
         <%= render_attr('VAB00030', 別表二上位株割合) %>
         <VAB00040>
+            <%= render_attr('VAB00050', beppyo2_config('no_votes')) %>
             <%= render_attr('VAB00060', beppyo2_config('total_votes')) %>
         </VAB00040>
         <%= render_attr('VAB00070', 別表二上位議決権数) %>

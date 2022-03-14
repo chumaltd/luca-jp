@@ -135,16 +135,16 @@ module Luca
         @当期純損益 = readable(@pl_data.dig('HA'))
         @法人税等 = readable(@pl_data.dig('H0'))
         _, @納付事業税 = 未納事業税期中増減
-        @別表四調整所得 = @当期純損益 + @法人税等 - @納付事業税
+        @当期還付事業税 = 還付事業税
+        @翌期還付事業税 = 中間還付税額(確定事業税, @事業税中間納付)
+        @別表四調整所得 = @当期純損益 + @法人税等 - @納付事業税 - @翌期還付事業税 + @当期還付事業税
 
         @当期還付法人税 = refund_tax('1502')
         @当期還付都道府県住民税 = refund_tax('1503')
         @翌期還付都道府県住民税 = 中間還付税額(@税額.dig(:kenmin, :kintou), @都道府県民税均等割中間納付) + 中間還付税額(@税額.dig(:kenmin, :houjinzei), @都道府県民税法人税割中間納付)
         @当期還付市民税 = refund_tax('1505')
         @翌期還付市民税 = 中間還付税額(@税額.dig(:shimin, :kintou), @市民税均等割中間納付) + 中間還付税額(@税額.dig(:shimin, :houjinzei), @市民税法人税割中間納付)
-        @当期還付事業税 = 還付事業税
         @事業税期首残高 = 期首未納事業税 > 0 ? 期首未納事業税 : (@当期還付事業税 * -1)
-        @翌期還付事業税 = 中間還付税額(確定事業税, @事業税中間納付)
         @仮払税金 = @翌期還付法人税 + @翌期還付都道府県住民税 + @翌期還付事業税 + @翌期還付市民税
 
         render_erb(search_template('beppyo4.xml.erb'))
@@ -158,7 +158,8 @@ module Luca
         @期首その他資本剰余金, @期末その他資本剰余金 = 期首期末残高('9132')
         @その他資本剰余金期中減, @その他資本剰余金期中増 = 純資産期中増減('9132')
         @期首自己株式, @期末自己株式 = 期首期末残高('916')
-        @自己株式期中減, @自己株式期中増 = 純資産期中増減('916')
+        # 自己株式は負の純資産。借方集計は負の増加として認識
+        @自己株式期中増, @自己株式期中減 = 純資産期中増減('916').map { |t| t * -1 }
         @資本金等の額期中減, @資本金等の額期中増 = 資本金等の額期中増減
         render_erb(search_template('beppyo51.xml.erb'))
       end
@@ -319,7 +320,12 @@ module Luca
         return nil if beppyo2_config('total_shares').nil?
         return nil if beppyo2_config('owners').nil?
 
-        (別表二上位株数 * 100.0 / beppyo2_config('total_shares')).round(1)
+        total = if beppyo2_config('own_shares').nil?
+                  beppyo2_config('total_shares')
+                else
+                  beppyo2_config('total_shares') - beppyo2_config('own_shares')
+                end
+        (別表二上位株数 * 100.0 / total).round(1)
       end
 
       def 別表二上位議決権数
@@ -332,7 +338,12 @@ module Luca
         return nil if beppyo2_config('total_votes').nil?
         return nil if beppyo2_config('owners').nil?
 
-        (別表二上位議決権数 * 100.0 / beppyo2_config('total_votes')).round(1)
+        total = if beppyo2_config('no_votes').nil?
+                  beppyo2_config('total_votes')
+                else
+                  beppyo2_config('total_votes') - beppyo2_config('no_votes')
+                end
+        (別表二上位議決権数 * 100.0 / total).round(1)
       end
 
       # TODO: 特定同族会社の判定
@@ -541,12 +552,14 @@ module Luca
       # 資本金、資本準備金、その他資本剰余金、自己株式（控除）の合算
       #
       def 資本金等の額期中増減
-        inc = ['911', '913', '916'].map do |code|
+        inc = ['911', '913'].map do |code|
           credit_amount(code, @start_date.year, @start_date.month, @end_date.year, @end_date.month) || 0
         end
-        dec = ['911', '913', '916'].map do |code|
+        inc << (debit_amount('916', @start_date.year, @start_date.month, @end_date.year, @end_date.month)||0) * -1
+        dec = ['911', '913'].map do |code|
           debit_amount(code, @start_date.year, @start_date.month, @end_date.year, @end_date.month) || 0
         end
+        dec << (credit_amount('916', @start_date.year, @start_date.month, @end_date.year, @end_date.month)||0) * -1
 
         [readable(dec.sum), readable(inc.sum)]
       end

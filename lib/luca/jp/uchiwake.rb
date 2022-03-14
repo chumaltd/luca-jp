@@ -57,7 +57,7 @@ module Luca #:nodoc:
             h[k][:name] = metadata['name'][0..9] if metadata['name']
             h[k][:security_purpose] = metadata['security_purpose']
             h[k][:security_genre] = metadata['security_genre']
-            h[k][:security_units] = (h[:amount].nil? || h[:amount].zero?) ? 0 : metadata['security_units']
+            h[k][:security_units] = (h[k][:amount].nil? || h[k][:amount].zero?) ? 0 : metadata['security_units']
             h[k][:note] = metadata['note']
           end
           h[k][:security_purpose] ||= 'その他' if /^332/.match(k.to_s)

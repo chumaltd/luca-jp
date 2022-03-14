@@ -106,7 +106,8 @@ module Luca
       end
 
       def 第六号
-        @資本金準備金 = eltax_config('shihon') || it_part_config('shihon_kin')
+        @資本金準備金 = readable(['911', '9131'].map { |cd| @bs_data.dig(cd) }.compact.sum)
+        STDERR.puts "第六号様式： 「決算確定の日」「国外関連者」などの追記が必要"
         render_erb(search_template('el-no6.xml.erb'))
       end
 
