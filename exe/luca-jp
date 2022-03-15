@@ -22,9 +22,14 @@ class LucaCmd
 
   def self.chihouzei(args, params)
     if params[:export]
-      Luca::Jp::Chihouzei.range(*args).export_json
+      accounts = Luca::Jp::Util.eltax_config('reports').map do |report|
+        Luca::Jp::Chihouzei.range(*args).export_json(report)
+      end
+      puts JSON.dump(accounts)
     else
-      puts Luca::Jp::Chihouzei.range(*args).kani
+      Luca::Jp::Util.eltax_config('reports').each do |report|
+        File.open("chihouzei-#{report['jichitai_code']}#{report['jimusho_code']}.xml", 'w') { |f| f.puts(Luca::Jp::Chihouzei.range(*args).kani(report))}
+      end
     end
   end
 

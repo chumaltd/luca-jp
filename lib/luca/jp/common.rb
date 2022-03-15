@@ -114,17 +114,22 @@ module Luca
 
       def 均等割
         tax = if 地方税資本金等の額 <= 10_000_000
-                [20_000, 50_000]
+                city = @employee > 50 ? 120_000 : 50_000
+                [20_000, city]
               elsif 地方税資本金等の額 <= 100_000_000
-                [50_000, 130_000]
+                city = @employee > 50 ? 150_000 : 130_000
+                [50_000, city]
               elsif 地方税資本金等の額 <= 1_000_000_000
-                [130_000, 160_000]
+                city = @employee > 50 ? 400_000 : 160_000
+                [130_000, city]
               elsif 地方税資本金等の額 <= 5_000_000_000
-                [540_000, 410_000]
+                city = @employee > 50 ? 1_750_000 : 410_000
+                [540_000, city]
               else
-                [800_000, 410_000]
+                city = @employee > 50 ? 3_000_000 : 410_000
+                [800_000, city]
               end
-        config.dig('jp', 'eltax', 'office_23ku') ? [tax.sum, 0] : tax
+        tokyo23? ? [tax.sum, 0] : tax
       end
 
       # 100円未満切り捨て
@@ -152,7 +157,7 @@ module Luca
                else
                  [1.0, 6.0]
                end
-        config.dig('jp', 'eltax', 'office_23ku') ? [rate.sum, 0] : rate
+        tokyo23? ? [rate.sum, 0] : rate
       end
 
       # 100円未満切り捨て

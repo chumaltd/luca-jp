@@ -8,9 +8,9 @@
             <gen:yyyymmdd></gen:yyyymmdd>
           </AGA_JIGYO_EDATE>
         <AGA_NAME idref="NAME"></AGA_NAME>
-        <AGB00100><%= @office_23ku %></AGB00100>
+        <AGB00100><%= @address %></AGB00100>
         <AGB00200>12</AGB00200>
-        <AGB00300 />
+        <AGB00300><%= @employee %></AGB00300>
         <AGC00100 />
         <AGC00110 />
         <AGC00120 />
@@ -132,16 +132,17 @@
         <AGE00710 />
         <AGE00800 />
         <AGE00900 />
-        <AGF00100 />
+        <AGF00100><%= @均等割 if @employee > 50 %></AGF00100>
         <AGF00200 />
         <AGF00300 />
-        <AGF00400 />
-        <AGF00500 />
-        <AGF00600>70000</AGF00600>
+        <AGF00400><%= "12" if @employee > 50 %></AGF00400>
+        <AGF00500><%= @均等割 if @employee > 50 %></AGF00500>
+        <AGF00200 />
+        <AGF00600><%= @均等割 if @employee <= 50 %></AGF00600>
         <AGF00700 />
         <AGF00800 />
-        <AGF00900>12</AGF00900>
-        <AGF01000>70000</AGF01000>
+        <AGF00900><%= "12" if @employee <= 50 %></AGF00900>
+        <AGF01000><%= @均等割 if @employee <= 50 %></AGF01000>
         <AGF01100 />
         <AGF01200 />
         <AGF01300 />
@@ -173,6 +174,6 @@
         <AGF03900 />
         <AGF04000 />
         <AGF04100 />
-        <AGF04200>70000</AGF04200>
+        <AGF04200><%= @均等割 %></AGF04200>
         <AGG00100 />
 </R0102AG120>

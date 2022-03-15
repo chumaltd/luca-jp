@@ -90,6 +90,10 @@ module Luca
         config.dig('jp', 'eltax', key)
       end
 
+      def tokyo23?
+        @report_category == '23ku'
+      end
+
       def 期首期末残高(code)
         pre = readable(@start_balance.dig(code))
         post = readable(@bs_data.dig(code))

@@ -4,7 +4,7 @@
         <KOUSEI_KANRI id="KOUSEI_KANRI">
             <KANRI_INF id="KANRI_INF">
                 <KOUSEI_KANRI_VR>0001</KOUSEI_KANRI_VR><%# 固定値 %>
-                <ORG1_CD>13000</ORG1_CD><%# 地方公共団体コード %>
+                <ORG1_CD><%= @jichitai_code %></ORG1_CD><%# 地方公共団体コード %>
                 <PROC_ID><%= @procedure_code %></PROC_ID>
                 <PROC_NAME><%= @procedure_name %></PROC_NAME>
                 <FIRST_RCPT_NUM></FIRST_RCPT_NUM>
@@ -74,7 +74,7 @@
                     <KAZEI_TEL id="KAZEI_TEL" />
                     <HOGEN_NUM id="HOGEN_NUM" />
                     <KANRI_NUM id="KANRI_NUM" />
-                    <KAZEI_NUM id="KAZEI_NUM"><%= eltax_config('x_houjin_bango') %></KAZEI_NUM>
+                    <KAZEI_NUM id="KAZEI_NUM"><%= @kanri_bango %></KAZEI_NUM>
                     <HOJO_NUM id="HOJO_NUM" />
                     <STF_NUM id="STF_NUM" />
                 </ORG_INF>

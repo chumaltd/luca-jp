@@ -18,16 +18,13 @@ module Luca
       @dirname = 'journals'
       @record_type = 'raw'
 
-      def kani(export: false)
+      def kani(report_cfg, export: false)
         set_pl(4)
         set_bs(4)
         @issue_date = Date.today
-        @company = CGI.escapeHTML(config.dig('company', 'name'))
         @software = 'LucaJp'
-        @jimusho_code = eltax_config('jimusho_code')
-        @jimusho_name = eltax_config('jimusho_name')
-        @app_version = eltax_config('app_version')
-        @form_vers = proc_version
+        @report_category = report_cfg['type']
+        @employee = report_cfg['employee'] || 1
 
         @税額 = 税額計算
         @均等割 = @税額.dig(:kenmin, :kintou)
@@ -61,19 +58,42 @@ module Luca
             }
           }
         else
+          @company = CGI.escapeHTML(config.dig('company', 'name'))
+          @form_vers = proc_version
+          @jichitai_code = report_cfg['jichitai_code']
+          @jimusho_code = report_cfg['jimusho_code']
+          @jimusho_name = report_cfg['jimusho_name']
+          @kanri_bango = report_cfg['x_houjin_bango']
+          @app_version = report_cfg['app_version']
+          @address = report_cfg['address'] || it_part_config('nozeisha_adr')
           @procedure_code = 'R0102100'
           @procedure_name = '法人都道府県民税・事業税・特別法人事業税又は地方法人特別税　確定申告'
-          @form_sec = ["R0102AA#{@form_vers['R0102AA']}", "R0102AG120", 別表九フォーム].compact.map{ |c| form_attr(c) }.join('')
+          @form_sec = case @report_category
+                      when 'prefecture'
+                        ["R0102AA#{@form_vers['R0102AA']}", 別表九フォーム]
+                          .compact.map{ |c| form_attr(c) }.join('')
+                      when '23ku'
+                        ["R0102AA#{@form_vers['R0102AA']}", "R0102AG120", 別表九フォーム]
+                          .compact.map{ |c| form_attr(c) }.join('')
+                      when 'city'
+                        # TODO: implement
+                      end
           @user_inf = render_erb(search_template('eltax-userinf.xml.erb'))
-          @form_data = [第六号, 別表四三, 別表九].compact.join("\n")
+          @form_data = case @report_category
+                       when 'prefecture'
+                         [第六号, 別表九].compact.join("\n")
+                       when '23ku'
+                         [第六号, 別表四三, 別表九].compact.join("\n")
+                       when 'city'
+                         # TODO: implement
+                       end
           render_erb(search_template('eltax.xml.erb'))
         end
       end
 
-      def export_json
-        records = kani(export: true)
-        [].tap do |res|
-          item = {}
+      def export_json(report_cfg)
+        records = kani(report_cfg, export: true)
+        {}.tap do |item|
           item['date'] = @end_date
           item['debit'] = []
           item['credit'] = []
@@ -100,8 +120,6 @@ module Luca
             item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:zeigaku] } if dat[:zeigaku] > 0
           end
           item['x-editor'] = 'LucaJp'
-          res << item
-          puts JSON.dump(res)
         end
       end
 

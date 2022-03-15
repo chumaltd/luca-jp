@@ -34,8 +34,8 @@ $ luca-jp [houjinzei|syouhizei|chihouzei] <yyyy> <mm> <yyyy> <mm> --export > <ex
 $ cat <export.json> | luca-book journals import --json
 
 $ luca-jp [houjinzei|syouhizei] <yyyy> <mm> <yyyy> <mm> > <tax.xtx>
-# 地方税はPCDeskが拡張子.xmlを要求する。また、日本語のファイル名はインポート時エラー
-$ luca-jp chihouzei <yyyy> <mm> <yyyy> <mm> > <tax.xml>
+# 地方税はchihouzei-<jimusho_code>.xmlを出力
+$ luca-jp chihouzei <yyyy> <mm> <yyyy> <mm>
 ```
 
 * xtxファイルはeTaxソフトの「作成」->「申告・申請等」->「組み込み」からインポート可能
@@ -211,18 +211,24 @@ eltax仕様では法人番号は省略可能フィールドであり、法人番
 ```yaml
 jp:
   eltax:
-    jimusho_name: 東京都芝都税事務所長
+    reports:
+    - jimusho_name: 東京都芝都税事務所長
+    - jimusho_name: 東京都渋谷都税事務所長
 ```
 
-| key            | Description                                                                                                  | eltaxフィールド |
-|----------------|--------------------------------------------------------------------------------------------------------------|-----------------|
-| jimusho_code   | 都道府県税事務所番号                                                                                         | JIMUSHO_NUM     |
-| jimusho_name   | elTaxは都道府県税事務所番号から提出先名称をひくことができない                                                | ORG1_NAME       |
-| shihon         | 資本金と資本準備金の合計額。様式6に記載                                                                      | SHIHON          |
-| no_keigen      | 軽減税率不適用法人。[true / false]                                                                           |                 |
-| x_houjin_bango | 地方自治体がかつて使用していた旧法人番号。必須なのではないかと思われる                                       | KAZEI_NUM       |
-| receipt_num    | eLtaxのID。ログインIDではなく、通常使用することはない文字列                                                  | T_RCPT_NUM      |
-| app_version    | 税目情報格納日時(申請バージョン)。条例改定のつど変わると考えられ、PCDeskの出力ファイルから取得する必要がある | STIME           |
+| key       | subkey         | Description                                                                                                  | eltaxフィールド |
+|-----------|----------------|--------------------------------------------------------------------------------------------------------------|-----------------|
+| no_keigen |                | 軽減税率不適用法人。[true / false]                                                                           |                 |
+| reports   |                | 申告書提出先の設定(配列)                                                                                     |                 |
+|           | type           | prefecture / city / 23ku                                                                                     |                 |
+|           | jichitai_code  | 地方公共団体コード                                                                                           | ORG1_CD         |
+|           | jimusho_code   | 都道府県税事務所番号                                                                                         | JIMUSHO_NUM     |
+|           | jimusho_name   | elTaxは都道府県税事務所番号から提出先名称をひくことができない                                                | ORG1_NAME       |
+|           | x_houjin_bango | 地方自治体がかつて使用していた旧法人番号。必須                                                               | KAZEI_NUM       |
+|           | address        | 事務所所在地。省略時は`it_part.nozeisha_adr`を参照                                        |        |
+|           | employee       | 従業員の数                                                                                                   |                 |
+|           | receipt_num    | eLtaxのID。ログインIDではなく、通常使用することはない文字列                                                  | T_RCPT_NUM      |
+|           | app_version    | 税目情報格納日時(申請バージョン)。条例改定のつど変わると考えられ、PCDeskの出力ファイルから取得する必要がある | STIME           |
 
 
 ## Format
