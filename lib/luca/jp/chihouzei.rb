@@ -76,7 +76,7 @@ module Luca
                         ["R0102AA#{@form_vers['R0102AA']}", "R0102AG120", 別表九フォーム]
                           .compact.map{ |c| form_attr(c) }.join('')
                       when 'city'
-                        # TODO: implement
+                        ["R0504AA180"]
                       end
           @user_inf = render_erb(search_template('eltax-userinf.xml.erb'))
           @form_data = case @report_category
@@ -85,7 +85,7 @@ module Luca
                        when '23ku'
                          [第六号, 別表四三, 別表九].compact.join("\n")
                        when 'city'
-                         # TODO: implement
+                         [第二十号].compact.join("\n")
                        end
           render_erb(search_template('eltax.xml.erb'))
         end
@@ -132,6 +132,11 @@ module Luca
       def 別表四三
         @office_23ku = config.dig('jp', 'eltax', 'office_23ku')
         render_erb(search_template('el-no6-43.xml.erb'))
+      end
+
+      def 第二十号
+        @資本金準備金 = readable(['911', '9131'].map { |cd| @bs_data.dig(cd) }.compact.sum)
+        render_erb(search_template('el-no20.xml.erb'))
       end
 
       def 別表九フォーム

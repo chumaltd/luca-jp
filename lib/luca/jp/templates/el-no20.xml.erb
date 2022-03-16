@@ -1,0 +1,143 @@
+<R0504AA180 xmlns="http://eltax.jp/HOJIN_DOFUKEN" vr="180" page="" seiseiSoft="<%= @software %>" seiseiVr="1" seiseiDay="<%= Date.today.strftime('%Y%m%d') %>" seiseiNM="<%= it_part_config('nozeisha_nm') %>" koshinSoft="" koshinVr="" koshinDay="" koshinNM="" taari="">
+    <AAA00100 idref="SEIRI_NUM" />
+    <AAA00200 idref="JIMUSHO_NUM"></AAA00200>
+    <AAA00300 idref="HOJIN_NUM"></AAA00300>
+    <AAA00400 />
+    <AAA00500 idref="HOJIN_NUMBER"></AAA00500>
+    <AAA00700 idref="RPT_DATE">
+        <gen:era></gen:era>
+        <gen:yy></gen:yy>
+        <gen:mm></gen:mm>
+        <gen:dd></gen:dd>
+    </AAA00700>
+    <AAA00800>
+        <gen:era><%= gengou(@issue_date) %></gen:era>
+        <gen:yy><%= wareki(@issue_date) %></gen:yy>
+        <gen:mm><%= @issue_date.month %></gen:mm>
+        <gen:dd><%= @issue_date.day %></gen:dd>
+    </AAA00800>
+    <AAA00900 idref="ORG1_NAME"></AAA00900>
+    <AAA_HONTEN_ZIP idref="HONTEN_ZIP"></AAA_HONTEN_ZIP>
+    <AAA_HONTEN_ADDR idref="HONTEN_ADDR"></AAA_HONTEN_ADDR>
+    <AAA_HONTEN_TEL_NUM idref="HONTEN_TEL"></AAA_HONTEN_TEL_NUM>
+    <AAA_ZIP />
+    <AAA_ADDR />
+    <AAA_TEL_NUM />
+    <AAA_KANA idref="KANA"></AAA_KANA>
+    <AAA_NAME idref="NAME"></AAA_NAME>
+    <AAA_DAIHYO_KANA idref="DAIHYO_KANA"></AAA_DAIHYO_KANA>
+    <AAA_DAIHYO_NAME idref="DAIHYO_NAME"></AAA_DAIHYO_NAME>
+    <AAA01000>
+        <gen:era />
+        <gen:yy />
+        <gen:mm />
+        <gen:dd />
+        <gen:yyyymmdd />
+    </AAA01000>
+    <AAA01100 />
+    <AAA01200 />
+    <AAA_JIGYO_NAME idref="JIGYO_NAME"></AAA_JIGYO_NAME>
+    <AAA_SHIHON idref="SHIHON"></AAA_SHIHON>
+    <AAA_SHIHON2><%= 資本金等の額 %></AAA_SHIHON2>
+    <AAA_SHIHON3><%= @資本金準備金 %></AAA_SHIHON3>
+    <AAA_SHIHON4><%= 地方税資本金等の額 %></AAA_SHIHON4>
+    <AAA_KEIRI_KANA></AAA_KEIRI_KANA>
+    <AAA_KEIRI_NAME></AAA_KEIRI_NAME>
+    <AAA_JIGYO_SDATE idref="SDATE">
+        <gen:era></gen:era>
+        <gen:yy></gen:yy>
+        <gen:mm></gen:mm>
+        <gen:dd></gen:dd>
+        <gen:yyyymmdd></gen:yyyymmdd>
+    </AAA_JIGYO_SDATE>
+    <AAA_JIGYO_EDATE idref="EDATE">
+        <gen:era></gen:era>
+        <gen:yy></gen:yy>
+        <gen:mm></gen:mm>
+        <gen:dd></gen:dd>
+        <gen:yyyymmdd></gen:yyyymmdd>
+    </AAA_JIGYO_EDATE>
+    <AAA_RPT_KBN idref="RPT_NAME">確定</AAA_RPT_KBN>
+    <AAA01300 />
+    <AAB00100 />
+    <AAB00110><%= @税額.dig(:houjin, :kokuzei) %></AAB00110>
+    <AAB00200 />
+    <AAB00400 />
+    <AAB00500 />
+    <AAB00600><%= 法人税割課税標準 %></AAB00600>
+    <AAB00610><%= 法人税割税率[1] %></AAB00610>
+    <AAB00620><%= 法人税割[1] %></AAB00620>
+    <AAB00700 />
+    <AAB00710 />
+    <AAB00720 />
+    <AAB00730 />
+    <AAB00750 />
+    <AAB00800 />
+    <AAB00900 />
+    <AAB01000><%= 法人税割[1] %></AAB01000>
+    <AAB01100><%= @法人税割中間納付 %></AAB01100>
+    <AAB01200 />
+    <AAB01300><%= @確定法人税割 - @法人税割中間納付 %></AAB01300>
+    <AAB01400>12</AAB01400>
+    <AAB01410><%= @均等割 %></AAB01410>
+    <AAB01420><%= @均等割 %></AAB01420>
+    <AAB01500><%= @均等割中間納付 %></AAB01500>
+    <AAB01600><%= @均等割 - @均等割中間納付 %></AAB01600>
+    <AAB01700><%= 納付税額(@確定法人税割, @法人税割中間納付) + 納付税額(@均等割, @均等割中間納付) %></AAB01700>
+    <AAB01800 />
+    <AAB01900><%= 納付税額(@確定法人税割, @法人税割中間納付) + 納付税額(@均等割, @均等割中間納付) %></AAB01900>
+    <AAC00100>
+        <AAC00200><%# 事務所の名称 %></AAC00200>
+        <AAC00300><%= @address %></AAC00300>
+        <AAC00400><%= @employee %></AAC00400>
+        <AAC00500><%= @employee %></AAC00500>
+    </AAC00100>
+    <AAC00600><%# 全従業者数 %></AAC00600>
+    <AAC00700><%= @employee %></AAC00700>
+    <AAC00800><%= @employee %></AAC00800>
+    <AAD00100>
+        <AAD00200 />
+        <AAD00300 />
+        <AAD00400 />
+        <AAD00500 />
+        <AAD00600 />
+    </AAD00100>
+    <AAE00100>
+        <gen:era />
+        <gen:yy />
+        <gen:mm />
+        <gen:dd />
+    </AAE00100>
+    <AAE01000>
+        <gen:era />
+        <gen:yy />
+        <gen:mm />
+        <gen:dd />
+    </AAE01000>
+    <AAE01100>
+        <gen:era />
+        <gen:yy />
+        <gen:mm />
+        <gen:dd />
+    </AAE01100>
+    <AAE00200>1</AAE00200><%# 青色申告 %>
+    <AAE00300><%= @税額.dig(:houjin, :kokuzei) > 200000 ? 1 : 2 %></AAE00300>
+    <AAE00400>
+        <gen:era />
+        <gen:yy />
+        <gen:mm />
+        <gen:dd />
+    </AAE00400>
+    <AAE00500>
+        <gen:era />
+        <gen:yy />
+        <gen:mm />
+        <gen:dd />
+    </AAE00500>
+    <AAE00600>2</AAE00600>
+    <AAE00700><%= eltax_kouza %></AAE00700>
+    <AAE00800><%= 中間還付税額(@確定法人税割, @法人税割中間納付) %></AAE00800>
+    <AAE00900 />
+    <AAJ_DAIRI_NAME></AAJ_DAIRI_NAME>
+    <AAJ_DAIRI_TEL_NUM></AAJ_DAIRI_TEL_NUM>
+</R0504AA180>

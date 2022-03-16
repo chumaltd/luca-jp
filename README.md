@@ -1,5 +1,9 @@
 # Luca::Jp
 
+![Gem Version](https://badge.fury.io/rb/luca-jp.svg)
+[![doc](https://img.shields.io/badge/doc-rubydoc-green.svg)](https://www.rubydoc.info/gems/luca-jp/index)
+![license](https://img.shields.io/github/license/chumaltd/luca-jp)
+
 [LucaBook](https://github.com/chumaltd/luca/blob/master/lucabook/)の法人税・消費税・地方税申告用エクステンション
 
 ## Installation
