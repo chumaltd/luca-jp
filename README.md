@@ -34,12 +34,12 @@ $ bundle
 $ cd </path/to/project-dir>
 
 # exportオプションはLucaBookインポート用の仕訳を出力
-$ luca-jp [houjinzei|syouhizei|chihouzei] <yyyy> <mm> <yyyy> <mm> --export > <export.json>
+$ luca-jp [houjinzei|syouhizei|chihouzei] --export [<yyyy> <mm> <yyyy> <mm>] > <export.json>
 $ cat <export.json> | luca-book journals import --json
 
-$ luca-jp [houjinzei|syouhizei] <yyyy> <mm> <yyyy> <mm> > <tax.xtx>
+$ luca-jp [houjinzei|syouhizei] [<yyyy> <mm> <yyyy> <mm>] > <tax.xtx>
 # 地方税はchihouzei-<jimusho_code>.xmlを出力
-$ luca-jp chihouzei <yyyy> <mm> <yyyy> <mm>
+$ luca-jp chihouzei [<yyyy> <mm> <yyyy> <mm>]
 ```
 
 * xtxファイルはeTaxソフトの「作成」->「申告・申請等」->「組み込み」からインポート可能
@@ -227,10 +227,17 @@ jp:
 |           | type           | prefecture / city / 23ku                                                                                     |                 |
 |           | jichitai_code  | 地方公共団体コード                                                                                           | ORG1_CD         |
 |           | jimusho_code   | 都道府県税事務所番号                                                                                         | JIMUSHO_NUM     |
-|           | jimusho_name   | elTaxは都道府県税事務所番号から提出先名称をひくことができない                                                | ORG1_NAME       |
+|           | jimusho_name   | 提出先名称。elTaxは事務所番号からひくことができない                                               | ORG1_NAME       |
 |           | x_houjin_bango | 地方自治体がかつて使用していた旧法人番号。必須                                                               | KAZEI_NUM       |
-|           | address        | 事務所所在地。省略時は`it_part.nozeisha_adr`を参照                                        |        |
+|           | name           | 事務所名。省略時は「本店」                                                                                   |                 |
+|           | address        | 事務所所在地。省略時は`it_part.nozeisha_adr`を参照                                                           |                 |
 |           | employee       | 従業員の数                                                                                                   |                 |
+|           | office_count | 事業所の数。省略時は1                                                                                                  |                 |
+|           | kintouwari | 均等割税額                                                                                                   |                 |
+|           | houjinzeiwari | 法人税割税率                                                                                                   |                 |
+|           | shotoku399 | 所得割税率。400万円以下の部分                                                                                                |                 |
+|           | shotoku401 | 所得割税率。400万円超800万円以下の部分                                                                                             |                 |
+|           | shotoku801 | 所得割税率。800万円超の部分                                                                                             |                 |
 |           | receipt_num    | eLtaxのID。ログインIDではなく、通常使用することはない文字列                                                  | T_RCPT_NUM      |
 |           | app_version    | 税目情報格納日時(申請バージョン)。条例改定のつど変わると考えられ、PCDeskの出力ファイルから取得する必要がある | STIME           |
 
@@ -302,8 +309,10 @@ XBRL2.1決算書は、LucaBookが出力可能。xtxをインポートしたの�
   * 外形標準課税法人や特別法人を適切に扱っていない
   * 修正申告を想定していない
 * 均等割に関する明細書
-  * 従業員数は追記が必要
 * 6号様式別表9
+* 20号様式
+  * 実ケースがないため未検証
+  * 政令区を考慮していない
 
 
 開発用情報

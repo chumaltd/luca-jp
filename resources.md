@@ -22,6 +22,13 @@
   * 「【別冊1】対象様式一覧」に帳票バージョンの有効期限がリストされている
 * XMLタグ仕様はバージョン別の「【別冊1】様式タグ仕様書」にある
 
+* 自治体別の税率は、総務省のサイトに掲載されている
+  * [地方税に関する統計等](https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/czei_shiryo_ichiran.html)
+
+* 自治体コードなどはeLTAXサイトに掲載されている。総務省が配布しているコードとやや異なる
+  * [eLTAX提出先](https://www.eltax.lta.go.jp/documents/03062)
+  * [全国地方公共団体コード](https://www.soumu.go.jp/denshijiti/code.html)
+
 
 ## EDINET
 

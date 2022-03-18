@@ -19,9 +19,9 @@ module Luca
           tax[:houjin][:chihou] = (地方法人税 / 100).floor * 100
 
           tax[:kenmin][:houjinzei], tax[:shimin][:houjinzei] = 法人税割(法人税額)
-          tax[:kenmin][:kintou], tax[:shimin][:kintou] = 均等割
+          tax[:kenmin][:kintou], tax[:shimin][:kintou] = 均等割 if @report_category
           tax[:kenmin][:shotoku] = 所得割400万以下(所得) + 所得割800万以下(所得) + 所得割800万超(所得)
-          tax[:kenmin][:tokubetsu] = 地方法人特別税(tax[:kenmin][:shotoku])
+          tax[:kenmin][:tokubetsu] = 特別法人事業税(tax[:kenmin][:shotoku])
         end
       end
 
@@ -139,14 +139,16 @@ module Luca
                    else
                      法人税割課税標準
                    end
-        税率 = 法人税割税率(課税標準)
+        県税率, 市税率 = 法人税割税率(課税標準)
         [
-          (課税標準 * 税率[0] / 100 / 100).floor * 100,
-          (課税標準 * 税率[1] / 100 / 100).floor * 100
+          (課税標準 * 県税率 / 100 / 100).floor * 100,
+          (課税標準 * 市税率 / 100 / 100).floor * 100
         ]
       end
 
       def 法人税割税率(法人税 = nil)
+        return [@houjinzeiwari_rate.to_f, @houjinzeiwari_rate.to_f] if @houjinzeiwari_rate
+
         課税標準 = if 法人税
                      (法人税 / 1000).floor * 1000
                    else
@@ -169,14 +171,17 @@ module Luca
         所得 ||= 所得金額
         return 0 if 所得 < 0
 
-        if 所得 >= 4_000_000
-          4_000_000
-        else
-          (所得 / 1000).floor * 1000
-        end
+        total = if 所得 >= 4_000_000
+                  4_000_000
+                else
+                  (所得 / 1000).floor * 1000
+                end
+        事業税の分割課税標準(total)
       end
 
       def 所得割税率400万以下(所得 = nil)
+        return @shotyoku399.to_f if @shotoku399
+
         所得 ||= 所得金額
         if 期末資本金 > 100_000_000 || 所得 > 25_000_000
           軽減税率不適用法人 ? 7.48 : 3.75
@@ -194,16 +199,19 @@ module Luca
         所得 ||= 所得金額
         return 0 if 所得 < 0
 
-        if 所得 <= 4_000_000
-          0
-        elsif 所得 >= 8_000_000
-          4_000_000
-        else
-          ((所得 - 4_000_000) / 1000).floor * 1000
-        end
+        total = if 所得 <= 4_000_000
+                  0
+                elsif 所得 >= 8_000_000
+                  4_000_000
+                else
+                  ((所得 - 4_000_000) / 1000).floor * 1000
+                end
+        事業税の分割課税標準(total)
       end
 
       def 所得割税率800万以下(所得 = nil)
+        return @shotyoku401.to_f if @shotoku401
+
         所得 ||= 所得金額
         if 期末資本金 > 100_000_000 || 所得 > 25_000_000
           軽減税率不適用法人 ? 7.48 : 5.665
@@ -221,14 +229,17 @@ module Luca
         所得 ||= 所得金額
         return 0 if 所得 < 0
 
-        if 所得 <= 8_000_000
+        total = if 所得 <= 8_000_000
           0
         else
           ((所得 - 8_000_000) / 1000).floor * 1000
         end
+        事業税の分割課税標準(total)
       end
 
       def 所得割税率800万超(所得 = nil)
+        return @shotyoku801.to_f if @shotoku801
+
         所得 ||= 所得金額
         if 期末資本金 > 100_000_000 || 所得 > 25_000_000
           7.48
@@ -238,7 +249,7 @@ module Luca
       end
 
       # 100円未満切り捨て
-      def 地方法人特別税(事業税)
+      def 特別法人事業税(事業税)
         ((事業税 * 37 / 100) / 100).floor * 100
       end
 
@@ -301,6 +312,43 @@ module Luca
 
       def 期末資本金
         readable(@bs_data.dig('911'))
+      end
+
+      # -----------------------------------------------------
+      # :section: 複数自治体間の分割計算
+      # -----------------------------------------------------
+      def 事業税の分割課税標準(課税標準)
+        case Luca::Jp::Util.eltax_config('reports')
+               .filter { |r| レポート種別.include?(r['type']) }.length
+        when 0, 1
+          課税標準
+        else
+          half = (課税標準 / 2 / 1000).floor * 1000
+          [
+            事業所数による分割課税標準(half),
+            従業員数による分割課税標準(half)
+          ].sum
+        end
+      end
+
+      def 従業員数による分割課税標準(課税標準)
+        分割基準の総数 = Luca::Jp::Util.eltax_config('reports')
+                           .filter { |r| レポート種別.include?(r['type']) }
+                           .map { |r| (r['employee'] || 1).to_i }.sum
+        ((課税標準.to_f / 分割基準の総数).floor(分割基準の総数.to_s.length) * @employee / 1000)
+          .floor * 1000
+      end
+
+      def 事業所数による分割課税標準(課税標準)
+        分割基準の総数 = Luca::Jp::Util.eltax_config('reports')
+                           .filter { |r| レポート種別.include?(r['type']) }
+                           .map { |r| (r['office_count'] || 1).to_i }.sum
+        ((課税標準.to_f / 分割基準の総数).floor(分割基準の総数.to_s.length) * @office_count / 1000)
+          .floor * 1000
+      end
+
+      def レポート種別
+        @report_category == 'city' ? ['city', '23ku'] : ['prefecture', '23ku']
       end
     end
   end

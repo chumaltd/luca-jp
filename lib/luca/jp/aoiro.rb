@@ -141,9 +141,9 @@ module Luca
 
         @当期還付法人税 = refund_tax('1502')
         @当期還付都道府県住民税 = refund_tax('1503')
-        @翌期還付都道府県住民税 = 中間還付税額(@税額.dig(:kenmin, :kintou), @都道府県民税均等割中間納付) + 中間還付税額(@税額.dig(:kenmin, :houjinzei), @都道府県民税法人税割中間納付)
+        @翌期還付都道府県住民税 = readable(@bs_data['1503'])
         @当期還付市民税 = refund_tax('1505')
-        @翌期還付市民税 = 中間還付税額(@税額.dig(:shimin, :kintou), @市民税均等割中間納付) + 中間還付税額(@税額.dig(:shimin, :houjinzei), @市民税法人税割中間納付)
+        @翌期還付市民税 = readable(@bs_data['1505']) || 0
         @事業税期首残高 = 期首未納事業税 > 0 ? 期首未納事業税 : (@当期還付事業税 * -1)
         @仮払税金 = @翌期還付法人税 + @翌期還付都道府県住民税 + @翌期還付事業税 + @翌期還付市民税
 
@@ -467,7 +467,7 @@ module Luca
       end
 
       def 確定都道府県住民税
-        @税額.dig(:kenmin, :kintou) + @税額.dig(:kenmin, :houjinzei)
+        readable(@pl_data['H112']) || 0
       end
 
       def 期首未納都道府県民税
@@ -475,7 +475,7 @@ module Luca
       end
 
       def 期末未納都道府県民税
-        納付税額(@税額.dig(:kenmin, :kintou), @都道府県民税均等割中間納付) + 納付税額(@税額.dig(:kenmin, :houjinzei), @都道府県民税法人税割中間納付)
+        readable(@bs_data['5153']) || 0
       end
 
       def 未納都道府県民税期中増減
@@ -484,16 +484,15 @@ module Luca
       end
 
       def 都道府県民税仮払納付
-        [(@都道府県民税中間納付 - 確定都道府県住民税), 0].max
-        中間還付税額(@税額.dig(:kenmin, :kintou), @都道府県民税均等割中間納付) + 中間還付税額(@税額.dig(:kenmin, :houjinzei), @都道府県民税法人税割中間納付)
+        readable(@bs_data['1503']) || 0
       end
 
       def 都道府県民税損金納付
-        [@都道府県民税均等割中間納付, @税額.dig(:kenmin, :kintou)].min + [@都道府県民税法人税割中間納付, @税額.dig(:kenmin, :houjinzei)].min
+        [@都道府県民税均等割中間納付 + @都道府県民税法人税割中間納付, readable(@pl_data['H112'])||0].min
       end
 
       def 確定市民税
-        @税額.dig(:shimin, :kintou) - @税額.dig(:shimin, :houjinzei)
+        readable(@pl_data['H113']) || 0
       end
 
       def 期首未納市民税
@@ -501,7 +500,7 @@ module Luca
       end
 
       def 期末未納市民税
-        納付税額(@税額.dig(:shimin, :kintou), @市民税均等割中間納付) + 納付税額(@税額.dig(:shimin, :houjinzei), @市民税法人税割中間納付)
+        readable(@bs_data['5154']) || 0
       end
 
       def 未納市民税期中増減
@@ -510,15 +509,15 @@ module Luca
       end
 
       def 市民税仮払納付
-        中間還付税額(@税額.dig(:shimin, :kintou), @市民税均等割中間納付) + 中間還付税額(@税額.dig(:shimin, :houjinzei), @市民税法人税割中間納付)
+        readable(@bs_data['1505']) || 0
       end
 
       def 市民税損金納付
-        [@市民税均等割中間納付, @税額.dig(:shimin, :kintou)].min + [@市民税法人税割中間納付, @税額.dig(:shimin, :houjinzei)].min
+        [@市民税均等割中間納付 + @市民税法人税割中間納付, readable(@pl_data['H113'])||0].min
       end
 
       def 確定事業税
-        @税額.dig(:kenmin, :shotoku) + @税額.dig(:kenmin, :tokubetsu)
+        readable(@pl_data['H114']) || 0
       end
 
       def 事業税損金納付
