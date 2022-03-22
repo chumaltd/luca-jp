@@ -23,6 +23,7 @@ module Luca
         set_bs(4)
         @issue_date = Date.today
         @software = 'LucaJp'
+        @jimusho_name = report_cfg['jimusho_name']
         @report_category = report_cfg['type']
         @employee = report_cfg['employee'] || 1
         @office_count = report_cfg['office_count'] || 1
@@ -36,13 +37,14 @@ module Luca
         jichitai = @report_category == 'city' ? :shimin : :kenmin
         @均等割 = report_cfg['kintouwari'] || @税額.dig(jichitai, :kintou)
         @確定法人税割 = @税額.dig(jichitai, :houjinzei)
-        @地方特別法人事業税中間納付 = prepaid_tax('1854')
-        @所得割中間納付 = prepaid_tax('1855')
-        @法人税割中間納付 = prepaid_tax('1859')
-        @均等割中間納付 = prepaid_tax('185A')
+        @地方特別法人事業税中間納付 = prepaid_tax('1854', @jimusho_name)
+        @所得割中間納付 = prepaid_tax('1855', @jimusho_name)
+        @法人税割中間納付 = prepaid_tax('1859', @jimusho_name)
+        @均等割中間納付 = prepaid_tax('185A', @jimusho_name)
         @所得割 = @税額.dig(:kenmin, :shotoku)
         if export
           {
+            customer: @jimusho_name,
             jigyouzei: {
               shotoku: {
                 zeigaku: @所得割,
@@ -69,7 +71,6 @@ module Luca
           @form_vers = proc_version
           @jichitai_code = report_cfg['jichitai_code']
           @jimusho_code = report_cfg['jimusho_code']
-          @jimusho_name = report_cfg['jimusho_name']
           @kanri_bango = report_cfg['x_houjin_bango']
           @app_version = report_cfg['app_version']
           @address = report_cfg['address'] || it_part_config('nozeisha_adr')
@@ -130,6 +131,7 @@ module Luca
             end
             item['debit'] << { 'label' => label, 'amount' => dat[:zeigaku] } if dat[:zeigaku] > 0
           end
+          item['x-customer'] = records[:customer] unless records[:customer].nil?
           item['x-editor'] = 'LucaJp'
         end
       end

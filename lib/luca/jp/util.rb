@@ -21,10 +21,10 @@ module Luca
         end
       end
 
-      def prepaid_tax(code)
-        #LucaSupport::Code.readable(@bs_data.dig(code) || 0)
+      def prepaid_tax(code, customer = nil)
         search_end = @end_date.prev_month # exclude year end adjustment
-        amount, _ = self.class.net(@start_date.year, @start_date.month, search_end.year, search_end.month, code: code)
+        header = { customer: customer } unless customer.nil?
+        amount, _ = self.class.net(@start_date.year, @start_date.month, search_end.year, search_end.month, code: code, header: header)
         LucaSupport::Code.readable(amount[code] || 0)
       end
 
