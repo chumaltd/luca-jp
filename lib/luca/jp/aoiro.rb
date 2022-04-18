@@ -169,7 +169,7 @@ module Luca
         @当期還付消費税 = refund_tax('1501')
         @消費税期首残高 = 期首未納消費税 > 0 ? 期首未納消費税 : (@当期還付消費税 * -1)
         @翌期還付消費税 = 中間還付税額(@消費税期中増, @消費税中間納付額)
-        @その他事業税 = 租税公課
+        @その他事業税 = 租税公課 - @消費税期中増
         render_erb(search_template('beppyo52.xml.erb'))
       end
 
@@ -387,7 +387,7 @@ module Luca
         return '' if (@start_balance['1502']||0) == 0 && @翌期還付法人税 == 0
 
         %Q(<ICB00220>
-        #{render_attr('ICB00230', @start_balance['1502'] || 0)}
+        #{render_attr('ICB00230', readable(@start_balance['1502']) || 0)}
         <ICB00240>
         #{render_attr('ICB00250', @当期還付法人税)}
         #{render_attr('ICB00260', @翌期還付法人税)}
@@ -400,7 +400,7 @@ module Luca
         return '' if (@start_balance['1503']||0) == 0 && @翌期還付都道府県住民税 == 0
 
         %Q(<ICB00280>
-        #{render_attr('ICB00290', @start_balance['1503'] || 0)}
+        #{render_attr('ICB00290', readable(@start_balance['1503']) || 0)}
         <ICB00300>
         #{render_attr('ICB00310', @当期還付都道府県住民税)}
         #{render_attr('ICB00320', @翌期還付都道府県住民税)}
@@ -413,7 +413,7 @@ module Luca
         return '' if (@start_balance['1505']||0) == 0 && @翌期還付市民税 == 0
 
         %Q(<ICB00340>
-        #{render_attr('ICB00350', @start_balance['1505'] || 0)}
+        #{render_attr('ICB00350', readable(@start_balance['1505']) || 0)}
         <ICB00360>
         #{render_attr('ICB00370', @当期還付市民税)}
         #{render_attr('ICB00380', @翌期還付市民税)}
@@ -581,7 +581,7 @@ module Luca
           #{render_attr('MCB00190', deduction + record['amount'])}
           #{render_attr('MCB00200', deduction)}
           #{render_attr('MCB00210', record['amount'])}
-          </MCB00110)
+          </MCB00110>)
         end
         tags.compact.join("\n")
       end
