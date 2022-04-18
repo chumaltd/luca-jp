@@ -104,7 +104,7 @@
                 <%= render_attr('IAF02100', '<kubun_CD>2</kubun_CD>') %>
                 <%= render_attr('IAF02200', '<kubun_CD>2</kubun_CD>') %>
                 <%= render_attr('IAF02300', '<kubun_CD>1</kubun_CD>') %>
-            <% elsif gaikyo_config('shisanhyou') < 12 %>
+            <% elsif gaikyo_config('shisanhyou')&.< 12 %>
                 <%= render_attr('IAF02100', '<kubun_CD>2</kubun_CD>') %>
                 <%= render_attr('IAF02200', '<kubun_CD>1</kubun_CD>') %>
                 <%= render_attr('IAF02250', gaikyo_config('shisanhyou')) %>
