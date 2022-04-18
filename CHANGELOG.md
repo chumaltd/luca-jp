@@ -1,3 +1,7 @@
+## Luca::Jp 0.12.1
+
+* 東京都均等割の明細のフォーマット修正
+
 ## Luca::Jp 0.12.0
 
 * `luca-jp chihouzei --export`の出力に地方税申告事務所(jp.eltax.reports.jimusho_name)を追加。未払、未収の追跡用
