@@ -37,7 +37,7 @@ module Luca
       #
       def self.load(this_year)
         records = if File.exist?(record_file)
-                    YAML.load_file(record_file)
+                    YAML.safe_load(File.read(record_file), permitted_classes: [Date])
                       .filter { |record| record['start_date'] > this_year.prev_year(11) && record['end_date'] < this_year }
                       .sort { |a, b| a['start_date'] <=> b['start_date'] }
                  else

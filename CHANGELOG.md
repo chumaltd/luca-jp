@@ -1,3 +1,7 @@
+## Luca::Jp 0.13.0
+
+* Ruby 3.1との互換性 (Replace YAML.load/load_file to YAML.safe_load)
+
 ## Luca::Jp 0.12.4
 
 * 別表四、別表五一、別表五二の還付金算入

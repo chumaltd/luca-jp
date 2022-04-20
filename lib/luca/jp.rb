@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'date'
 require 'luca/jp/version'
 require 'luca_support/config'
 
@@ -18,7 +19,7 @@ module Luca
   end
 
   EX_CONF = begin
-              YAML.load_file(Pathname(LucaSupport::PJDIR) / 'config-lucajp.yml')
+              YAML.safe_load(File.read(Pathname(LucaSupport::PJDIR) / 'config-lucajp.yml'), permitted_classes: [Date])
             rescue Errno::ENOENT
               nil
             end
