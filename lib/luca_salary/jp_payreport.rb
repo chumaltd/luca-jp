@@ -46,7 +46,7 @@ def 給与支払報告明細行(slip, company, year)
     和暦(Date.new(year, 12, -1))[1], # 年分
     支払を受ける者(slip['profile']),
     支払(slip, year),
-    支払を受ける者の詳細(slip['profile'], year),
+    支払を受ける者の詳細(slip, year),
     company['tax_id'], # 法人番号
     支払を受ける者の扶養情報(slip['profile'], year),
     slip['911'], # 基礎控除の額
@@ -108,21 +108,21 @@ def 支払(slip, year)
   ]
 end
 
-def 支払を受ける者の詳細(profile, year)
-  birth = if profile['birth_date'].is_a?(String)
-                 Date.parse(profile['birth_date'])
+def 支払を受ける者の詳細(slip, year)
+  birth = if slip.dig('profile', 'birth_date').is_a?(String)
+            Date.parse(slip.dig('profile', 'birth_date'))
                else
-                 profile['birth_date']
+                 slip.dig('profile', 'birth_date')
                end
   生年月日 = 和暦(birth)
-  扶養対象 = 扶養親族分類(profile['family'], year)
+  扶養対象 = 扶養親族分類(slip.dig('profile', 'family'), year)
 
   [
     nil, # 生命保険料の控除額
     nil, # 地震保険料の控除額
     nil, # 住宅借入金等特別控除等の額
     nil, # 旧個人年金保険料の額
-    nil, # 配偶者の合計所得
+    slip.dig('spouse', 'income'), # 配偶者の合計所得
     nil, # 旧長期損害保険料の額
     生年月日[0], # 必須：受給者の生年月日 元号
     生年月日[1], # 必須：受給者の生年月日 年
