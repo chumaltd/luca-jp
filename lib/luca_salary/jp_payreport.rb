@@ -150,7 +150,7 @@ def 支払を受ける者の扶養情報(profile, year)
     profile['tax_id'], # 個人番号
     profile.dig('spouse', 'katakana'), # 控除対象配偶者カナ
     profile.dig('spouse', 'name'), # 控除対象配偶者 氏名
-    profile.dig('spouse') ? 00 : nil, # 控除対象配偶者 区分 TODO: 非居住者(01)の設定
+    profile.dig('spouse') ? '00' : nil, # 控除対象配偶者 区分 TODO: 非居住者(01)の設定
     profile.dig('spouse', 'tax_id'), # 控除対象配偶者 個人番号
     [0, 1, 2, 3].map { |i|
       [
