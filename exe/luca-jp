@@ -1,7 +1,9 @@
 #!/usr/bin/ruby
+# frozen_string_literal: true
 
 require 'optparse'
 require 'luca/jp'
+require 'luca_salary/jp_payreport'
 
 class LucaCmd
   def self.syouhizei(args, params)
@@ -54,6 +56,15 @@ class LucaCmd
   end
 end
 
+module LucaSalaryCmd
+  class Export
+    def self.payreport(args = nil, _params = nil)
+      puts LucaSalary::JpPayreport.export(args.first)
+    end
+  end
+end
+
+LucaRecord::Base.valid_project?
 cmd = ARGV.shift
 params = {}
 
@@ -89,6 +100,12 @@ when /urikake/
     args = opt.parse!(ARGV)
     LucaCmd.urikake(args, params)
   end
+when 'k', 'kyuyo', 'salary'
+  OptionParser.new do |opt|
+    opt.banner = 'Usage: luca-jp kyuyo [--export] year'
+    args = opt.parse(ARGV)
+    LucaSalaryCmd::Export.payreport(args)
+  end
 else
   puts 'Proper subcommand needed.'
   puts
@@ -96,6 +113,7 @@ else
   puts '  h[oujinzei]: 法人税の計算'
   puts '  s[youhizei]: 消費税の計算'
   puts '  c[hihouzei]: 地方税の計算'
+  puts '  k[yuyo]: 給与報告（所得税）の計算'
   puts '  urikake: 勘定科目内訳明細書の売掛金リスト(CSV)'
   exit 1
 end

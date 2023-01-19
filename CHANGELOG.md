@@ -1,3 +1,7 @@
+## Luca::Jp 0.14.0
+
+* `luca-jp kyuyo --export`: 給与支払報告CSVの実装。lucasalary-jp gemをマージしたもの
+
 ## Luca::Jp 0.13.0
 
 * Ruby 3.1との互換性 (Replace YAML.load/load_file to YAML.safe_load)
