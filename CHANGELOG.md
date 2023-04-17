@@ -1,3 +1,7 @@
+## Luca::Jp main
+
+* 法人税令和4年度フォーマットの反映: 別表１、別表１次葉
+
 ## Luca::Jp 0.14.2
 
 * LucaSalary::Jp 保険料のロードをLucaBase.load_data()に変更。小数の値をBigDecimalとして扱う
