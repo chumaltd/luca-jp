@@ -2,7 +2,7 @@
 
 ## e-Tax
 
-[e-Tax仕様書](https://www.e-tax.nta.go.jp/shiyo/index.htm#anc05)に申告・申請の技術仕様がリストされている。LinuxでCabファイルを解凍するとファイル名が文字化けする。`unar`コマンドで解凍すると適切にデコードできる。ExcelファイルはLibreOfficeで編集可能。
+[e-Tax仕様書](https://www.e-tax.nta.go.jp/shiyo/index.htm#anc05)に申告・申請の技術仕様がリストされている。LinuxでCabファイルを解凍するとファイル名が文字化けする。`unar`コマンドで解凍すると適切にデコードできる。または、`convmv`コマンドで変換する。ExcelファイルはLibreOfficeで編集可能。
 
 * ファイルは手続・帳票などの意味のある単位ではなく、改訂バージョン単位で分類されている。調査対象の手続や帳票のバージョンをあらかじめ特定しなくてはならない
   * 起点となる手続IDのリストは存在していない。LucaSuite JPの対象は以下の手続
