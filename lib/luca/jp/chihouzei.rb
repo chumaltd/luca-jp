@@ -250,7 +250,9 @@ module Luca
       end
 
       def proc_version
-        if @start_date >= Date.parse('2020-4-1')
+        if @end_date >= Date.parse('2022-4-1')
+          { 'R0102AA' => '211', 'R0102AM' => '211' }
+        elsif @start_date >= Date.parse('2020-4-1')
           { 'R0102AA' => '200', 'R0102AM' => '200' }
         else
           { 'R0102AA' => '190', 'R0102AM' => '190' }
