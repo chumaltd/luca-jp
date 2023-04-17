@@ -1,4 +1,4 @@
-<HOA511 page="1" VR="13.0" id="HOA511" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+<HOA511 page="1" VR="<%= @form_vers['HOA511'] %>" id="HOA511" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
     <ICA00000>
         <ICA00010>
             <ICA00020 IDREF="JIGYO_NENDO_FROM"/>
@@ -39,6 +39,7 @@
                 </ICB00550>
                 <%= render_attr('ICB00610', 期末未納法人税) %>
             </ICB00530>
+            <%# ICB00860 未払通算税効果額 %>
             <ICB00620>
                 <%= render_attr('ICB00630', 期首未納都道府県民税) %>
                 <ICB00640>
