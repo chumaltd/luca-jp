@@ -82,7 +82,7 @@ module Luca
                         ["R0102AA#{@form_vers['R0102AA']}", 別表九フォーム]
                           .compact.map{ |c| form_attr(c) }.join('')
                       when '23ku'
-                        ["R0102AA#{@form_vers['R0102AA']}", "R0102AG120", 別表九フォーム]
+                        ["R0102AA#{@form_vers['R0102AA']}", "R0102AG#{@form_vers['R0102AG']}", 別表九フォーム]
                           .compact.map{ |c| form_attr(c) }.join('')
                       when 'city'
                         ["R0504AA180"].compact.map{ |c| form_attr(c) }.join('')
@@ -251,11 +251,11 @@ module Luca
 
       def proc_version
         if @end_date >= Date.parse('2022-4-1')
-          { 'R0102AA' => '211', 'R0102AM' => '211' }
+          { 'R0102AA' => '211', 'R0102AG' => '211', 'R0102AM' => '211' }
         elsif @start_date >= Date.parse('2020-4-1')
-          { 'R0102AA' => '200', 'R0102AM' => '200' }
+          { 'R0102AA' => '200', 'R0102AG' => '120','R0102AM' => '200' }
         else
-          { 'R0102AA' => '190', 'R0102AM' => '190' }
+          { 'R0102AA' => '190', 'R0102AG' => '120', 'R0102AM' => '190' }
         end
       end
 
