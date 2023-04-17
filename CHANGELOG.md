@@ -1,3 +1,7 @@
+## Luca::Jp 0.14.2
+
+* LucaSalary::Jp 保険料のロードをLucaBase.load_data()に変更。小数の値をBigDecimalとして扱う
+
 ## Luca::Jp 0.14.1
 
 * LucaSalary::Jp 保険料のエリア指定を考慮。有効な最新テーブルを選択

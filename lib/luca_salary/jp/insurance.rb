@@ -1,22 +1,26 @@
 require 'bigdecimal'
 require 'date'
 require 'json'
+require 'luca_record'
 require 'pathname'
 
-class InsuranceJP
+class InsuranceJP < LucaRecord::Base
   attr_reader :table
+  @record_type = 'json'
+  @dirname = 'dict'
 
   # load config
   def initialize(dir_path, area=nil, date=nil)
-    @pjdir = Pathname(dir_path) + 'dict'
+    @pjdir = Pathname(dir_path)
     @area = area
     @date = date
-    @table = load_table
+    filename = select_active_filename
+    @table = self.class.load_table(@pjdir, filename)
   end
 
-  def load_table
-    file_name = @pjdir + select_active_filename
-    JSON.parse(File.read(file_name.to_s))
+  def self.load_table(pjdir, filename)
+    file_path = pjdir / @dirname / filename
+    load_data(File.open(file_path))
   end
 
   def health_insurance_salary(rank)
@@ -61,7 +65,7 @@ class InsuranceJP
 
   # TODO: Limit only to pension tables.
   def open_tables
-    Dir.chdir(@pjdir.to_s) do
+    Dir.chdir((@pjdir / 'dict').to_s) do
       Dir.glob("*.json").each do |file_name|
         File.open(file_name, 'r') {|f| yield(f, file_name)}
       end
