@@ -1,3 +1,7 @@
+## Luca::Jp 0.14.1
+
+* LucaSalary::Jp 保険料のエリア指定を考慮。有効な最新テーブルを選択
+
 ## Luca::Jp 0.14.0
 
 * `luca-jp kyuyo --export`: 給与支払報告CSVの実装。lucasalary-jp gemをマージしたもの

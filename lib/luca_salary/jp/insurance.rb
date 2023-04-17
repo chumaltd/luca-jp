@@ -41,21 +41,25 @@ class InsuranceJP
     BigDecimal(num).round(0, BigDecimal::ROUND_HALF_DOWN).to_i
   end
 
-  # TODO: need selection logic
   def select_active_filename
-    list = load_json
-    list.first[1]
+    list_json
+             .filter { |tbl| tbl[0] <= @date }
+             .max { |a, b| a[0] <=> b[0] }
+             .last
   end
 
-  def load_json
+  def list_json
     table_list = [].tap do |a|
       open_tables do |f, name|
         data = JSON.parse(f.read)
+        next if @area && data['area'] != @area
+
         a << [Date.parse(data['effective_date']), name]
       end
     end
   end
 
+  # TODO: Limit only to pension tables.
   def open_tables
     Dir.chdir(@pjdir.to_s) do
       Dir.glob("*.json").each do |file_name|
