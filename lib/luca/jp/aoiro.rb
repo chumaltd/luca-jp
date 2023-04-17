@@ -198,6 +198,9 @@ module Luca
       end
 
       def 適用額明細
+        if 期末資本金 <= 10_000_000
+          STDERR.puts "適用額明細： 必要に応じて「少額減価償却資産の損金算入」（67条の5第1項, 00277。別表16[7]）の確認が必要"
+        end
         return nil if @確定法人税額 == 0
 
         render_erb(search_template('tekiyougaku.xml.erb'))
