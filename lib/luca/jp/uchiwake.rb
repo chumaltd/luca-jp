@@ -198,13 +198,59 @@ module Luca #:nodoc:
         render_erb(search_template('yakuin-meisai.xml.erb'))
       end
 
-      # TODO: render template. check tax refund
-      def 雑益雑損失内訳
-        @雑益 = readable(@bs_data.dig('D16') || 0)
-        @雑損失 = readable(@bs_data.dig('E16') || 0)
-        STDERR.puts "勘定科目内訳書（雑益雑損失）作成の必要性確認" if @雑益 >= 100_000 || @雑損失 >= 100_000
+      # 雑収入のうち、10万円以上または未収入金とのセット仕訳
+      # 雑収入の補助科目のうち、10万円以上
+      # 雑損失とその補助科目のうち、10万円以上の仕訳
+      #
+      def 雑益雑損失内訳フォーム
+        @雑益 = LucaBook::List.term(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: 'D16')
+                        .data
+                        .map { |journal| {
+                                 note: journal[:note],
+                                 amount: readable(journal[:credit].select { |entry| entry[:code] == 'D16' }
+                                   .map { |entry| entry[:amount] }.compact.sum),
+                                 tax_refund: journal[:credit].index { |entry| entry[:code] =~ /^150/ }
+                               } }
+                        .select { |obj| obj[:amount] >= 100_000 || obj[:tax_refund] }
+        @pl_data.keys
+          .select { |k| k =~ /^D16[0-9A-Z]+/ && @pl_data[k] >= 100_000 }
+          .each do |k|
+          @雑益.push({
+                       note: self.class.dict.dig(k)[:label],
+                       amount: @pl_data[k]
+                     })
+        end
+        @雑益 = @雑益.sort_by{ |obj| obj[:amount] }
+                .reverse.take(10)
 
-        nil
+        @雑損失 = LucaBook::List.term(@start_date.year, @start_date.month, @end_date.year, @end_date.month, code: 'E16')
+                        .data
+                        .map { |journal| {
+                                 note: journal[:note],
+                                 amount: readable(journal[:debit].select { |entry| entry[:code] == 'E16' }
+                                   .map { |entry| entry[:amount] }.compact.sum)
+                               } }
+                        .select { |obj| obj[:amount] >= 100_000 }
+        @pl_data.keys
+          .select { |k| k =~ /^E16[0-9A-Z]+/ && @pl_data[k] >= 100_000 }
+          .each do |k|
+          @雑損失.push({
+                         note: self.class.dict.dig(k)[:label],
+                         amount: @pl_data[k]
+                       })
+        end
+        @雑損失 = @雑損失.sort_by{ |obj| obj[:amount] }
+                  .reverse.take(10)
+        return nil if @雑益.empty? && @雑損失.empty?
+
+        'HOI160'
+      end
+
+      def 雑益雑損失内訳
+        return nil if @雑益.empty? && @雑損失.empty?
+
+        STDERR.puts "勘定科目内訳書（雑益雑損失）の内容確認"
+        render_erb(search_template('zatsueki-meisai.xml.erb'))
       end
     end
   end
