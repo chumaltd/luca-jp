@@ -1,4 +1,13 @@
 <HOI141 page="1" VR="5.0" id="HOI141" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <ILA00000>
+        <ILA00010>
+            <ILA00025>01</ILA00025>
+            <ILA00030><%= it_part_config('daihyo_nm') %></ILA00030>
+            <ILA00045>01</ILA00045>
+            <ILA00050><%= it_part_config('daihyo_adr') %></ILA00050>
+            <ILA00060>1</ILA00060>
+        </ILA00010>
+    </ILA00000>
     <ILB00000>
         <ILB00010>
             <%= render_attr('ILB00020', @役員報酬) %>

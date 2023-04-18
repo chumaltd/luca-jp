@@ -78,7 +78,7 @@ module Luca
           @form_data = [
             別表一, 別表一次葉, 別表二, 別表四簡易, 別表五一, 別表五二, 別表七, 別表十五,
             適用額明細,
-            預貯金内訳, 有価証券内訳, 買掛金内訳, 仮受金内訳, 借入金内訳, 役員報酬内訳, 地代家賃内訳,
+            預貯金内訳, 有価証券内訳, 買掛金内訳, 仮受金内訳, 借入金内訳, 役員報酬内訳, 地代家賃内訳, 雑益雑損失内訳,
             概況説明
             ].compact.join("\n")
           render_erb(search_template('aoiro.xtx.erb'))
@@ -187,6 +187,7 @@ module Luca
 
       def 別表十五
         @交際費 = readable(@pl_data.dig('C1B') || 0)
+        STDERR.puts "別表十五： 交際費計上額なし。必要に応じて帳票削除" if @交際費 == 0
         @限度額 = @交際費 < 4_000_000 ? @交際費 : 4_000_000
         @不算入額 = @交際費 < 4_000_000 ? 0 : @交際費 - 4_000_000
         render_erb(search_template('beppyo15.xml.erb'))
@@ -202,7 +203,10 @@ module Luca
         if 期末資本金 <= 10_000_000
           STDERR.puts "適用額明細： 必要に応じて「少額減価償却資産の損金算入」（67条の5第1項, 00277。別表16[7]）の確認が必要"
         end
-        return nil if @確定法人税額 == 0
+        if @確定法人税額 == 0
+          STDERR.puts "別表一：適用額明細書の有無の確認が必要"
+          return nil
+        end
 
         render_erb(search_template('tekiyougaku.xml.erb'))
       end

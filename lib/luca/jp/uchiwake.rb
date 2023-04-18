@@ -169,6 +169,7 @@ module Luca #:nodoc:
         account_codes = uchiwake_account_config('C1E').map { |account| account['code'].to_s }
         return nil if account_codes.length == 0
 
+        STDERR.puts "勘定科目内訳書（地代家賃）の支払対象期間の追記が必要"
         @地代家賃 = @bs_data.each.with_object({}) do |(k, v), h|
           next unless account_codes.include?(k)
           next unless readable(v || 0) > 0
@@ -191,9 +192,19 @@ module Luca #:nodoc:
       end
 
       def 役員報酬内訳
+        STDERR.puts "勘定科目内訳書（役員報酬）の個人別金額の追記が必要"
         @役員報酬 = readable(@pl_data.dig('C11') || 0)
         @給料 = readable(@pl_data.dig('C12') || 0)
         render_erb(search_template('yakuin-meisai.xml.erb'))
+      end
+
+      # TODO: render template. check tax refund
+      def 雑益雑損失内訳
+        @雑益 = readable(@bs_data.dig('D16') || 0)
+        @雑損失 = readable(@bs_data.dig('E16') || 0)
+        STDERR.puts "勘定科目内訳書（雑益雑損失）作成の必要性確認" if @雑益 >= 100_000 || @雑損失 >= 100_000
+
+        nil
       end
     end
   end
