@@ -99,6 +99,7 @@ when /urikake/
     opt.on('--total VAL', '売掛金総額') { |v| params[:total] = v&.to_i }
     args = opt.parse!(ARGV)
     LucaCmd.urikake(args, params)
+    STDERR.puts "UTF-8でCSVを作成しています。eTaxはShiftJIS以外の文字コードを拒否する可能性があります"
   end
 when 'k', 'kyuyo', 'salary'
   OptionParser.new do |opt|
