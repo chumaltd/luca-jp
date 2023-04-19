@@ -579,7 +579,7 @@ module Luca
       end
 
       def 別表五一期首資本
-        readable(@start_balance.dig('911')||0 + @start_balance.dig('913')||0)
+        readable(['911', '913', '916'].map { |k| @start_balance.dig(k) }.compact.sum)
       end
 
       # 資本金、資本準備金、その他資本剰余金、自己株式（控除）の合算
