@@ -64,7 +64,8 @@ module Luca
           @都道府県民税期中増, @都道府県民税期中減 = 未納都道府県民税期中増減
           @市民税期中増, @市民税期中減 = 未納市民税期中増減
           @事業税期中増, @事業税期中減 = 未納事業税期中増減
-          @事業税中間納付 = prepaid_tax('1854') + prepaid_tax('1855') + prepaid_tax('1856') + prepaid_tax('1857') + prepaid_tax('1858')
+          @事業税中間納付 = ['1854', '1855', '1856', '1857', '1858']
+                              .map{ |k| prepaid_tax(k) }.compact.sum
           @翌期還付法人税 = 中間還付税額(@確定法人税額 + @確定地方法人税額, @法人税中間納付 + @地方法人税中間納付)
           @概況売上 = gaikyo('A0')
           @form_sec = [
@@ -217,7 +218,7 @@ module Luca
         @概況給料 = gaikyo('C12')
         @概況交際費 = gaikyo('C1B')
         @概況減価償却 = gaikyo('C1P')
-        @概況地代租税 = gaikyo('C1E') + gaikyo('C1I')
+        @概況地代租税 = ['C1E', 'C1I'].map { |k| gaikyo(k) }.compact.sum
         @概況営業損益 = gaikyo('CA')
         @概況特別利益 = gaikyo('F0')
         @概況特別損失 = gaikyo('G0')
@@ -227,10 +228,10 @@ module Luca
         @概況受取手形 = gaikyo('120')
         @概況売掛金 = gaikyo('130')
         @概況棚卸資産 = gaikyo('160')
-        @概況貸付金 = gaikyo('140') + gaikyo('333')
+        @概況貸付金 = ['140', '333'].map { |k| gaikyo(k) }.compact.sum
         @概況建物 = gaikyo('311')
         @概況機械 = gaikyo('313')
-        @概況車船 = gaikyo('314') + gaikyo('318')
+        @概況車船 = ['314', '318'].map { |k| gaikyo(k) }.compact.sum
         @概況土地 = gaikyo('316')
         @概況負債計 = gaikyo('8ZZ')
         @概況支払手形 = gaikyo('510')
@@ -240,9 +241,9 @@ module Luca
         @概況純資産 = gaikyo('9ZZ')
         @代表者報酬 = gaikyo('C11')
         @代表者借入 = gaikyo('5121')
-        @概況仕入 = gaikyo('B11') + gaikyo('B12')
+        @概況仕入 = ['B11', 'B12'].map { |k| gaikyo(k) }.compact.sum
         @概況外注費 = gaikyo('C1O')
-        @概況人件費 = gaikyo('C11') + gaikyo('C12') + gaikyo('C13')
+        @概況人件費 = ['C11', 'C12', 'C13'].map { |k| gaikyo(k) }.compact.sum
         render_erb(search_template('gaikyo.xml.erb'))
       end
 
@@ -375,7 +376,8 @@ module Luca
       end
 
       def 別表五一仮払税金
-        未収仮払税金 = [@start_balance['1502'], @start_balance['1503'], @start_balance['1504'], @start_balance['1505']].compact.sum
+        未収仮払税金 = ['1502', '1503', '1504', '1505']
+                         .map { |k| @start_balance[k] }.compact.sum
         還付税金 = [@当期還付法人税, @当期還付都道府県住民税, @当期還付事業税, @当期還付市民税].compact.sum
         return '' if 未収仮払税金 == 0 && 還付税金 == 0 && @仮払税金 == 0
 
@@ -656,11 +658,13 @@ module Luca
       end
 
       def 概況月仕入(idx)
-        gaikyo_month(idx, 'B11') + gaikyo_month(idx, 'B12')
+        ['B11', 'B12']
+          .map { |k| gaikyo_month(idx, k) }.compact.sum
       end
 
       def 概況月人件費(idx)
-        gaikyo_month(idx, 'C11') + gaikyo_month(idx, 'C12') + gaikyo_month(idx, 'C13') + gaikyo_month(idx, 'C14')
+        ['C11', 'C12', 'C13', 'C14']
+          .map { |k| gaikyo_month(idx, k) }.compact.sum
       end
 
       def 概況月外注費(idx)
