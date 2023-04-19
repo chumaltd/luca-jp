@@ -1,0 +1,16 @@
+<HOI160 page="1" VR="3.0" id="HOI160" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+  <% @雑益.each do |profit| %>
+    <HPB00000>
+      <HPB00100>雑収入</HPB00100>
+      <%= render_attr('HPB00200', profit[:note]) %>
+      <%= render_attr('HPB00500', profit[:amount]) %>
+    </HPB00000>
+  <% end %>
+  <% @雑損失.each do |loss| %>
+    <HPC00000>
+      <HPC00100>雑損失</HPC00100>
+      <%= render_attr('HPC00200', loss[:note]) %>
+      <%= render_attr('HPC00500', loss[:amount]) %>
+    </HPC00000>
+  <% end %>
+</HOI160>

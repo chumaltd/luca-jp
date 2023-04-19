@@ -12,9 +12,10 @@ module Luca
     class Urikake < LucaDeal::Invoice
       @dirname = 'invoices'
 
-      def report(total = nil)
+      def report(total = nil, encoding = nil)
         listed_amount = 0
-        str = CSV.generate(String.new, headers: false, col_sep: ',', encoding: 'UTF-8') do |f|
+        encoding ||= 'SJIS'
+        str = CSV.generate(String.new, headers: false, col_sep: ',', encoding: encoding) do |f|
           list.map do |invoice|
             amount = readable(invoice.dig('subtotal', 0, 'items') + invoice.dig('subtotal', 0, 'tax'))
             listed_amount += amount
@@ -23,6 +24,8 @@ module Luca
           if total
             f << ['3', '0', '売掛金', 'その他', nil, total - listed_amount, nil ]
             f << ['3', '1', nil, nil, nil, total, nil ]
+          else
+            f << ['3', '1', nil, nil, nil, listed_amount, nil ]
           end
         end
         File.open('HOI030_3.0.csv', 'w') { |f| f.write(str) }
