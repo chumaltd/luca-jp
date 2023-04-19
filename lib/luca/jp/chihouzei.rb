@@ -138,7 +138,7 @@ module Luca
 
       def 第六号
         @資本金準備金 = readable(['911', '9131'].map { |cd| @bs_data.dig(cd) }.compact.sum)
-        STDERR.puts "第六号様式： 「決算確定の日」「国外関連者」などの追記が必要"
+        STDERR.puts "第六号様式： 「決算確定の日」などの追記が必要。「国外関連者」の確認が必要"
         render_erb(search_template('el-no6.xml.erb'))
       end
 
@@ -180,7 +180,7 @@ module Luca
         @所得割中間納付
       end
 
-      # TODO: 損失の区分
+      # 災害損失は考慮していない
       #
       def 別表九各期青色損失
         tags = @繰越損失管理.records
@@ -192,7 +192,7 @@ module Luca
           %Q(<AMB00200>
           <AMB00210>#{etax_date(@start_date)}</AMB00210>
           <AMB00220>#{etax_date(@end_date)}</AMB00220>
-          <AMB00225 />
+          <AMB00225>1</AMB00225>
           #{render_attr('AMB00230', deduction + record['amount'])}
           #{render_attr('AMB00240', deduction)}
           #{render_attr('AMB00250', record['amount'])}
