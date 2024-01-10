@@ -2,7 +2,8 @@
 
 require 'date'
 require 'luca/jp/version'
-require 'luca_support/config'
+require 'luca_support/const'
+require 'yaml'
 
 module Luca
   module Jp
@@ -17,10 +18,4 @@ module Luca
     autoload :Uchiwake, 'luca/jp/uchiwake'
     autoload :Util, 'luca/jp/util'
   end
-
-  EX_CONF = begin
-              YAML.safe_load(File.read(Pathname(LucaSupport::PJDIR) / 'config-lucajp.yml'), permitted_classes: [Date])
-            rescue Errno::ENOENT
-              nil
-            end
 end

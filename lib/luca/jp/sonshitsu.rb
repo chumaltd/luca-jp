@@ -4,7 +4,7 @@ require 'date'
 require 'pathname'
 require 'yaml'
 require 'luca_book'
-require 'luca_support/config'
+require 'luca_support/const'
 
 module Luca
   module Jp
@@ -95,7 +95,7 @@ module Luca
       end
 
       def self.record_file
-        Pathname(LucaSupport::PJDIR) / 'data' / 'balance' / 'sonshitsu.yml'
+        Pathname(LucaSupport::CONST.pjdir) / 'data' / 'balance' / 'sonshitsu.yml'
       end
     end
   end

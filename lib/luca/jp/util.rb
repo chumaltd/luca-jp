@@ -64,7 +64,7 @@ module Luca
       end
 
       def config
-        EX_CONF.nil? ? LucaSupport::CONFIG : LucaSupport::CONFIG.merge(EX_CONF)
+        LucaSupport::CONST.config
       end
 
       def it_part_config(key)

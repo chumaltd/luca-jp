@@ -1,3 +1,8 @@
+## Luca::Jp 0.16.1
+
+* Reworked global constants w/LucaRecord v0.7
+* add `luca-book version` subcommand
+
 ## Luca::Jp 0.15.0
 
 * 法人税令和4年度フォーマットの反映: 別表１、別表１次葉、別表４簡易、別表５１、別表５２、別表７、別表１５

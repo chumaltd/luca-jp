@@ -33,7 +33,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'lucabook', '>= 0.4'
   spec.add_dependency 'lucasalary', '>= 0.1.26'
-  spec.add_dependency 'lucarecord', '>= 0.5.5'
+  spec.add_dependency 'lucarecord', '>= 0.7.0'
   spec.add_dependency 'jp-national-tax', '>= 0.1.3'
 
   spec.add_development_dependency 'bundler', '~> 2.3'

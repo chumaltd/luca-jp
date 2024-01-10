@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'luca_support'
-require 'luca_support/config'
 
 module Luca
   module Jp

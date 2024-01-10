@@ -5,7 +5,6 @@ require 'cgi/escape'
 require 'luca_book'
 require 'luca_support'
 require 'luca_record/dict'
-require 'luca_support/config'
 require 'luca/jp/util'
 
 module Luca

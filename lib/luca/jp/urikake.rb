@@ -4,7 +4,6 @@ require 'json'
 require 'cgi/escape'
 require 'luca_deal'
 require 'luca_support'
-require 'luca_support/config'
 require 'luca/jp'
 
 module Luca

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 require 'luca_salary'
-require 'luca_support/config'
+require 'luca_support/const'
 require 'csv'
 require 'open3'
 
@@ -24,11 +24,11 @@ module LucaSalary
       # TODO: extract effective field
       def self.set_company(year)
         {}.tap do |h|
-          h['name'] = CONFIG.dig('company', 'name')
-          h['address'] = CONFIG.dig('company', 'address')
-          h['address2'] = CONFIG.dig('company', 'address2')
-          h['tel'] = CONFIG.dig('company', 'tel')
-          h['tax_id'] = CONFIG.dig('company', 'tax_id')
+          h['name'] = LucaSupport::CONST.config.dig('company', 'name')
+          h['address'] = LucaSupport::CONST.config.dig('company', 'address')
+          h['address2'] = LucaSupport::CONST.config.dig('company', 'address2')
+          h['tel'] = LucaSupport::CONST.config.dig('company', 'tel')
+          h['tax_id'] = LucaSupport::CONST.config.dig('company', 'tax_id')
 
           raise "会社名、住所の設定は必須" if h['name'].nil? or h['address'].nil?
         end
