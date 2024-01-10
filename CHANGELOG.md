@@ -1,3 +1,7 @@
+## Luca::Jp 0.16.2
+
+* 給与報告の扶養対象家族の区分別人数を算出
+
 ## Luca::Jp 0.16.1
 
 * Reworked global constants w/LucaRecord v0.7

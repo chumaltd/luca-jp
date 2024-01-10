@@ -49,7 +49,7 @@ def 給与支払報告明細行(slip, company, year)
     支払を受ける者の詳細(slip, year),
     company['tax_id'], # 法人番号
     支払を受ける者の扶養情報(slip['profile'], year),
-    slip['911'], # 基礎控除の額
+    slip['911'] == 480_000 ? nil : slip['911'], # 基礎控除の額、48万の場合記載しない
     nil, # 所得金額調整控除額 TODO: 未実装 措法41の3の3
     nil, # ひとり親
     提出先判定(slip), # 必須：作成区分（国税のみ0, 地方のみ1, 両方2）
@@ -82,6 +82,7 @@ end
 
 def 支払(slip, year)
   配偶者控除等 = [slip['916'], slip['917']].compact.sum
+  扶養対象 = 扶養親族分類(slip.dig('profile', 'family'), year)
   [
     '給料', # 種別
     slip['1'], # 支払金額
@@ -93,12 +94,12 @@ def 支払(slip, year)
     配偶者控除等 > 0 ? 1 : 2, # 控除対象配偶者の有無 TODO: 従たる給与
     老人控除対象配偶者(slip.dig('profile', 'spouse'), year),
     配偶者控除等, # 配偶者控除の額
-    nil, # 控除対象扶養親族の数 特定 主
+    扶養対象['特定'].length, # 控除対象扶養親族の数 特定 主
     nil, # 控除対象扶養親族の数 特定 従
-    nil, # 控除対象扶養親族の数 老人 主
+    扶養対象['老人'].length, # 控除対象扶養親族の数 老人 主
     nil, # 控除対象扶養親族の数 老人 上の内訳
     nil, # 控除対象扶養親族の数 老人 従
-    nil, # 控除対象扶養親族の数 その他 主
+    扶養対象['その他'].length, # 控除対象扶養親族の数 その他 主
     nil, # 控除対象扶養親族の数 その他 従
     nil, # 障害者の数 特別障害者
     nil, # 障害者の数 上の内訳 NOTE: 同居・同一生計
@@ -122,7 +123,7 @@ def 支払を受ける者の詳細(slip, year)
     nil, # 地震保険料の控除額
     nil, # 住宅借入金等特別控除等の額
     nil, # 旧個人年金保険料の額
-    slip.dig('spouse', 'income'), # 配偶者の合計所得
+    slip.dig('profile', 'spouse', 'income', year), # 配偶者の合計所得
     nil, # 旧長期損害保険料の額
     生年月日[0], # 必須：受給者の生年月日 元号
     生年月日[1], # 必須：受給者の生年月日 年
@@ -174,7 +175,7 @@ def 支払を受ける者の扶養情報(profile, year)
     nil, # 青色専従者
     nil, # 条約免除
     半角変換(profile['katakana']), # 必須：支払を受ける者のフリガナ（半角）
-    nil, # 需給者番号
+    nil, # 受給者番号
     profile.dig('resident', 'area_code'), # 必須：提出先市町村コード
     profile.dig('resident', 'tax_id'), # 指定番号
   ]
@@ -203,17 +204,27 @@ end
 def 扶養親族分類(family, year)
   return {} if family.nil?
 
-  { '16才以上' => [], '16才未満' => [] }.tap do |result|
+  this_year = Date.new(year, 12, -1)
+  { '16才以上' => [], '16才未満' => [], '老人' => [], '特定' => [], 'その他' => [] }.tap do |result|
     family.each do |p|
       if !p['birth_date']
         result['16才以上'] << p
+        result['その他'] << p
       else
         date = p['birth_date']
         date = Date.parse(date) if date.is_a?(String)
-        if date.next_year(16) < Date.new(year, 12, -1)
+        if date.next_year(16) <= this_year
           result['16才以上'] << p
+          if date.next_year(70) <= this_year
+            result['老人'] << p
+          elsif date.next_year(19) <= this_year and date.next_year(23) > this_year
+            result['特定'] << p
+          else
+            result['その他'] << p
+          end
         else
           result['16才未満'] << p
+          result['その他'] << p
         end
       end
     end
