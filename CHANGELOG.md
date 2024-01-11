@@ -1,3 +1,7 @@
+## Luca::Jp 0.16.3
+
+* Switch to `LucaCmd.check_dir()` with `ext_conf` option.
+
 ## Luca::Jp 0.16.2
 
 * 給与報告の扶養対象家族の区分別人数を算出

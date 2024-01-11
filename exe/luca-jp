@@ -7,6 +7,8 @@ require 'luca_salary/jp_payreport'
 require 'luca_cmd'
 require 'luca_support/const'
 
+EXT_CONF = 'config-lucajp.yml'
+
 class LucaCmd
   def self.syouhizei(args, params)
     if params[:export]
@@ -56,26 +58,6 @@ class LucaCmd
       [r[0].year, r[0].month, r[1].year, r[1].month]
     end
   end
-
-  def self.check_dir_jp(target)
-    check_dir(target) do
-      begin
-        ex_conf = YAML.safe_load(
-          File.read(Pathname(LucaSupport::CONST.pjdir) / 'config-lucajp.yml'),
-          permitted_classes: [Date]
-        )
-        if ex_conf
-          LucaSupport::CONST.set_config(
-            LucaSupport::CONST.config.merge(ex_conf)
-          )
-        end
-      rescue Errno::ENOENT
-        nil
-      end
-
-      yield
-    end
-  end
 end
 
 module LucaSalaryCmd
@@ -97,7 +79,7 @@ when 'h', /hou?jinzei/
     opt.on('--export', 'export json') { |_v| params[:export] = true }
     opt.on('--lastyear', 'report on last Financial year') { |_v| params[:lastyear] = true }
     args = opt.parse!(ARGV)
-    LucaCmd.check_dir_jp('journals') do
+    LucaCmd.check_dir('journals', ext_conf: EXT_CONF) do
       LucaCmd.houjinzei(args, params)
     end
   end
@@ -107,7 +89,7 @@ when 's', /s[yh]ou?hizei/
       opt.on('--export', 'export json') { |_v| params[:export] = true }
       opt.on('--lastyear', 'report on last Financial year') { |_v| params[:lastyear] = true }
       args = opt.parse!(ARGV)
-      LucaCmd.check_dir_jp('journals') do
+      LucaCmd.check_dir('journals', ext_conf: EXT_CONF) do
         LucaCmd.syouhizei(args, params)
       end
     end
@@ -117,7 +99,7 @@ when 'c', /chihou?zei/
     opt.on('--export', 'export json') { |_v| params[:export] = true }
     opt.on('--lastyear', 'report on last Financial year') { |_v| params[:lastyear] = true }
     args = opt.parse!(ARGV)
-    LucaCmd.check_dir_jp('journals') do
+    LucaCmd.check_dir('journals', ext_conf: EXT_CONF) do
       LucaCmd.chihouzei(args, params)
     end
   end
@@ -127,7 +109,7 @@ when /urikake/
     opt.on('--total VAL', '売掛金総額') { |v| params[:total] = v&.to_i }
     opt.on('--utf8', 'UTF-8でファイル生成') { |_v| params[:encode] = 'UTF-8' }
     args = opt.parse!(ARGV)
-    LucaCmd.check_dir_jp('invoices') do
+    LucaCmd.check_dir('invoices', ext_conf: EXT_CONF) do
       LucaCmd.urikake(args, params)
     end
   end
@@ -135,7 +117,7 @@ when 'k', 'kyuyo', 'salary'
   OptionParser.new do |opt|
     opt.banner = 'Usage: luca-jp kyuyo [--export] year'
     args = opt.parse(ARGV)
-    LucaCmd.check_dir_jp('profiles') do
+    LucaCmd.check_dir('profiles', ext_conf: EXT_CONF) do
       LucaSalaryCmd::Export.payreport(args)
     end
   end
