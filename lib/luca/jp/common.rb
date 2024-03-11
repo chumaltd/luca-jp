@@ -341,6 +341,8 @@ module Luca
       # :section: 複数自治体間の分割計算
       # -----------------------------------------------------
       def 事業税の分割課税標準(課税標準)
+        return 課税標準 if ! Luca::Jp::Util.eltax_config('reports')
+
         case Luca::Jp::Util.eltax_config('reports')
                .filter { |r| レポート種別.include?(r['type']) }.length
         when 0, 1
