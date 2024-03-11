@@ -21,6 +21,7 @@ module Luca
       # TODO: 軽減税率売上の識別
       #
       def kani(export: false)
+        @２割特例 = config.dig('jp', 'syouhizei_kubun') == 2023
         set_pl(4)
         set_bs(4)
         @issue_date = Date.today
@@ -32,6 +33,7 @@ module Luca
 
         @sales = @pl_data.dig('A0') * 100 / (100 + 税率 + 地方税率).floor
         @tax_amount = (課税標準額(@sales) * 税率 / 100).floor
+        @基準期間の課税売上高 = LucaSupport::Code.readable(基準期間の課税売上高(税率 + 地方税率))
         @みなし仕入税額 = (@tax_amount * みなし仕入率(config.dig('jp', 'syouhizei_kubun')) / 100).floor
         @税額 = LucaSupport::Code.readable(((@tax_amount - @みなし仕入税額) / 100).floor * 100)
         @譲渡割額 = (@税額 * 地方税率 / (税率*100)).floor * 100
@@ -54,9 +56,17 @@ module Luca
           @procedure_name = '消費税及び地方消費税申告(簡易課税・法人)'
           @form_vers = proc_version
           @version = @form_vers['proc']
-          @form_sec = ['SHA020', 'SHB047', 'SHB067'].map{ |c| form_rdf(c) }.join('')
           @it = it_part
-          @form_data = [申告書簡易課税, 付表四の三, 付表五の三].join("\n")
+          @form_sec = if @２割特例
+                        ['SHA020', 'SHB070'].map{ |c| form_rdf(c) }.join('')
+                      else
+                        ['SHA020', 'SHB047', 'SHB067'].map{ |c| form_rdf(c) }.join('')
+                      end
+          @form_data = if @２割特例
+                         [申告書簡易課税, 付表六].join("\n")
+                       else
+                         [申告書簡易課税, 付表四の三, 付表五の三].join("\n")
+                       end
           render_erb(search_template('consumption.xtx.erb'))
         end
       end
@@ -71,6 +81,10 @@ module Luca
 
       def 付表五の三
         render_erb(search_template('fuhyo53.xml.erb'))
+      end
+
+      def 付表六
+        render_erb(search_template('fuhyo6.xml.erb'))
       end
 
       def export_json
@@ -110,6 +124,16 @@ module Luca
         (課税資産の譲渡等の対価の額 / 1000).floor * 1000
       end
 
+      def 基準期間の課税売上高(税率)
+        基準日 = @end_date.prev_year(2)
+        from_d, to_d = LucaBook::Util.current_fy(基準日)
+        state = LucaBook::State.range(from_d.year, from_d.month, to_d.year, to_d.month)
+        state.pl
+        (state.pl_data.dig('A0') * 100 / (100 + 税率)).floor
+      end
+
+      # 2023は２割特例
+      #
       def みなし仕入率(事業区分)
         {
           1 => 90,
@@ -117,7 +141,8 @@ module Luca
           3 => 70,
           4 => 60,
           5 => 50,
-          6 => 40
+          6 => 40,
+          2023 => 80
         }[事業区分]
       end
 
@@ -144,7 +169,9 @@ module Luca
       end
 
       def proc_version
-        if @end_date >= Date.parse('2021-4-1')
+        if @end_date >= Date.parse('2023-10-1')
+          { 'proc' => '23.0.0', 'SHA020' => '9.0' }
+        elsif @end_date >= Date.parse('2021-4-1')
           { 'proc' => '20.0.1', 'SHA020' => '7.1' }
         else
           { 'proc' => '20.0.0', 'SHA020' => '7.0' }

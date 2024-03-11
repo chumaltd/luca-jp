@@ -8,8 +8,8 @@
             <gen:yyyymmdd></gen:yyyymmdd>
           </AMA_JIGYO_EDATE>
         <AMA_NAME idref="NAME"></AMA_NAME>
-        <%= render_attr('AMA00100', 当期所得金額) %>
-        <%= render_attr('AMA00200', [当期所得金額, 0].max) %>
+        <%= render_attr('AMA00100', @別表四調整所得) %>
+        <%= render_attr('AMA00200', [@別表四調整所得, 0].max) %>
         <AMB00110>
           <gen:era />
           <gen:yy />

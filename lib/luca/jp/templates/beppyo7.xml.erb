@@ -7,9 +7,9 @@
         <MCA00040 IDREF="NOZEISHA_NM"/>
     </MCA00000>
     <MCB00000>
-        <%= render_attr('MCB00002', 当期所得金額) %>
+        <%= render_attr('MCB00002', @別表四調整所得) %>
         <MCB00004>
-            <%= render_attr('MCB00008', [当期所得金額, 0].max) %>
+            <%= render_attr('MCB00008', [@別表四調整所得, 0].max) %>
         </MCB00004>
         <%= 別表七各期青色損失 %>
         <MCB00220>

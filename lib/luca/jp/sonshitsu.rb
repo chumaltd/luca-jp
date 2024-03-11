@@ -26,7 +26,7 @@ module Luca
         @profit = 0
       end
 
-      # sonshitsu format is as bellows:
+      # sonshitsu format is as follows:
       #
       #   - start_date: 2020-01-01
       #     end_date: 2020-12-31
@@ -37,7 +37,7 @@ module Luca
       #
       def self.load(this_year)
         records = if File.exist?(record_file)
-                    YAML.safe_load(File.read(record_file), permitted_classes: [Date])
+                    YAML.safe_load(File.read(record_file), permitted_classes: [Date], aliases: true)
                       .filter { |record| record['start_date'] > this_year.prev_year(11) && record['end_date'] < this_year }
                       .sort { |a, b| a['start_date'] <=> b['start_date'] }
                  else

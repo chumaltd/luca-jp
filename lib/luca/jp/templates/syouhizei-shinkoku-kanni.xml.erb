@@ -34,7 +34,10 @@
         <%= render_attr('ABI00110', @中間納付額) %>
         <%= render_attr('ABI00120', 納付税額(@税額, @中間納付額)) %>
         <%= render_attr('ABI00130', 中間還付税額(@税額, @中間納付額)) %>
-        <%= render_attr('ABI00170', LucaSupport::Code.readable(@sales)) %>
+        <% if ! @２割特例 %>
+            <%= render_attr('ABI00170', LucaSupport::Code.readable(@sales)) %>
+        <% end %>
+        <%= render_attr('ABI00180', @基準期間の課税売上高) %>
     </ABI00000>
     <ABJ00000>
         <ABJ00010>
@@ -54,11 +57,16 @@
         <ABK00030><kubun_CD>2</kubun_CD></ABK00030>
         <ABK00040><kubun_CD>2</kubun_CD></ABK00040>
     </ABK00000>
-    <ABL00000>
-        <ABL00010><kubun_CD>2</kubun_CD></ABL00010>
-        <ABL00020><%= 事業区分 %></ABL00020>
-        <ABL00210><kubun_CD>2</kubun_CD></ABL00210>
-    </ABL00000>
+    <% if ! @２割特例 %>
+        <ABL00000>
+            <ABL00010><kubun_CD>2</kubun_CD></ABL00010>
+            <ABL00020><%= 事業区分 %></ABL00020>
+            <ABL00210><kubun_CD>2</kubun_CD></ABL00210>
+        </ABL00000>
+    <% end %>
+    <% if @form_vers['SHA020'] >= '9.0' %>
+      <ABY00000><kubun_CD><%= @２割特例 ? 1 : 2 %></kubun_CD></ABY00000>
+    <% end %>
     </SHA020-1>
     <SHA020-2 page="1">
         <ABM00000>

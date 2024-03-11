@@ -11,11 +11,11 @@ module Luca
       #
       def 税額計算
         所得 = 所得金額
+        法人税額 = 中小企業の軽減税額(所得) + 一般区分の税額(所得)
+        地方法人税課税標準 = (法人税額 / 1000).floor * 1000
+        地方法人税 = 地方法人税額(地方法人税課税標準)
         { houjin: {}, kenmin: {}, shimin: {} }.tap do |tax|
-          法人税額 = 中小企業の軽減税額(所得) + 一般区分の税額(所得)
           tax[:houjin][:kokuzei] = (法人税額 / 100).floor * 100
-          地方法人税課税標準 = (法人税額 / 1000).floor * 1000
-          地方法人税 = 地方法人税額(地方法人税課税標準)
           tax[:houjin][:chihou] = (地方法人税 / 100).floor * 100
 
           tax[:kenmin][:houjinzei], tax[:shimin][:houjinzei] = 法人税割(法人税額)
@@ -68,18 +68,45 @@ module Luca
       # 繰越損失適用後の所得金額
       #
       def 所得金額
-        @繰越損失管理 = Sonshitsu.load(@end_date).update(当期所得金額).save if @繰越損失管理.nil?
+        @繰越損失管理 = Sonshitsu.load(@end_date).update(@別表四調整所得).save if @繰越損失管理.nil?
         @繰越損失管理.profit
       end
 
-      # 税引前当期利益をもとに計算
       # 消費税を租税公課に計上している場合、控除済みの金額
       # 事業税は仮払経理の場合にも納付時損金／還付時益金
       #
-      def 当期所得金額
-        _, 納付事業税 = 未納事業税期中増減
-        事業税中間納付 = prepaid_tax('1854') + prepaid_tax('1855') + prepaid_tax('1856') + prepaid_tax('1857') + prepaid_tax('1858')
-        LucaSupport::Code.readable(@pl_data.dig('GA') - 納付事業税 - 事業税中間納付 + 還付事業税)
+      def 別表四所得調整(ext_config = nil)
+        @税引前損益 = readable(@pl_data.dig('GA'))
+
+        if ext_config
+          @減価償却の償却超過額 = ext_config.dig('損金不算入', '減価償却')
+          @役員給与の損金不算入額 = ext_config.dig('損金不算入', '役員給与')
+          @交際費等の損金不算入額 = ext_config.dig('損金不算入', '交際費')
+          @減価償却超過額の当期認容額 = ext_config.dig('益金不算入', '減価償却')
+          @受取配当金の益金不算入額 = ext_config.dig('益金不算入', '受取配当金')
+          @受贈益の益金不算入額 = ext_config.dig('益金不算入', '受贈益')
+        end
+
+        @当期還付事業税 = refund_tax('1504')
+        @損金不算入額税額未確定 = [
+          @減価償却の償却超過額,
+          @役員給与の損金不算入額,
+          @交際費等の損金不算入額,
+          @当期還付事業税
+        ].compact.sum
+
+        _, @納付事業税 = 未納事業税期中増減
+        @事業税中間納付 = ['1854', '1855', '1856', '1857', '1858']
+                            .map{ |k| prepaid_tax(k) }.compact.sum
+        @益金不算入額税額未確定 = [
+          @納付事業税,
+          @事業税中間納付,
+          @減価償却超過額の当期認容額,
+          @受取配当金の益金不算入額,
+          @受贈益の益金不算入額,
+        ].compact.sum
+
+        @別表四調整所得 = @税引前損益 + @損金不算入額税額未確定 - @益金不算入額税額未確定
       end
 
       # -----------------------------------------------------
@@ -271,10 +298,6 @@ module Luca
         else
           0
         end
-      end
-
-      def 還付事業税
-        refund_tax('1504')
       end
 
       def 未納事業税期中増減

@@ -1,0 +1,32 @@
+<SHB070 page="1" VR="1.0" id="SHB070" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <AYA00000><AYA00010>
+        <AYA00020 IDREF="KAZEI_KIKAN_FROM"/>
+        <AYA00030 IDREF="KAZEI_KIKAN_TO"/>
+    </AYA00010>
+    <AYA00040 IDREF="NOZEISHA_NM"/>
+    </AYA00000>
+    <AYB00000>
+        <AYB00010>
+            <%= render_attr('AYB00030', LucaSupport::Code.readable(@sales)) %>
+            <%= render_attr('AYB00040', LucaSupport::Code.readable(@sales)) %>
+        </AYB00010>
+        <AYB00050>
+            <%= render_attr('AYB00070', 課税標準額(@sales)) %>
+            <%= render_attr('AYB00080', 課税標準額(@sales)) %>
+        </AYB00050>
+        <AYB00090>
+            <%= render_attr('AYB00110', @tax_amount) %>
+            <%= render_attr('AYB00120', @tax_amount) %>
+        </AYB00090>
+        <AYB00210>
+            <%= render_attr('AYB00230', @tax_amount) %>
+            <%= render_attr('AYB00240', @tax_amount) %>
+        </AYB00210>
+    </AYB00000>
+    <AYC00000>
+        <AYC00010>
+        <%= render_attr('AYC00030', @みなし仕入税額) %>
+        <%= render_attr('AYC00040', @みなし仕入税額) %>
+        </AYC00010>
+    </AYC00000>
+</SHB070>

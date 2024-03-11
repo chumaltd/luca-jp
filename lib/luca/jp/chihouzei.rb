@@ -17,7 +17,7 @@ module Luca
       @dirname = 'journals'
       @record_type = 'raw'
 
-      def kani(report_cfg, export: false)
+      def kani(report_cfg, export: false, ext_config: nil)
         set_pl(4)
         set_bs(4)
         @issue_date = Date.today
@@ -32,6 +32,7 @@ module Luca
         @shotoku401 = report_cfg['shotoku401']
         @shotoku801 = report_cfg['shotoku801']
 
+        別表四所得調整(ext_config)
         @税額 = 税額計算
         jichitai = @report_category == 'city' ? :shimin : :kenmin
         @均等割 = report_cfg['kintouwari'] || @税額.dig(jichitai, :kintou)
@@ -99,8 +100,8 @@ module Luca
         end
       end
 
-      def export_json(report_cfg)
-        records = kani(report_cfg, export: true)
+      def export_json(report_cfg, ext_config: nil)
+        records = kani(report_cfg, export: true, ext_config: ext_config)
         label = @report_category == 'city' ? '市町村住民税' : '都道府県住民税'
         {}.tap do |item|
           item['date'] = @end_date

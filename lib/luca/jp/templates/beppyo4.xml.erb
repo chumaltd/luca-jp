@@ -14,55 +14,76 @@
     <ARC00000>
         <ARC00010>
             <% ['ARC00020', 'ARC00030'].each do |code| %>
-                <%= render_attr(code, 法人税損金納付額 + 法人税仮払納付額) %>
+                <%= render_attr(code, @損金経理をした法人税及び地方法人税) %>
             <% end %>
         </ARC00010>
         <ARC00040>
             <% ['ARC00050', 'ARC00060'].each do |code| %>
-                <%= render_attr(code, [都道府県民税損金納付, 市民税損金納付, 都道府県民税仮払納付, 市民税仮払納付].compact.sum) %>
+                <%= render_attr(code, @損金経理をした道府県民税及び市町村民税) %>
             <% end %>
         </ARC00040>
         <ARC00100>
             <% ['ARC00110', 'ARC00120'].each do |code| %>
-                <%= render_attr(code, 当期納税充当金) %>
+                <%= render_attr(code, @損金経理をした納税充当金) %>
             <% end %>
         </ARC00100>
-        <%= 別表四還付事業税 %>
-        <%# ARC00360 通算法人に係る加算額 %>
-        <% if (@当期還付法人税 + @当期還付都道府県住民税 + @当期還付市民税) > 0 %>
-            <ARC00275>
-                <%= render_attr('ARC00280', '前期仮払税金否認') %>
-                <% ['ARC00290', 'ARC00300'].each do |code| %>
-                    <%= render_attr(code, [@当期還付法人税, @当期還付都道府県住民税, @当期還付市民税].compact.sum) %>
+        <% if @減価償却の償却超過額 %>
+            <ARC00160>
+                <% ['ARC00170', 'ARC00180'].each do |code| %>
+                    <%= render_attr(code, @減価償却の償却超過額) %>
                 <% end %>
-            </ARC00275>
+            </ARC00160>
         <% end %>
+        <% if @役員給与の損金不算入額 %>
+            <ARC00190>
+                <% ['ARC00200', 'ARC00210'].each do |code| %>
+                    <%= render_attr(code, @役員給与の損金不算入額) %>
+                <% end %>
+            </ARC00190>
+        <% end %>
+        <% if @交際費等の損金不算入額 %>
+            <ARC00213>
+                <% ['ARC00215', 'ARC00218'].each do |code| %>
+                    <%= render_attr(code, @交際費等の損金不算入額) %>
+                <% end %>
+            </ARC00213>
+        <% end %>
+        <%# ARC00360 通算法人に係る加算額 %>
+        <%= 別表四還付事業税 %>
         <ARC00325>
             <% ['ARC00330', 'ARC00340'].each do |code| %>
-                <%= render_attr(code, [@法人税等, @当期還付事業税, @当期還付法人税, @当期還付都道府県住民税, 法人税仮払納付額, 都道府県民税仮払納付, 市民税仮払納付].compact.sum) %>
+                <%= render_attr(code, @損金不算入額) %>
             <% end %>
         </ARC00325>
     </ARC00000>
     <ARD00000>
+        <% if @減価償却超過額の当期認容額 %>
+            <ARD00010>
+                <% ['ARD00020', 'ARD00030'].each do |code| %>
+                    <%= render_attr(code, @減価償却超過額の当期認容額) %>
+                <% end %>
+            </ARD00010>
+        <% end %>
         <ARD00040>
             <% ['ARD00050', 'ARD00060'].each do |code| %>
                 <%= render_attr(code, @納付事業税) %>
             <% end %>
         </ARD00040>
-        <ARD00100>
-            <% ['ARD00110', 'ARD00120'].each do |code| %>
-                <%= render_attr(code, [@当期還付法人税, @当期還付都道府県住民税, @当期還付市民税].compact.sum) %>
-            <% end %>
-        </ARD00100>
-        <%# ARD00400 通算法人に係る減算額 %>
-        <% if (法人税仮払納付額 + 都道府県民税仮払納付 + 市民税仮払納付) > 0 %>
-            <ARD00215>
-                <%= render_attr('ARD00220', '仮払税金認定損') %>
-                <% ['ARD00230', 'ARD00240'].each do |code| %>
-                    <%= render_attr(code, [法人税仮払納付額, 都道府県民税仮払納付, 市民税仮払納付].compact.sum) %>
+        <% if @受取配当金の益金不算入額 %>
+            <ARD00070>
+                <% ['ARD00080', 'ARD00090'].each do |code| %>
+                    <%= render_attr(code, @受取配当金の益金不算入額) %>
                 <% end %>
-            </ARD00215>
+            </ARD00070>
         <% end %>
+        <% if @受贈益の益金不算入額 %>
+            <ARD00340>
+                <% ['ARD00350', 'ARD00360'].each do |code| %>
+                    <%= render_attr(code, @受贈益の益金不算入額) %>
+                <% end %>
+            </ARD00340>
+        <% end %>
+        <%# ARD00400 通算法人に係る減算額 %>
         <% if @翌期還付事業税 > 0 %>
             <ARD00215>
                 <%= render_attr('ARD00220', '仮払事業税認定損') %>
@@ -72,51 +93,73 @@
             </ARD00215>
         <% end %>
         <ARD00280>
-            <% ['ARD00290', 'ARD00300'].each do |code| %>
-                <%= render_attr(code, [@納付事業税, @翌期還付事業税, @当期還付法人税, @当期還付都道府県住民税, @当期還付市民税, 法人税仮払納付額, 都道府県民税仮払納付, 市民税仮払納付].compact.sum) %>
-            <% end %>
+            <%= render_attr('ARD00290', @益金不算入額) %>
+            <%= render_attr('ARD00300', @益金不算入額留保) %>
+            <ARD00310>
+                <%= render_attr('ARD00330', @益金不算入額社外流出) %>
+            </ARD00310>
         </ARD00280>
     </ARD00000>
     <ARE00000>
-        <% ['ARE00010', 'ARE00020'].each do |code| %>
-            <%= render_attr(code, @別表四調整所得) %>
-        <% end %>
+        <%= render_attr('ARE00010', @別表四調整所得) %>
+        <%= render_attr('ARE00020', @別表四調整所得留保) %>
+        <ARE00030>
+            <%= render_attr('ARE00050', @別表四調整所得社外流出) %>
+        </ARE00030>
     </ARE00000>
     <ARZ10000>
-        <% ['ARZ10010', 'ARZ10020'].each do |code| %>
-            <%= render_attr(code, @別表四調整所得) %>
-        <% end %>
+        <%= render_attr('ARZ10010', @別表四調整所得) %>
+        <%= render_attr('ARZ10020', @別表四調整所得留保) %>
+        <ARZ10030>
+            <%= render_attr('ARZ10050', @別表四調整所得社外流出) %>
+        </ARZ10030>
     </ARZ10000>
+    <%# ARF00000 寄附金の損金不算入額 %>
+    <%# ARI00000 法人税額から控除される所得税額 %>
+    <%# ARJ00000 税額控除の対象となる外国法人税の額 %>
     <ARK00000>
-        <% ['ARK00010', 'ARK00020'].each do |code| %>
-            <%= render_attr(code, @別表四調整所得) %>
-        <% end %>
+        <%= render_attr('ARK00010', @別表四調整所得) %>
+        <%= render_attr('ARK00020', @別表四調整所得留保) %>
+        <ARK00030>
+            <%= render_attr('ARK00050', @別表四調整所得社外流出) %>
+        </ARK00030>
     </ARK00000>
     <ARM00000>
-        <% ['ARM00010', 'ARM00020'].each do |code| %>
-            <%= render_attr(code, @別表四調整所得) %>
-        <% end %>
+        <%= render_attr('ARM00010', @別表四調整所得) %>
+        <%= render_attr('ARM00020', @別表四調整所得留保) %>
+        <ARM00030>
+            <%= render_attr('ARM00050', @別表四調整所得社外流出) %>
+        </ARM00030>
     </ARM00000>
+    <%# ARN10010 中間申告における繰戻しによる還付に係る災害損失欠損金額の益金算入額 %>
+    <%# ARR00000 非適格合併又は残余財産の全部分配等による移転資産等の譲渡利益額又は譲渡損失額 %>
     <ARS00000>
-        <% ['ARS00010', 'ARS00020'].each do |code| %>
-            <%= render_attr(code, @別表四調整所得) %>
-        <% end %>
+        <%= render_attr('ARS00010', @別表四調整所得) %>
+        <%= render_attr('ARS00020', @別表四調整所得留保) %>
+        <ARS00030>
+            <%= render_attr('ARS00050', @別表四調整所得社外流出) %>
+        </ARS00030>
     </ARS00000>
     <%# ARS10000 更生欠損金又は民事再生等評価換えが行われる場合の再生等欠損金の損金算入額 %>
     <%# ARS20000 通算対象欠損金額の損金算入額又は通算対象所得金額の益金算入額 %>
     <ARS50000>
-        <% ['ARS50010', 'ARS50020'].each do |code| %>
-            <%= render_attr(code, @別表四調整所得) %>
-        <% end %>
+        <%= render_attr('ARS50010', @別表四調整所得) %>
+        <%= render_attr('ARS50020', @別表四調整所得留保) %>
+        <ARS50030>
+            <%= render_attr('ARS50050', @別表四調整所得社外流出) %>
+        </ARS50030>
     </ARS50000>
     <ART00000>
         <% ['ART00010', 'ART00020'].each do |code| %>
             <%= render_attr(code, @繰越損失管理.deduction) %>
         <% end %>
     </ART00000>
+    <%# ARX00000 残余財産の確定の日の属する事業年度に係る事業税及び特別法人事業税の損金算入額 %>
     <ARV00000>
-        <% ['ARV00010', 'ARV00020'].each do |code| %>
-            <%= render_attr(code, @別表四調整所得 - @繰越損失管理.deduction) %>
-        <% end %>
+        <%= render_attr('ARV00010', @別表四調整所得 - @繰越損失管理.deduction) %>
+        <%= render_attr('ARV00020', @別表四調整所得留保) %>
+        <ARV00030>
+            <%= render_attr('ARV00050', @別表四調整所得社外流出 - @繰越損失管理.deduction) %>
+        </ARV00030>
     </ARV00000>
 </HOA420>

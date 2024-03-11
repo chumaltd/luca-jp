@@ -6,6 +6,7 @@ require 'luca/jp'
 require 'luca_salary/jp_payreport'
 require 'luca_cmd'
 require 'luca_support/const'
+require 'yaml'
 
 EXT_CONF = 'config-lucajp.yml'
 
@@ -19,17 +20,19 @@ class LucaCmd
   end
 
   def self.houjinzei(args, params)
+    ext_config = params[:extra] ? YAML.load_file(params[:extra]) : nil
     if params[:export]
-      Luca::Jp::Aoiro.range(*auto_range(args, params)).export_json
+      Luca::Jp::Aoiro.range(*auto_range(args, params)).export_json(ext_config: ext_config)
     else
-      puts Luca::Jp::Aoiro.range(*auto_range(args, params)).kani
+      puts Luca::Jp::Aoiro.range(*auto_range(args, params)).kani(ext_config: ext_config)
     end
   end
 
   def self.chihouzei(args, params)
+    ext_config = params[:extra] ? YAML.load_file(params[:extra]) : nil
     if params[:export]
       accounts = Luca::Jp::Util.eltax_config('reports').map do |report|
-        Luca::Jp::Chihouzei.range(*auto_range(args, params)).export_json(report)
+        Luca::Jp::Chihouzei.range(*auto_range(args, params)).export_json(report, ext_config: ext_config)
       end
       puts JSON.dump(accounts)
     else
@@ -76,6 +79,7 @@ case cmd
 when 'h', /hou?jinzei/
   OptionParser.new do |opt|
     opt.banner = 'Usage: luca-jp h|houjinzei [options] [yyyy mm yyyy mm]'
+    opt.on('-x VAL', 'extra config') { |v| params[:extra] = v }
     opt.on('--export', 'export json') { |_v| params[:export] = true }
     opt.on('--lastyear', 'report on last Financial year') { |_v| params[:lastyear] = true }
     args = opt.parse!(ARGV)
@@ -96,6 +100,7 @@ when 's', /s[yh]ou?hizei/
 when 'c', /chihou?zei/
   OptionParser.new do |opt|
     opt.banner = 'Usage: luca-jp c|chihouzei [options] [yyyy mm yyyy mm]'
+    opt.on('-x VAL', 'extra config') { |v| params[:extra] = v }
     opt.on('--export', 'export json') { |_v| params[:export] = true }
     opt.on('--lastyear', 'report on last Financial year') { |_v| params[:lastyear] = true }
     args = opt.parse!(ARGV)
