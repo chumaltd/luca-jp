@@ -15,7 +15,70 @@ class Luca::Jp::InterimBeppyo52Test < Minitest::Test
     FileUtils.rm_rf([Pathname(LucaSupport::CONST.pjdir) / 'data' ])
   end
 
-  def test_temporary_taxes_convert
+  def test_beppyo4_temporary_taxes_convert
+    prep = %Q([
+      {
+      "date": "2020-1-31",
+      "debit": [
+      {
+      "label": "現金",
+      "amount": 1000000
+      }
+      ],
+      "credit": [
+      {
+      "label": "売上高",
+      "amount": 1000000
+      }
+      ]
+      }
+      ])
+    LucaBook::Import.import_json(prep)
+    interim_tax_payment
+    tax = apply_houjinzei
+    eltax, eltax_json = apply_chihouzei
+
+    jptax = Luca::Jp::Aoiro.range(2020, 1, 2020, 12)
+    jptax.kani()
+
+    # NOTE: 売上高をもとに、地方事業税のみ損金として計算されるケース
+    assert_equal (Luca::Jp::Common.中小企業の軽減税額(1_000_000 - [1003, 1004].sum) / 100).floor * 100, tax[:kokuzei][:zeigaku]
+
+    assert_equal [1001, 1002].sum, jptax.instance_variable_get(:@損金経理をした法人税及び地方法人税)
+    assert_equal [2017, 2021].sum, jptax.instance_variable_get(:@損金経理をした道府県民税及び市町村民税)
+    assert_equal [
+                   tax.map { |_k, v| v[:zeigaku] }.compact.sum,
+                   eltax.map{ |_k, v| v[:juminzei].map{ |_k, v| v[:zeigaku] }.compact.sum },
+                   eltax[:ken][:jigyouzei].map{ |_k, v| v[:zeigaku] }.compact.sum,
+                   -8048
+                 ].flatten.compact.sum, jptax.instance_variable_get(:@損金経理をした納税充当金)
+
+    assert_equal 1_000_000 - [
+                   tax.map { |_k, v| v[:zeigaku] }.compact.sum,
+                   eltax.map{ |_k, v| v[:juminzei].map{ |_k, v| v[:zeigaku] }.compact.sum },
+                   eltax[:ken][:jigyouzei].map{ |_k, v| v[:zeigaku] }.compact.sum,
+                 ].flatten.compact.sum, jptax.instance_variable_get(:@当期純損益)
+
+    assert_equal [
+                   tax.map { |_k, v| v[:zeigaku] }.compact.sum,
+                   eltax.map{ |_k, v| v[:juminzei].map{ |_k, v| v[:zeigaku] }.compact.sum },
+                   eltax[:ken][:jigyouzei].map{ |_k, v| v[:zeigaku] }.compact.sum,
+                   -1003,
+                   -1004
+                 ].flatten.compact.sum, jptax.instance_variable_get(:@損金不算入額)
+    assert_equal jptax.instance_variable_get(:@損金不算入額留保), jptax.instance_variable_get(:@損金不算入額)
+    assert_equal 0, jptax.instance_variable_get(:@損金不算入額社外流出)
+
+    assert_equal 0, jptax.instance_variable_get(:@益金不算入額)
+    assert_equal 0, jptax.instance_variable_get(:@益金不算入額留保)
+    assert_equal 0, jptax.instance_variable_get(:@益金不算入額社外流出)
+
+    assert_equal 1_000_000 - [1003, 1004].sum, jptax.instance_variable_get(:@別表四調整所得)
+    assert_equal 1_000_000 - [1003, 1004].sum, jptax.instance_variable_get(:@別表四調整所得留保)
+    assert_equal jptax.instance_variable_get(:@当期純損益), jptax.instance_variable_get(:@別表四調整所得社外流出)
+  end
+
+  def test_beppyo52_temporary_taxes_convert
     prep = %Q([
       {
       "date": "2020-1-31",

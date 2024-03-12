@@ -15,7 +15,36 @@ class Luca::Jp::RefundBeppyo52Test < Minitest::Test
     FileUtils.rm_rf([Pathname(LucaSupport::CONST.pjdir) / 'data' ])
   end
 
-  def test_temporary_taxes_receivable
+  def test_beppyo4_temporary_taxes_receivable
+    interim_tax_payment
+    tax = apply_houjinzei
+    eltax, eltax_json = apply_chihouzei
+
+    jptax = Luca::Jp::Aoiro.range(2020, 1, 2020, 12)
+    jptax.kani()
+
+    assert_equal 0, tax[:kokuzei][:zeigaku]
+
+    assert_equal 0, jptax.instance_variable_get(:@損金経理をした法人税及び地方法人税)
+    assert_equal [1009, 1011].sum, jptax.instance_variable_get(:@損金経理をした道府県民税及び市町村民税)
+    assert_equal jptax.send(:均等割).sum - [1009, 1011].sum, jptax.instance_variable_get(:@損金経理をした納税充当金)
+
+    assert_equal 0 - jptax.send(:均等割).sum, jptax.instance_variable_get(:@当期純損益)
+
+    assert_equal jptax.send(:均等割).sum, jptax.instance_variable_get(:@損金不算入額)
+    assert_equal jptax.instance_variable_get(:@損金不算入額留保), jptax.instance_variable_get(:@損金不算入額)
+    assert_equal 0, jptax.instance_variable_get(:@損金不算入額社外流出)
+
+    assert_equal [1003, 1004, 1005, 1006, 1007].sum, jptax.instance_variable_get(:@益金不算入額)
+    assert_equal [1003, 1004, 1005, 1006, 1007].sum, jptax.instance_variable_get(:@益金不算入額留保)
+    assert_equal 0, jptax.instance_variable_get(:@益金不算入額社外流出)
+
+    assert_equal 0 - [1003, 1004, 1005, 1006, 1007].sum, jptax.instance_variable_get(:@別表四調整所得)
+    assert_equal 0 - [1003, 1004, 1005, 1006, 1007].sum, jptax.instance_variable_get(:@別表四調整所得留保)
+    assert_equal jptax.instance_variable_get(:@当期純損益), jptax.instance_variable_get(:@別表四調整所得社外流出)
+  end
+
+  def test_beppyo52_temporary_taxes_receivable
     interim_tax_payment
     prep = %Q([
       {
@@ -123,7 +152,7 @@ class Luca::Jp::RefundBeppyo52Test < Minitest::Test
   end
 
   # TODO: 期末に経過勘定が残っている場合の還付認識。適切な経理ではないため優先度低
-  def test_temporary_taxes_refund
+  def test_beppyo52_temporary_taxes_refund
     interim_tax_payment
     jptax = Luca::Jp::Aoiro.range(2020, 1, 2020, 12)
     jptax.kani()
