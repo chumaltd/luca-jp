@@ -22,7 +22,7 @@ class LucaCmd
   def self.houjinzei(args, params)
     ext_config = params[:extra] ? YAML.load_file(params[:extra]) : nil
     if params[:export]
-      Luca::Jp::Aoiro.range(*auto_range(args, params)).export_json(ext_config: ext_config)
+      puts Luca::Jp::Aoiro.range(*auto_range(args, params)).export_json(ext_config: ext_config)
     else
       puts Luca::Jp::Aoiro.range(*auto_range(args, params)).kani(ext_config: ext_config)
     end

@@ -85,35 +85,35 @@ module Luca
         end
       end
 
-      def export_json(ext_config: nil)
+      def export_json(ext_config: nil, raw: false)
         dat = kani(export: true, ext_config: ext_config)
-        [].tap do |res|
-          item = {}
-          item['date'] = @end_date
-          item['debit'] = []
-          item['credit'] = []
-          if dat[:kokuzei][:chukan] > 0
-            item['credit'] << { 'label' => '仮払法人税', 'amount' => dat[:kokuzei][:chukan] }
-          end
-          if dat[:kokuzei][:chukan] > dat[:kokuzei][:zeigaku]
-            item['debit'] << { 'label' => '未収法人税', 'amount' => dat[:kokuzei][:chukan] - dat[:kokuzei][:zeigaku] }
-          else
-            item['credit'] << { 'label' => '未払法人税', 'amount' => dat[:kokuzei][:zeigaku] - dat[:kokuzei][:chukan] }
-          end
-          item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:kokuzei][:zeigaku] } if dat[:kokuzei][:zeigaku] > 0
-          if dat[:chihou][:chukan] > 0
-            item['credit'] << { 'label' => '仮払法人税(地方)', 'amount' => dat[:chihou][:chukan] }
-          end
-          if dat[:chihou][:chukan] > dat[:chihou][:zeigaku]
-            item['debit'] << { 'label' => '未収法人税', 'amount' => dat[:chihou][:chukan] - dat[:chihou][:zeigaku] }
-          else
-            item['credit'] << { 'label' => '未払法人税', 'amount' => dat[:chihou][:zeigaku] - dat[:chihou][:chukan] }
-          end
-          item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:chihou][:zeigaku] } if dat[:chihou][:zeigaku] > 0
-          item['x-editor'] = 'LucaJp'
-          res << item
-          puts JSON.dump(res)
+        res = []
+        item = {}
+        item['date'] = @end_date
+        item['debit'] = []
+        item['credit'] = []
+        if dat[:kokuzei][:chukan] > 0
+          item['credit'] << { 'label' => '仮払法人税', 'amount' => dat[:kokuzei][:chukan] }
         end
+        if dat[:kokuzei][:chukan] > dat[:kokuzei][:zeigaku]
+          item['debit'] << { 'label' => '未収法人税', 'amount' => dat[:kokuzei][:chukan] - dat[:kokuzei][:zeigaku] }
+        else
+          item['credit'] << { 'label' => '未払法人税', 'amount' => dat[:kokuzei][:zeigaku] - dat[:kokuzei][:chukan] }
+        end
+        item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:kokuzei][:zeigaku] } if dat[:kokuzei][:zeigaku] > 0
+        if dat[:chihou][:chukan] > 0
+          item['credit'] << { 'label' => '仮払法人税(地方)', 'amount' => dat[:chihou][:chukan] }
+        end
+        if dat[:chihou][:chukan] > dat[:chihou][:zeigaku]
+          item['debit'] << { 'label' => '未収法人税', 'amount' => dat[:chihou][:chukan] - dat[:chihou][:zeigaku] }
+        else
+          item['credit'] << { 'label' => '未払法人税', 'amount' => dat[:chihou][:zeigaku] - dat[:chihou][:chukan] }
+        end
+        item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:chihou][:zeigaku] } if dat[:chihou][:zeigaku] > 0
+        item['x-editor'] = 'LucaJp'
+        res << item
+
+        raw ? res : JSON.dump(res)
       end
 
       def 別表一
@@ -494,7 +494,8 @@ module Luca
       end
 
       def 当期納税充当金
-        readable(@pl_data.dig('H0')) - [法人税損金納付額, 都道府県民税損金納付, 市民税損金納付, 事業税損金納付].compact.sum
+        #readable(@pl_data.dig('H0')) - [法人税損金納付額, 都道府県民税損金納付, 市民税損金納付, 事業税損金納付].compact.sum
+        readable(@bs_data.dig('515')) || 0
       end
 
       def 期首未納法人税
@@ -541,7 +542,9 @@ module Luca
       #
       def 都道府県民税仮払納付
         [
-          readable(@bs_data['1503'])
+          readable(@bs_data['1503']),
+          readable(@bs_data['1859']),
+          readable(@bs_data['185A']),
         ].compact.sum
       end
 
@@ -549,6 +552,10 @@ module Luca
       #
       def 都道府県民税損金納付
         @都道府県民税均等割中間納付 + @都道府県民税法人税割中間納付 - 都道府県民税仮払納付
+      end
+
+      def 期末未納都道府県民税
+        readable(@bs_data.dig('5153')) || 0
       end
 
       def 確定市民税
@@ -571,8 +578,8 @@ module Luca
       def 市民税仮払納付
         [
           readable(@bs_data['1505']),
-          readable(@bs_data['1859']),
-          readable(@bs_data['185A']),
+          readable(@bs_data['185D']),
+          readable(@bs_data['185E']),
         ].compact.sum
       end
 
@@ -588,6 +595,10 @@ module Luca
 
       def 事業税損金納付
         [@事業税中間納付, 確定事業税].min
+      end
+
+      def 期末未納事業税
+        readable(@bs_data['5152']) || 0
       end
 
       def 別表五一期首差引金額

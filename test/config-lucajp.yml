@@ -1,0 +1,7 @@
+jp:
+  eltax:
+    reports:
+    - jimusho_name: ken
+      type: prefecture
+    - jimusho_name: shi
+      type: city

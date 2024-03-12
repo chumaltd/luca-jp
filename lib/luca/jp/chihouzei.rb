@@ -39,22 +39,18 @@ module Luca
         @確定法人税割 = @税額.dig(jichitai, :houjinzei)
         @地方特別法人事業税中間納付 = prepaid_tax('1854', @jimusho_name)
         @所得割中間納付 = prepaid_tax('1855', @jimusho_name)
-        @法人税割中間納付 = prepaid_tax('1859', @jimusho_name)
-        @均等割中間納付 = prepaid_tax('185A', @jimusho_name)
+        @法人税割中間納付 = prepaid_tax(
+          @report_category == 'city' ? '185D' :'1859',
+          @jimusho_name
+        )
+        @均等割中間納付 = prepaid_tax(
+          @report_category == 'city' ? '185E' : '185A',
+          @jimusho_name
+        )
         @所得割 = @税額.dig(:kenmin, :shotoku)
         if export
           {
             customer: @jimusho_name,
-            jigyouzei: {
-              shotoku: {
-                zeigaku: @所得割,
-                chukan: @所得割中間納付
-              },
-              tokubetsu: {
-                zeigaku: @税額.dig(:kenmin, :tokubetsu),
-                chukan: @地方特別法人事業税中間納付
-              },
-            },
             juminzei: {
               kinto: {
                 zeigaku: @均等割,
@@ -65,7 +61,20 @@ module Luca
                 chukan: @法人税割中間納付
               }
             }
-          }
+          }.tap do |record|
+            if @report_category != 'city'
+              record[:jigyouzei] = {
+                shotoku: {
+                  zeigaku: @所得割,
+                  chukan: @所得割中間納付
+                },
+                tokubetsu: {
+                  zeigaku: @税額.dig(:kenmin, :tokubetsu),
+                  chukan: @地方特別法人事業税中間納付
+                },
+              }
+            end
+          end
         else
           @company = CGI.escapeHTML(config.dig('company', 'name'))
           @form_vers = proc_version
@@ -110,7 +119,7 @@ module Luca
           unless @report_category == 'city'
             records[:jigyouzei].each do |k, dat|
               if dat[:chukan] > 0
-                item['credit'] << { 'label' => karibarai_label(k), 'amount' => dat[:chukan] }
+                item['credit'] << { 'label' => karibarai_label(k, @report_category), 'amount' => dat[:chukan] }
               end
               if dat[:chukan] > dat[:zeigaku]
                 item['debit'] << { 'label' => '未収地方事業税', 'amount' => dat[:chukan] - dat[:zeigaku] }
@@ -122,7 +131,7 @@ module Luca
           end
           records[:juminzei].each do |k, dat|
             if dat[:chukan] > 0
-              item['credit'] << { 'label' => karibarai_label(k), 'amount' => dat[:chukan] }
+              item['credit'] << { 'label' => karibarai_label(k, @report_category), 'amount' => dat[:chukan] }
             end
             if dat[:chukan] > dat[:zeigaku]
               item['debit'] << { 'label' => "未収#{label}", 'amount' => dat[:chukan] - dat[:zeigaku] }
@@ -230,22 +239,31 @@ module Luca
         "<FORM_ATTR><FORM_ID>#{code}</FORM_ID><FORM_NAME>#{name}</FORM_NAME><FORM_FILE_NAME></FORM_FILE_NAME><FORM_XSL_NAME></FORM_XSL_NAME></FORM_ATTR>"
       end
 
-      def karibarai_label(key)
-        case key
-        when :tokubetsu
-          '仮払地方税特別法人事業税'
-        when :shotoku
-          '仮払地方税所得割'
-        when :syunyu
-          '仮払地方税収入割'
-        when :shihon
-          '仮払地方税資本割'
-        when :fukakachi
-          '仮払地方税付加価値割'
-        when :houjinzei
-          '仮払地方税法人税割'
-        when :kinto
-          '仮払地方税均等割'
+      def karibarai_label(key, category)
+        if category == 'city'
+          case key
+          when :houjinzei
+            '仮払市民税法人税割'
+          when :kinto
+            '仮払市民税均等割'
+          end
+        else
+          case key
+          when :tokubetsu
+            '仮払地方税特別法人事業税'
+          when :shotoku
+            '仮払地方税所得割'
+          when :syunyu
+            '仮払地方税収入割'
+          when :shihon
+            '仮払地方税資本割'
+          when :fukakachi
+            '仮払地方税付加価値割'
+          when :houjinzei
+            '仮払地方税法人税割'
+          when :kinto
+            '仮払地方税均等割'
+          end
         end
       end
 
