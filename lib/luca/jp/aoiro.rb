@@ -100,7 +100,7 @@ module Luca
         else
           item['credit'] << { 'label' => '未払法人税', 'amount' => dat[:kokuzei][:zeigaku] - dat[:kokuzei][:chukan] }
         end
-        item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:kokuzei][:zeigaku] } if dat[:kokuzei][:zeigaku] > 0
+        item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:kokuzei][:zeigaku] }
         if dat[:chihou][:chukan] > 0
           item['credit'] << { 'label' => '仮払法人税(地方)', 'amount' => dat[:chihou][:chukan] }
         end
@@ -492,7 +492,11 @@ module Luca
       end
 
       def 当期納税充当金
-        #readable(@pl_data.dig('H0')) - [法人税損金納付額, 都道府県民税損金納付, 市民税損金納付, 事業税損金納付].compact.sum
+        r = credit_amount('515', @start_date.year, @start_date.month, @end_date.year, @end_date.month)
+        readable(r)
+      end
+
+      def 期末納税充当金
         readable(@bs_data.dig('515')) || 0
       end
 
@@ -620,7 +624,7 @@ module Luca
           @翌期還付都道府県住民税,
           @翌期還付市民税,
           期末繰越損益,
-          当期納税充当金
+          期末納税充当金
         ].compact.sum - [
           期末未納法人税,
           期末未納都道府県民税,
@@ -654,7 +658,7 @@ module Luca
           @翌期還付都道府県住民税,
           @翌期還付市民税,
           期末繰越損益,
-          当期納税充当金
+          期末納税充当金
         ].compact.sum - [
           @法人税中間納付,
           @地方法人税中間納付,

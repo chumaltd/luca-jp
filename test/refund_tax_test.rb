@@ -6,7 +6,7 @@ require 'luca_support/const'
 require 'luca/jp'
 require 'pathname'
 
-class Luca::Jp::RefundBeppyo52Test < Minitest::Test
+class Luca::Jp::RefundTest < Minitest::Test
   def setup
     create_project(LucaSupport::CONST.pjdir)
   end
