@@ -98,8 +98,8 @@ module Luca
       end
 
       def 期首期末残高(code)
-        pre = readable(@start_balance.dig(code))
-        post = readable(@bs_data.dig(code))
+        pre = readable(@start_balance.dig(code)) || 0
+        post = readable(@bs_data.dig(code)) || 0
         [readable(pre), readable(post)]
       end
 

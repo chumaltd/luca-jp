@@ -6,7 +6,7 @@ require 'luca_support/const'
 require 'luca/jp'
 require 'pathname'
 
-class Luca::Jp::InterimBeppyo52Test < Minitest::Test
+class Luca::Jp::InterimConvertTest < Minitest::Test
   def setup
     create_project(LucaSupport::CONST.pjdir)
   end
@@ -76,6 +76,73 @@ class Luca::Jp::InterimBeppyo52Test < Minitest::Test
     assert_equal 1_000_000 - [1003, 1004].sum, jptax.instance_variable_get(:@別表四調整所得)
     assert_equal 1_000_000 - [1003, 1004].sum, jptax.instance_variable_get(:@別表四調整所得留保)
     assert_equal jptax.instance_variable_get(:@当期純損益), jptax.instance_variable_get(:@別表四調整所得社外流出)
+  end
+
+  def test_beppyo51_temporary_taxes_convert
+    prep = %Q([
+      {
+      "date": "2020-1-31",
+      "debit": [
+      {
+      "label": "現金",
+      "amount": 1000000
+      }
+      ],
+      "credit": [
+      {
+      "label": "売上高",
+      "amount": 1000000
+      }
+      ]
+      }
+      ])
+    LucaBook::Import.import_json(prep)
+    interim_tax_payment
+    tax = apply_houjinzei
+    eltax, eltax_json = apply_chihouzei
+
+    jptax = Luca::Jp::Aoiro.range(2020, 1, 2020, 12)
+    jptax.kani()
+
+    assert_equal 0, jptax.send(:期首繰越損益)
+    assert_equal jptax.instance_variable_get(:@当期純損益), jptax.send(:期末繰越損益)
+
+    assert_equal 0, jptax.instance_variable_get(:@期首資本金)
+    assert_equal 0, jptax.instance_variable_get(:@資本金期中減)
+    assert_equal 100000, jptax.instance_variable_get(:@資本金期中増)
+    assert_equal 100000, jptax.send(:期末資本金)
+    assert_equal 0, jptax.instance_variable_get(:@期首資本準備金)
+    assert_equal 0, jptax.instance_variable_get(:@資本準備金期中減)
+    assert_equal 0, jptax.instance_variable_get(:@資本準備金期中増)
+    assert_equal 0, jptax.instance_variable_get(:@期末資本準備金)
+
+    assert_equal 0, jptax.send(:別表五一期首資本)
+    assert_equal 0, jptax.instance_variable_get(:@資本金等の額期中減)
+    assert_equal 100000, jptax.instance_variable_get(:@資本金等の額期中増)
+    assert_equal 100000, jptax.send(:資本金等の額)
+
+    assert_equal jptax.send(:別表五一期末差引金額),
+                 [
+                   jptax.send(:別表五一期首差引金額),
+                   jptax.send(:別表五一期中減差引金額) * -1,
+                   jptax.send(:別表五一期中増差引金額)
+                 ].sum
+    assert_equal 0, jptax.send(:別表五一期首差引金額)
+    # NOTE: 本来は第1期に中間納付するケースはないが、処理確認は有益
+    assert_equal [1001, 1002, 1008, 1009, 1010, 1011].sum * -1, jptax.send(:別表五一期中減差引金額)
+    assert_equal [
+                   jptax.instance_variable_get(:@当期純損益),
+                   jptax.send(:期末未納事業税),
+                   [1001, 1002].sum * -1,
+                   [1008, 1009].sum * -1,
+                   [1010, 1011].sum * -1,
+                 ].sum,
+                 jptax.send(:別表五一期中増差引金額)
+    assert_equal [
+                   jptax.instance_variable_get(:@当期純損益),
+                   jptax.send(:期末未納事業税),
+                 ].sum,
+                 jptax.send(:別表五一期末差引金額)
   end
 
   def test_beppyo52_temporary_taxes_convert
