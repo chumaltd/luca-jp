@@ -143,6 +143,18 @@ class Luca::Jp::InterimConvertTest < Minitest::Test
                    jptax.send(:期末未納事業税),
                  ].sum,
                  jptax.send(:別表五一期末差引金額)
+    # NOTE: 別表4と別表5-1の検算式
+    assert_equal [
+                   jptax.send(:別表五一期首差引金額),
+                   jptax.instance_variable_get(:@別表四調整所得),
+                   [1001, 1002].sum * -1,
+                   [1008, 1009].sum * -1,
+                   [1010, 1011].sum * -1,
+                   jptax.send(:期末未納法人税) * -1,
+                   jptax.send(:期末未納都道府県民税) * -1,
+                   jptax.send(:期末未納市民税) * -1
+                 ].sum,
+                 jptax.send(:別表五一期末差引金額)
   end
 
   def test_beppyo52_temporary_taxes_convert
