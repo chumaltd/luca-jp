@@ -114,9 +114,7 @@ module Luca
       # -----------------------------------------------------
 
       def 期首繰越損失
-        @繰越損失管理.records
-          .filter { |record| record['start_date'] > @end_date.prev_year(10) && record['end_date'] < @start_date }
-          .inject(0) { |sum, record| sum + (record['amount'] || 0) }
+        翌期繰越損失 + @繰越損失管理.deduction
       end
 
       def 当期控除計
@@ -126,7 +124,7 @@ module Luca
       def 翌期繰越損失
         @繰越損失管理.records
           .filter { |record| record['start_date'] > @end_date.prev_year(10) && record['end_date'] < @start_date }
-          .inject(0) { |sum, record| sum + (record['amount'] || 0) }
+          .inject(0) { |sum, record| [sum, record['amount']].compact.sum }
       end
 
       def 当期繰越損失
