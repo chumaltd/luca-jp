@@ -24,10 +24,10 @@ module Luca
       # TODO: customerオプションを適切に扱うには
       # 納付時にx-customerを付加していないケースの考慮が必要
       def prepaid_tax(code, customer = nil)
-        search_end = @end_date.prev_month # exclude year end adjustment
+        search_end = @end_date.prev_day # exclude year end adjustment
         # header = { customer: customer } unless customer.nil?
         header = nil
-        amount, _ = self.class.net(@start_date.year, @start_date.month, search_end.year, search_end.month, code: code, header: header)
+        amount, _ = self.class.net(@start_date.year, @start_date.month, date_range: @start_date..search_end, code: code, header: header)
         LucaSupport::Code.readable(amount[code] || 0)
       end
 

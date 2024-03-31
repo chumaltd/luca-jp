@@ -36,14 +36,32 @@ module Luca
         @地方法人税額 = 地方法人税額(@地方法人税課税標準)
         @確定地方法人税額 = @税額.dig(:houjin, :chihou)
 
+        @所得税等の仮払額 = prepaid_tax('185F')
+        @所得税等の税額控除額 = [
+          @所得税等の仮払額,
+          @所得税等の損金不算入額
+        ].compact.sum
         @法人税中間納付 = prepaid_tax('1851')
         @地方法人税中間納付 = prepaid_tax('1852')
+        @所得税等の還付額 = [@所得税等の税額控除額 - @確定法人税額, 0].max
+        @差引所得に対する法人税額 = [@確定法人税額 - @所得税等の税額控除額, 0].max
+        @法人税中間納付の還付額 = [@法人税中間納付 - @差引所得に対する法人税額, 0].max
+        @法人税未払 = [@差引所得に対する法人税額 - @法人税中間納付, 0].max
 
         if export
           {
             kokuzei: {
               zeigaku: @確定法人税額,
-              chukan: @法人税中間納付
+              shotoku: {
+                karibarai: @所得税等の仮払額,
+                kanpu: @所得税等の還付額,
+                modori: [@所得税等の還付額 - @所得税等の仮払額, 0].max
+              },
+              chukan: {
+                karibarai: @法人税中間納付,
+                kanpu: @法人税中間納付の還付額
+              },
+              mibarai: @法人税未払
             },
             chihou: {
               zeigaku: @確定地方法人税額,
@@ -87,20 +105,48 @@ module Luca
 
       def export_json(ext_config: nil, raw: false)
         dat = kani(export: true, ext_config: ext_config)
-        res = []
-        item = {}
-        item['date'] = @end_date
-        item['debit'] = []
-        item['credit'] = []
-        if dat[:kokuzei][:chukan] > 0
-          item['credit'] << { 'label' => '仮払法人税', 'amount' => dat[:kokuzei][:chukan] }
-        end
-        if dat[:kokuzei][:chukan] > dat[:kokuzei][:zeigaku]
-          item['debit'] << { 'label' => '未収法人税', 'amount' => dat[:kokuzei][:chukan] - dat[:kokuzei][:zeigaku] }
-        else
-          item['credit'] << { 'label' => '未払法人税', 'amount' => dat[:kokuzei][:zeigaku] - dat[:kokuzei][:chukan] }
-        end
+        item = {
+          'date' => @end_date,
+          'debit' => [],
+          'credit' => [],
+          'x-editor' => 'LucaJp'
+        }
         item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:kokuzei][:zeigaku] }
+        確定仕訳所得税(item, dat)
+        確定仕訳国税(item, dat)
+        item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:chihou][:zeigaku] } if dat[:chihou][:zeigaku] > 0
+        確定仕訳地方税(item, dat)
+        res = [item]
+
+        raw ? res : JSON.dump(res)
+      end
+
+      def 確定仕訳所得税(item, dat)
+        if dat.dig(:kokuzei, :shotoku, :karibarai) > 0
+          item['credit'] << { 'label' => '仮払所得税', 'amount' => dat[:kokuzei][:shotoku][:karibarai] }
+        end
+        if dat[:kokuzei][:shotoku][:kanpu] > 0
+          item['debit'] << { 'label' => '未収法人税', 'amount' => dat[:kokuzei][:shotoku][:kanpu] }
+        end
+        if dat[:kokuzei][:shotoku][:modori] > 0
+          # TODO: 損金経理する所得税の補助科目追加
+          item['credit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:kokuzei][:shotoku][:modori] }
+        end
+      end
+
+      def 確定仕訳国税(item, dat)
+        if dat.dig(:kokuzei, :chukan, :karibarai) > 0
+          item['credit'] << { 'label' => '仮払法人税', 'amount' => dat[:kokuzei][:chukan][:karibarai] }
+        end
+        if dat.dig(:kokuzei, :chukan, :kanpu) > 0
+          item['debit'] << { 'label' => '未収法人税', 'amount' => dat[:kokuzei][:chukan][:kanpu] }
+        end
+        if dat[:kokuzei][:mibarai] > 0
+          item['credit'] << { 'label' => '未払法人税', 'amount' => dat[:kokuzei][:mibarai] }
+        end
+      end
+
+      def 確定仕訳地方税(item, dat)
         if dat[:chihou][:chukan] > 0
           item['credit'] << { 'label' => '仮払法人税(地方)', 'amount' => dat[:chihou][:chukan] }
         end
@@ -109,11 +155,6 @@ module Luca
         else
           item['credit'] << { 'label' => '未払法人税', 'amount' => dat[:chihou][:zeigaku] - dat[:chihou][:chukan] }
         end
-        item['debit'] << { 'label' => '法人税、住民税及び事業税', 'amount' => dat[:chihou][:zeigaku] } if dat[:chihou][:zeigaku] > 0
-        item['x-editor'] = 'LucaJp'
-        res << item
-
-        raw ? res : JSON.dump(res)
       end
 
       def 別表一
@@ -183,8 +224,6 @@ module Luca
           @受取配当金の益金不算入額,
           @受贈益の益金不算入額,
         ].compact.sum
-        @別表四調整所得留保 = @当期純損益 + @損金不算入額留保 - @益金不算入額留保
-        @別表四調整所得社外流出 = @当期純損益 + @損金不算入額社外流出 - @益金不算入額社外流出
         # TODO: 寄付金、所得税額控除、外国法人税の損金不算入調整
 
         render_erb(search_template('beppyo4.xml.erb'))
@@ -409,6 +448,53 @@ module Luca
 
         return true if 別表二上位議決権割合 > 50 || 別表二上位株割合 > 50
         false
+      end
+
+      # 加算・減算欄の調整
+      def 別表四調整所得仮計
+        損金不算入額仮計 = [
+          @減価償却の償却超過額,
+          @役員給与の損金不算入額,
+          @交際費等の損金不算入額,
+          @当期還付事業税
+        ].compact.sum
+
+        益金不算入額仮計 = [
+          @納付事業税,
+          @事業税中間納付,
+          @減価償却超過額の当期認容額,
+          @受取配当金の益金不算入額,
+          @受贈益の益金不算入額,
+        ].compact.sum
+
+        @税引前損益 + 損金不算入額仮計 - 益金不算入額仮計
+      end
+
+      def 別表四調整所得仮計留保
+        @当期純損益 + @損金不算入額留保 - @益金不算入額留保
+      end
+
+      def 別表四調整所得仮計社外流出
+        @当期純損益 + @損金不算入額社外流出 - @益金不算入額社外流出
+      end
+
+      # 損金経理した税額控除対象額の調整
+      def 別表四調整所得合計
+        [
+          別表四調整所得仮計,
+          @所得税等の損金不算入額,
+        ].compact.sum
+      end
+
+      def 別表四調整所得合計留保
+        別表四調整所得仮計留保
+      end
+
+      def 別表四調整所得合計社外流出
+        [
+          別表四調整所得仮計社外流出,
+          @所得税等の損金不算入額,
+        ].compact.sum
       end
 
       def 別表四還付法人税等金額
