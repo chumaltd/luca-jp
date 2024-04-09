@@ -87,8 +87,8 @@ module Luca
           @概況売上 = gaikyo('A0')
           @form_sec = [
             'HOA112', 'HOA116', 'HOA201', 'HOA420', 'HOA511', 'HOA522',
-            別表六一フォーム, 別表七フォーム, 別表八一フォーム, 別表十四二フォーム,
-            'HOE200', 適用額明細フォーム,
+            別表六一フォーム, 別表七フォーム, 別表八一フォーム, 別表十四二フォーム, 別表十五フォーム,
+            適用額明細フォーム,
             'HOI010', 有価証券内訳フォーム, 買掛金内訳フォーム, 'HOI100', 借入金内訳フォーム, 'HOI141', 地代家賃内訳フォーム, 雑益雑損失内訳フォーム,
             'HOK010'
             ].compact.map{ |c| form_rdf(c) }.join('')
@@ -313,9 +313,17 @@ module Luca
         render_erb(search_template('beppyo14-2.xml.erb'))
       end
 
+      def 別表十五フォーム
+        return nil if readable(@pl_data.dig('C1B') || 0) <= 0
+
+        'HOE200'
+      end
+
       def 別表十五
         @交際費 = readable(@pl_data.dig('C1B') || 0)
-        STDERR.puts "別表十五「交際費等の損金算入に関する明細書」： 交際費計上額なし。必要に応じて帳票削除" if @交際費 == 0
+        return nil if @交際費 <= 0
+
+        STDERR.puts "別表十五「交際費等の損金算入に関する明細書」： 飲食費など明細の追記が必要"
         @限度額 = @交際費 < 4_000_000 ? @交際費 : 4_000_000
         @不算入額 = @交際費 < 4_000_000 ? 0 : @交際費 - 4_000_000
         render_erb(search_template('beppyo15.xml.erb'))
