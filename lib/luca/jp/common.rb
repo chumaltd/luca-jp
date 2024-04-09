@@ -109,12 +109,32 @@ module Luca
           @受贈益の益金不算入額,
         ].compact.sum
 
-        @別表四調整所得 = @税引前損益 + @損金不算入額税額未確定 - @益金不算入額税額未確定
+        @別表四調整所得 = @税引前損益 + @損金不算入額税額未確定 - @益金不算入額税額未確定 + 寄付金の損金不算入額
         # 税引前損益に含まれない税額控除対象所得税の認識
         @所得税等の損金不算入額 = [
           @所得税等の損金不算入額,
           prepaid_tax('H115')
         ].compact.sum
+      end
+
+      def 寄付金の損金不算入額
+        寄付金 = LucaSupport::Code.readable(@pl_data.dig('C1X')||0)
+        指定寄付金 = LucaSupport::Code.readable(@pl_data.dig('C1X1')||0)
+
+        [
+          寄付金 - 指定寄付金 - 一般寄付金の損金算入限度額,
+          0
+        ].max
+      end
+
+      def 一般寄付金の損金算入限度額
+        寄付金算定所得 = @税引前損益 + @損金不算入額税額未確定 - @益金不算入額税額未確定 + LucaSupport::Code.readable(@pl_data.dig('C1X')||0)
+        期末資本準備金 = LucaSupport::Code.readable(@bs_data.dig('9131')||0)
+
+        ([
+          (寄付金算定所得 * 2.5 / 100).floor,
+          ([期末資本金, 期末資本準備金].compact.sum * 2.5 / 1000).floor
+        ].compact.sum / 4).floor
       end
 
       # -----------------------------------------------------

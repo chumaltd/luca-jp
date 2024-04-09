@@ -1,0 +1,36 @@
+<HOE099 page="1" VR="12.0" id="HOE099" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <WWA00000>
+        <WWA00010>
+            <WWA00020 IDREF="JIGYO_NENDO_FROM"/>
+            <WWA00030 IDREF="JIGYO_NENDO_TO"/>
+        </WWA00010>
+        <WWA00040 IDREF="NOZEISHA_NM"/>
+    </WWA00000>
+    <WWB00000>
+        <WWB00010>
+            <WWB00020>
+                <%= render_attr('WWB00030', @指定寄付金) %>
+                <%= render_attr('WWB00050', @寄付金 - @指定寄付金) %>
+                <%= render_attr('WWB00060', @寄付金) %>
+                <%= render_attr('WWB00080', @寄付金) %>
+            </WWB00020>
+            <%= render_attr('WWB00090', 別表四調整所得仮計) %>
+            <%= render_attr('WWB00100', [@寄付金 + 別表四調整所得仮計, 0].max) %>
+            <%= render_attr('WWB00110', ([@寄付金 + 別表四調整所得仮計, 0].max * 2.5 / 100).floor) %>
+            <%= render_attr('WWB00120', [期末資本金, @期末資本準備金].sum) %>
+            <WWB00130>
+                <%= render_attr('WWB00150', [期末資本金, @期末資本準備金].compact.sum) %>
+            </WWB00130>
+            <%= render_attr('WWB00160', ([期末資本金, @期末資本準備金].compact.sum * 2.5 / 1000).floor) %>
+            <%= render_attr('WWB00170', 一般寄付金の損金算入限度額) %>
+        </WWB00010>
+        <%# WWB00180 特定公益増進法人等に対する寄附金の特別損金算入限度額の計算 %>
+        <%= render_attr('WWB00230', @指定寄付金) %>
+        <%# WWB00240 国外関連者に対する寄附金額及び本店等に対する内部寄附金額 %>
+        <%= render_attr('WWB00250', @寄付金) %>
+        <WWB00260>
+            <%= render_attr('WWB00270', 寄付金の損金不算入額) %>
+            <%= render_attr('WWB00300', 寄付金の損金不算入額) %>
+        </WWB00260>
+    </WWB00000>
+</HOE099>

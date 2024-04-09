@@ -86,7 +86,7 @@ module Luca
           @翌期還付法人税 = 中間還付税額(@確定法人税額 + @確定地方法人税額, @法人税中間納付 + @地方法人税中間納付)
           @概況売上 = gaikyo('A0')
           @form_sec = [
-            'HOA112', 'HOA116', 'HOA201', 'HOA420', 'HOA511', 'HOA522', 別表七フォーム,
+            'HOA112', 'HOA116', 'HOA201', 'HOA420', 'HOA511', 'HOA522', 別表七フォーム, 別表十四二フォーム,
             'HOE200', 適用額明細フォーム,
             'HOI010', 有価証券内訳フォーム, 買掛金内訳フォーム, 'HOI100', 借入金内訳フォーム, 'HOI141', 地代家賃内訳フォーム, 雑益雑損失内訳フォーム,
             'HOK010'
@@ -94,7 +94,7 @@ module Luca
           #@extra_form_sec = ['HOI040']
           @it = it_part
           @form_data = [
-            別表一, 別表一次葉, 別表二, 別表四簡易, 別表五一, 別表五二, 別表七, 別表十五,
+            別表一, 別表一次葉, 別表二, 別表四簡易, 別表五一, 別表五二, 別表七, 別表十四二, 別表十五,
             適用額明細,
             預貯金内訳, 有価証券内訳, 買掛金内訳, 仮受金内訳, 借入金内訳, 役員報酬内訳, 地代家賃内訳, 雑益雑損失内訳,
             概況説明
@@ -224,7 +224,7 @@ module Luca
           @受取配当金の益金不算入額,
           @受贈益の益金不算入額,
         ].compact.sum
-        # TODO: 寄付金、所得税額控除、外国法人税の損金不算入調整
+        # TODO: 外国法人税の損金不算入調整
 
         render_erb(search_template('beppyo4.xml.erb'))
       end
@@ -269,6 +269,21 @@ module Luca
         return nil if @繰越損失管理.records.length == 0
 
         render_erb(search_template('beppyo7.xml.erb'))
+      end
+
+      def 別表十四二フォーム
+        return nil if readable(@pl_data.dig('C1X')||0) <= 0
+
+        'HOE099'
+      end
+
+      def 別表十四二
+        @寄付金 = readable(@pl_data.dig('C1X'))
+        return nil if @寄付金 <= 0
+
+        STDERR.puts "別表十四（二）： 損金算入可能な寄付金の明細追記が必要"
+        @指定寄付金 = readable(@pl_data.dig('C1X1')||0)
+        render_erb(search_template('beppyo14-2.xml.erb'))
       end
 
       def 別表十五
@@ -482,6 +497,7 @@ module Luca
       def 別表四調整所得合計
         [
           別表四調整所得仮計,
+          寄付金の損金不算入額,
           @所得税等の損金不算入額,
         ].compact.sum
       end
@@ -493,6 +509,7 @@ module Luca
       def 別表四調整所得合計社外流出
         [
           別表四調整所得仮計社外流出,
+          寄付金の損金不算入額,
           @所得税等の損金不算入額,
         ].compact.sum
       end
