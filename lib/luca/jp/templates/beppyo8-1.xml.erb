@@ -1,0 +1,12 @@
+<HOB800 page="1" VR="18.0" id="HOB800" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+    <CBA00000>
+        <CBA00010>
+            <CBA00020 IDREF="JIGYO_NENDO_FROM"/>
+            <CBA00030 IDREF="JIGYO_NENDO_TO"/>
+        </CBA00010>
+        <CBA00040 IDREF="NOZEISHA_NM"/>
+    </CBA00000>
+    <CBB00000>
+        <%= render_attr('CBB00150', @受取配当金の益金不算入額) %>
+    </CBB00000>
+</HOB800>
