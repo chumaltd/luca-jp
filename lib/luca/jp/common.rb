@@ -132,7 +132,7 @@ module Luca
         期末資本準備金 = LucaSupport::Code.readable(@bs_data.dig('9131')||0)
 
         ([
-          (寄付金算定所得 * 2.5 / 100).floor,
+          ([寄付金算定所得, 0].max * 2.5 / 100).floor,
           ([期末資本金, 期末資本準備金].compact.sum * 2.5 / 1000).floor
         ].compact.sum / 4).floor
       end

@@ -40,8 +40,8 @@ class Luca::Jp::RefundTest < Minitest::Test
     assert_equal 0, jptax.instance_variable_get(:@益金不算入額社外流出)
 
     assert_equal 0 - [1003, 1004, 1005, 1006, 1007].sum, jptax.instance_variable_get(:@別表四調整所得)
-    assert_equal 0 - [1003, 1004, 1005, 1006, 1007].sum, jptax.instance_variable_get(:@別表四調整所得留保)
-    assert_equal jptax.instance_variable_get(:@当期純損益), jptax.instance_variable_get(:@別表四調整所得社外流出)
+    assert_equal 0 - [1003, 1004, 1005, 1006, 1007].sum, jptax.send(:別表四調整所得合計留保)
+    assert_equal jptax.instance_variable_get(:@当期純損益), jptax.send(:別表四調整所得合計社外流出)
   end
 
   def test_beppyo51_temporary_taxes_convert

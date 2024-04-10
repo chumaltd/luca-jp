@@ -40,9 +40,9 @@ class Luca::Jp::PaymentNextFYTest < Minitest::Test
     assert_equal jptax.instance_variable_get(:@損金不算入額留保), jptax.instance_variable_get(:@損金不算入額)
     assert_equal 0, jptax.instance_variable_get(:@損金不算入額社外流出)
 
-    assert_equal -3000, jptax.instance_variable_get(:@別表四調整所得)
-    assert_equal -3000, jptax.instance_variable_get(:@別表四調整所得留保)
-    assert_equal jptax.instance_variable_get(:@当期純損益), jptax.instance_variable_get(:@別表四調整所得社外流出)
+    assert_equal (-3000), jptax.instance_variable_get(:@別表四調整所得)
+    assert_equal (-3000), jptax.send(:別表四調整所得合計留保)
+    assert_equal jptax.instance_variable_get(:@当期純損益), jptax.send(:別表四調整所得合計社外流出)
   end
 
   def test_beppyo51_taxes_payment

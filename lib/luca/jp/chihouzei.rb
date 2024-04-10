@@ -40,7 +40,7 @@ module Luca
         @地方特別法人事業税中間納付 = prepaid_tax('1854', @jimusho_name)
         @所得割中間納付 = prepaid_tax('1855', @jimusho_name)
         @法人税割中間納付 = prepaid_tax(
-          @report_category == 'city' ? '185D' :'1859',
+          @report_category == 'city' ? '185D' : '1859',
           @jimusho_name
         )
         @均等割中間納付 = prepaid_tax(

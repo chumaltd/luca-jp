@@ -737,10 +737,6 @@ module Luca
         [@事業税中間納付, 確定事業税].min
       end
 
-      def 期末未納事業税
-        readable(@bs_data['5152']) || 0
-      end
-
       def 別表五一期首差引金額
         [
           @当期還付法人税,
