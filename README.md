@@ -41,33 +41,53 @@ Documents
 Usage
 ---------
 
-`luca-jp`コマンドに期間指定して税額計算、仕訳データ、申告データを生成。
+`luca-jp`コマンドは税額計算、仕訳データ、申告データを生成。
 
-あらかじめ、`--export`オプションで確定税額の仕訳を生成し、LucaBookにインポートしておく必要がある。  
-消費税課税事業者は、`luca-jp syouhizei --export`を最初に実行する。
-
+申告用のXML生成に先立って、`--export`オプションで確定税額の仕訳を生成し、LucaBookにインポートしておく。  
 仕訳を一式インポートしたうえで、`luca-jp`コマンドでeTax用のxtxまたはeLtax用のXMLを出力。
+
+
+### 消費税の計算
+
+消費税課税事業者は、`luca-jp syouhizei --export`を最初に実行する。
 
 ```bash
 # LucaBookのディレクトリトップで実行する
 $ cd </path/to/project-dir>
 
 # exportオプションはLucaBookインポート用の仕訳を出力
-$ luca-jp [houjinzei|syouhizei|chihouzei] --export [<yyyy> <mm> <yyyy> <mm>] > <export.json>
+$ luca-jp syouhizei --export [--lastyear|<yyyy> <mm> <yyyy> <mm>] > <export.json>
 $ cat <export.json> | luca-book journals import --json
 
-$ luca-jp [houjinzei|syouhizei] [<yyyy> <mm> <yyyy> <mm>] > <tax.xtx>
-# 地方税はchihouzei-<jimusho_code>.xmlを出力
-$ luca-jp chihouzei [<yyyy> <mm> <yyyy> <mm>]
+$ luca-jp syouhizei [--lastyear|<yyyy> <mm> <yyyy> <mm>] > <tax.xtx>
 ```
+
+### 法人税・地方税の計算
+
+```bash
+# LucaBookのディレクトリトップで実行する
+$ cd </path/to/project-dir>
+
+# exportオプションはLucaBookインポート用の仕訳を出力
+$ luca-jp [houjinzei|chihouzei] --export [--lastyear|<yyyy> <mm> <yyyy> <mm>] > <export.json>
+$ cat <export.json> | luca-book journals import --json
+
+$ luca-jp houjinzei [--lastyear|<yyyy> <mm> <yyyy> <mm>] > <tax.xtx>
+# 地方税はchihouzei-<jimusho_code>.xmlを出力
+$ luca-jp chihouzei [--lastyear|<yyyy> <mm> <yyyy> <mm>]
+```
+
+`-x path/to/extra-conf.yml`オプションを追加することで、単期のconfigセットを指定できる。ファイル名は任意。仕訳データ生成時と申告書ファイル生成時に同一のconfigファイルを指定しなくてはならない。
+
+各XMLファイルは、eTax/PCDeskにインポートする。
 
 * xtxファイルはeTaxソフトの「作成」->「申告・申請等」->「組み込み」からインポート可能
 * 地方税のxmlファイルはPCDeskの「申告データ一覧(照会・編集)」->「取り込み」からインポート可能
 
-
 LucaBookの日本用標準勘定科目を利用した仕訳データを前提としている。税務署は内訳データを求めているため、税金納付などは種目を細かく分類して記帳しなくてはならない。
 
-* 中間納付の計算上、最終月は計算から除外する。決算仕訳により相殺される影響を受けない
+* 多くの項目を自動生成するが、仕訳から明細を生成できない項目は残る。eTaxソフトで確認のうえ修正する。注意事項は`luca-jp`コマンド実行時にコンソールの標準エラーに表示。
+* 中間納付の計算上、最終日の仕訳を計算から除外する。決算仕訳により相殺される影響を受けない
 
 
 ### 財務諸表

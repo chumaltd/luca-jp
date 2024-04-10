@@ -1,6 +1,7 @@
 # 法人税申告用Config
 
-configはLucaBookの`config.yml`に加えて、Luca::Jp専用の`config-lucajp.yml`をロードする。
+configはLucaBookの`config.yml`に加えて、Luca::Jp専用の`config-lucajp.yml`をロードする。  
+各年度特有の調整項目などは、[単年度用Config](./config-yearly.md)を参照。
 
 IT部
 ------------
