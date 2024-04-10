@@ -77,7 +77,7 @@ $ luca-jp houjinzei [--lastyear|<yyyy> <mm> <yyyy> <mm>] > <tax.xtx>
 $ luca-jp chihouzei [--lastyear|<yyyy> <mm> <yyyy> <mm>]
 ```
 
-`-x path/to/extra-conf.yml`オプションを追加することで、単期のconfigセットを指定できる。ファイル名は任意。仕訳データ生成時と申告書ファイル生成時に同一のconfigファイルを指定しなくてはならない。
+`-x path/to/extra-conf.yml`オプションを追加することで、[単期のconfigセット](./documents/config-yearly.md)を指定できる。ファイル名は任意。仕訳データ生成時と申告書ファイル生成時に同一のconfigファイルを指定しなくてはならない。
 
 各XMLファイルは、eTax/PCDeskにインポートする。
 
