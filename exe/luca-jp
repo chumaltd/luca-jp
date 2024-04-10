@@ -37,7 +37,7 @@ class LucaCmd
       puts JSON.dump(accounts)
     else
       Luca::Jp::Util.eltax_config('reports').each do |report|
-        File.open("chihouzei-#{report['jichitai_code']}#{report['jimusho_code']}.xml", 'w') { |f| f.puts(Luca::Jp::Chihouzei.range(*auto_range(args, params)).kani(report))}
+        File.open("chihouzei-#{report['jichitai_code']}#{report['jimusho_code']}.xml", 'w') { |f| f.puts(Luca::Jp::Chihouzei.range(*auto_range(args, params)).kani(report, ext_config: ext_config))}
       end
     end
   end

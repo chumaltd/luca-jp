@@ -41,10 +41,11 @@ module Luca #:nodoc:
 
         @有価証券 = @bs_data.each.with_object({}) do |(k, v), h|
           next unless account_codes.include?(k.to_s)
-          next if v.nil? || v <= 0
 
           inc = debit_amount(k, @start_date.year, @start_date.month, @end_date.year, @end_date.month) || 0
           dec = credit_amount(k, @start_date.year, @start_date.month, @end_date.year, @end_date.month) || 0
+          next if v.nil? || (v <= 0 && inc <= 0 && dec <= 0)
+
           h[k] = {
             name: self.class.dict.dig(k)[:label],
             amount: readable(v),
