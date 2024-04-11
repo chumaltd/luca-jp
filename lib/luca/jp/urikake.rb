@@ -11,38 +11,37 @@ module Luca
     class Urikake < LucaDeal::Invoice
       @dirname = 'invoices'
 
-      def report(total = nil, encoding = nil)
+      def report(encoding = nil)
         listed_amount = 0
         encoding ||= 'SJIS'
+        customers, total = list
         str = CSV.generate(String.new, headers: false, col_sep: ',', encoding: encoding) do |f|
-          list.map do |invoice|
-            amount = readable(invoice.dig('subtotal', 0, 'items') + invoice.dig('subtotal', 0, 'tax'))
+          customers.map do |c|
+            amount = readable(c['unsettled'])
             listed_amount += amount
-            f << ['3', '0', '売掛金', invoice.dig('customer', 'name'), invoice.dig('customer', 'address'), amount, nil ]
+            f << ['3', '0', '売掛金', c['customer'], c['address'], amount, nil ]
           end
-          if total
+          if total - listed_amount > 0
             f << ['3', '0', '売掛金', 'その他', nil, total - listed_amount, nil ]
-            f << ['3', '1', nil, nil, nil, total, nil ]
-          else
-            f << ['3', '1', nil, nil, nil, listed_amount, nil ]
           end
+          f << ['3', '1', nil, nil, nil, total, nil ]
         end
         File.open('HOI030_3.0.csv', 'w') { |f| f.write(str) }
       end
 
       def list
-        invoices = self.class.asof(@date.year, @date.month)
-                     .map { |dat, _path| dat }
-                     .sort_by { |invoice| invoice.dig('subtotal', 0, 'items') }
+        customers = self.class.report(@date, detail: true)
+                     .sort_by { |customer| customer['unsettled'] }
                      .reverse
+        total = customers.inject(0) { |sum, customer| sum + customer['unsettled'] }
 
-        reports = invoices.filter { |invoice| 500_000 <= invoice['subtotal'].inject(0) { |sum, i| sum + i['items'] + i['tax'] } }
-        return reports if reports.length >= 5
+        reports = customers.filter { |customer| 500_000 <= customer['unsettled'] }
+        return [reports, total] if reports.length >= 5
 
-        additional = invoices
-                       .filter { |invoice| 500_000 > invoice['subtotal'].inject(0) { |sum, i| sum + i['items'] + i['tax'] } }
+        additional = customers
+                       .filter { |customer| 500_000 > customer['unsettled'] }
                        .take(5 - reports.length)
-        reports.concat(additional)
+        [reports.concat(additional), total]
       end
     end
   end
