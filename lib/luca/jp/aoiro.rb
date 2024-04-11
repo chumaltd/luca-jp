@@ -20,13 +20,14 @@ module Luca
       @dirname = 'journals'
       @record_type = 'raw'
 
-      def kani(ext_config: nil, export: false)
+      def kani(ext_config: nil, export: false, no_xbrl: false)
         set_pl(4)
         set_bs(4)
         @issue_date = Date.today
         @company = CGI.escapeHTML(config.dig('company', 'name'))
         @software = 'LucaJp'
         @shinkoku_kbn = '30' # 確定申告
+        @no_xbrl = no_xbrl # 決算書XBRLの組み込み省略
 
         別表四所得調整(ext_config)
         @税額 = 税額計算
@@ -99,7 +100,7 @@ module Luca
             別表六一, 別表七, 別表八一, 別表十四二, 別表十五,
             適用額明細,
             預貯金内訳, 有価証券内訳, 買掛金内訳, 仮受金内訳, 借入金内訳, 役員報酬内訳, 地代家賃内訳, 雑益雑損失内訳,
-            概況説明
+            概況説明, 決算書
             ].compact.join("\n")
           render_erb(search_template('aoiro.xtx.erb'))
         end
@@ -380,6 +381,25 @@ module Luca
         @概況外注費 = gaikyo('C1O')
         @概況人件費 = ['C11', 'C12', 'C13'].map { |k| gaikyo(k) }.compact.sum
         render_erb(search_template('gaikyo.xml.erb'))
+      end
+
+      def 決算書フォーム
+        return %Q(<XBRL2_1_SEC/>) if @no_xbrl
+
+        xsd_filename = %Q(#statement-#{@issue_date.to_s}.xsd)
+        %Q(<XBRL2_1_SEC><rdf:Seq>
+          <rdf:li><rdf:description><Instance><rdf:Bag><rdf:li><rdf:description about="#HOT010-1"/></rdf:li></rdf:Bag></Instance></rdf:description></rdf:li>
+          <rdf:li><rdf:description><taxonomy><rdf:Bag><rdf:li><rdf:description about="#{xsd_filename}"/></rdf:li></rdf:Bag></taxonomy></rdf:description></rdf:li>
+          </rdf:Seq></XBRL2_1_SEC>)
+      end
+
+      def 決算書
+        return nil if @no_xbrl
+
+        @xbrl_filename = %Q(statement-#{@issue_date.to_s})
+        @xbrl, @xsd = LucaBook::State.range(@start_date.year, @start_date.month, @end_date.year, @end_date.month)
+                          .render_xbrl(@xbrl_filename)
+        render_erb(search_template('xbrl21.xml.erb'))
       end
 
       def self.dict

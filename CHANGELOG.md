@@ -1,3 +1,7 @@
+## Luca::Jp 0.19.0
+
+* `luca-jp houjinzei`サブコマンドがデフォルトでXBRL2.1財務諸表を同梱する挙動に変更
+
 ## Luca::Jp 0.18.1
 
 * `luca-jp urikake`サブコマンドのバックエンド更新。LucaDeal機能を用いて過去10年の未決済売掛金を集計

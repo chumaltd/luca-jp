@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.executables   = ['luca-jp']
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'lucabook', '>= 0.5.3'
+  spec.add_dependency 'lucabook', '>= 0.5.4'
   spec.add_dependency 'lucadeal', '>= 0.5.5'
   spec.add_dependency 'lucasalary', '>= 0.1.26'
   spec.add_dependency 'lucarecord', '>= 0.7.3'

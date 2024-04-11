@@ -1,0 +1,8 @@
+<XBRL2_1>
+    <XBRL2_1_INSTANCE VR="2.0" id="HOT010-1" page="1" sakuseiDay="<%= @issue_date %>" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>">
+        <%= @xbrl %>
+    </XBRL2_1_INSTANCE>
+    <XBRL2_1_TAXONOMY id="<%= @xbrl_filename %>.xsd">
+        <%= @xsd %>
+    </XBRL2_1_TAXONOMY>
+</XBRL2_1>
