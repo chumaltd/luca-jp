@@ -118,7 +118,10 @@ module Luca #:nodoc:
 
       def 仮受金内訳
         @源泉給与 = readable(@bs_data.dig('5191') || 0)
-        @源泉報酬 = readable(@bs_data.dig('5193') || 0)
+        @源泉報酬 = [
+          readable(@bs_data.dig('5193') || 0),
+          readable(@bs_data.dig('5194') || 0)
+        ].sum
         render_erb(search_template('kariuke-meisai.xml.erb'))
       end
 
