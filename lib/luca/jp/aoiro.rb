@@ -394,7 +394,10 @@ module Luca
       end
 
       def 決算書
-        return nil if @no_xbrl
+        if @no_xbrl
+          STDERR.puts "決算書XBRLをeTaxソフトに追加インポートする必要あり"
+          return nil
+        end
 
         @xbrl_filename = %Q(statement-#{@issue_date.to_s})
         @xbrl, @xsd = LucaBook::State.range(@start_date.year, @start_date.month, @end_date.year, @end_date.month)
@@ -544,8 +547,15 @@ module Luca
         @当期純損益 + @損金不算入額留保 - @益金不算入額留保
       end
 
+      # NOTE: 別表四社外流出欄の本書と外書の区分は紙の事務を前提としており自明ではない。
+      # 帳票フィールド仕様書を参照して実装するほかない
+      #
       def 別表四調整所得仮計社外流出
-        @当期純損益 + @損金不算入額社外流出 - @益金不算入額社外流出
+        @損金不算入額社外流出
+      end
+
+      def 別表四調整所得仮計社外流出外書
+        @益金不算入額社外流出 * -1
       end
 
       # 損金経理した税額控除対象額の調整
@@ -567,6 +577,10 @@ module Luca
           寄付金の損金不算入額,
           @所得税等の損金不算入額,
         ].compact.sum
+      end
+
+      def 別表四調整所得合計社外流出外書
+        別表四調整所得仮計社外流出外書
       end
 
       def 別表四還付法人税等金額
