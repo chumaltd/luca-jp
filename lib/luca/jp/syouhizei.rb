@@ -169,7 +169,9 @@ module Luca
       end
 
       def proc_version
-        if @end_date >= Date.parse('2023-10-1')
+        if @end_date >= Date.parse('2024-4-1')
+          { 'proc' => '23.2.0', 'SHA020' => '9.0' }
+        elsif @end_date >= Date.parse('2023-10-1')
           { 'proc' => '23.0.0', 'SHA020' => '9.0' }
         elsif @end_date >= Date.parse('2021-4-1')
           { 'proc' => '20.0.1', 'SHA020' => '7.1' }

@@ -1,4 +1,4 @@
-<HOI090 page="1" VR="4.0" id="HOI090" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+<HOI090 page="1" VR="<%= @form_vers['HOI090'] %>" id="HOI090" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
     <% @買掛金.values.each do |payable| %>
         <HIB00000>
             <%= render_attr('HIB00100', payable[:payable_type]) %>

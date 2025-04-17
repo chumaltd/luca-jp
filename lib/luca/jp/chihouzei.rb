@@ -268,7 +268,11 @@ module Luca
       end
 
       def proc_version
-        if @end_date >= Date.parse('2022-4-1')
+        if @start_date >= Date.parse('2025-4-1')
+          { 'R0102AA' => '250', 'R0102AG' => '211', 'R0102AM' => '240' }
+        elsif @end_date >= Date.parse('2024-4-1')
+          { 'R0102AA' => '240', 'R0102AG' => '211', 'R0102AM' => '240' }
+        elsif @end_date >= Date.parse('2022-4-1')
           { 'R0102AA' => '211', 'R0102AG' => '211', 'R0102AM' => '211' }
         elsif @start_date >= Date.parse('2020-4-1')
           { 'R0102AA' => '200', 'R0102AG' => '120','R0102AM' => '200' }

@@ -40,6 +40,11 @@
         <AAA_JIGYO_NAME idref="JIGYO_NAME"></AAA_JIGYO_NAME>
         <AAA_SHIHON idref="SHIHON"></AAA_SHIHON>
         <AAA_SHIHON3></AAA_SHIHON3>
+        <% if @form_vers['R0102AA'] == '250' %>
+          <AAA_GASSAN></AAA_GASSAN>
+          <AAA_GASSAN2></AAA_GASSAN2>
+          <AAA_HOUJIN_KBN></AAA_HOUJIN_KBN>
+        <% end %>
         <AAA_SHIHON4></AAA_SHIHON4>
         <AAA_SHIHON2><%= 資本金等の額 %></AAA_SHIHON2>
         <AAA_SHIHON5><%= @資本金準備金 %></AAA_SHIHON5>
@@ -198,4 +203,10 @@
         <AAI00800>2</AAI00800>
         <AAJ_DAIRI_NAME></AAJ_DAIRI_NAME>
         <AAJ_DAIRI_TEL_NUM></AAJ_DAIRI_TEL_NUM>
+        <% if @form_vers['R0102AA'] == '250' %>
+          <AAL00100></AAL00100>
+          <AAL00200></AAL00200>
+          <AAL00300></AAL00300>
+          <AAL00400></AAL00400>
+        <% end %>
 </R0102AA<%= @form_vers['R0102AA'] %>>

@@ -1,4 +1,4 @@
-<HOI100 page="1" VR="5.0" id="HOI100" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
+<HOI100 page="1" VR="<%= @form_vers['HOI100'] %>" id="HOI100" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
     <HJB00000>
         <HJB01000>
             <%= render_attr('HJB01100', '預り金') %>
