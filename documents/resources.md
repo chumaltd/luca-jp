@@ -26,9 +26,8 @@ e-Tax仕様書のファイルは手続・帳票などの意味のある単位で
 
 なお、バージョンの改訂意図を読み取る手段はない。税制改定じたいが必ずしもロジカルな帰結でない可能性があり、やむを得ない。
 
-XML構造設計書については、[jp-national-taxのツール](https://github.com/chumaltd/jp-national-tax/tree/master/tools)を用いてフィールドごとの出現バージョンを分析できる。  
-`parse-etax-spec.rb`を用いて各シートをCSV変換したうえで、`stats-etax-spec.rb`で帳票を指定して分析する。`parse-etax-spec.rb`は対象バージョンをすべて変換する必要があるがバルク処理を実装しておらず、シェルスクリプトの`for`文などでループ処理する想定。  
-フィールドの追加・削除は把握できるが、定義の異同はチェックしていない。
+手続きごとのバージョンセットについては、[jp-national-taxのツール](https://github.com/chumaltd/jp-national-tax/tree/master/tools)を用いて分析できる。
+
 
 ### 詳細
 
