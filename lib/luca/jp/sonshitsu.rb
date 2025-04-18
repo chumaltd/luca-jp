@@ -31,9 +31,9 @@ module Luca
       #   - start_date: 2020-01-01
       #     end_date: 2020-12-31
       #     increase: 1000000
-      #   - start_date: 2021-01-01
-      #     end_date: 2021-12-31
-      #     decrease: 800000
+      #     decrease:
+      #     - date: 2021-12-31
+      #       val: 800000
       #
       def self.load(this_year)
         records = if File.exist?(record_file)
@@ -47,6 +47,10 @@ module Luca
       end
 
       def save
+        @records.each do |record|
+          record.delete('amount')
+          record.delete('decrease') if record['decrease'].nil? || record['decrease'].empty?
+        end
         File.open(self.class.record_file, 'w') { |f| f.puts YAML.dump(@records)}
         self
       end
@@ -83,14 +87,14 @@ module Luca
       def net_amount
         @records.each do |record|
           record['amount'] = record['increase'] - past_decreased(record['decrease'])
-          record['decrease'] = record['decrease']&.reject { |decrease_record| decrease_record['date'] > @report_date.prev_year }
+          record['decrease'] = record['decrease']&.reject { |decrease_record| decrease_record['date'] >= @report_date }
         end
       end
 
       def past_decreased(decrease_records)
         return 0 if decrease_records.nil?
 
-        decrease_records.filter { |record| record['date'] <= @report_date.prev_year }
+        decrease_records.filter { |record| record['date'] < @report_date }
           .map { |record| record['val'] }.sum || 0
       end
 
