@@ -101,6 +101,7 @@ module Luca #:nodoc:
           metadata = uchiwake_account_config(k).first
           if metadata && metadata['name']
             h[k][:name] = metadata['name']
+            h[k][:tax_id] = metadata['tax_id']&.to_s&.sub(/T/, '')
             h[k][:payable_type] = self.class.dict.dig(k[0..2], :label)
             h[k][:address] = metadata['address']
             h[k][:note] = metadata['note']
@@ -185,6 +186,7 @@ module Luca #:nodoc:
           metadata = uchiwake_account_config(k).first
           if metadata && metadata['name']
             h[k][:name] = metadata['name']
+            h[k][:tax_id] = metadata['tax_id']&.to_s&.sub(/T/, '')
             h[k][:address] = metadata['address']
             h[k][:rent_type] = metadata['rent_type'] || '家賃'
             h[k][:rent_purpose] = metadata['rent_purpose']

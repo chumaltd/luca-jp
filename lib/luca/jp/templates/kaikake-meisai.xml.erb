@@ -2,6 +2,11 @@
     <% @買掛金.values.each do |payable| %>
         <HIB00000>
             <%= render_attr('HIB00100', payable[:payable_type]) %>
+            <% if @form_vers['HOI090'] >= '5.0' && payable[:tax_id] -%>
+              <HIB00500>
+                <%= render_attr('HIB00510', payable[:tax_id]) %>
+              </HIB00500>
+            <% end -%>
             <HIB00200>
                 <%= render_attr('HIB00210', payable[:name]) %>
                 <%= render_attr('HIB00220', payable[:address]) %>

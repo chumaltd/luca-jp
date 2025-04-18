@@ -199,8 +199,8 @@ module Luca
           next if deduction == 0 && record['amount'] == 0
 
           %Q(<AMB00200>
-          <AMB00210>#{etax_date(@start_date)}</AMB00210>
-          <AMB00220>#{etax_date(@end_date)}</AMB00220>
+            <AMB00210>#{etax_date(record['start_date'])}</AMB00210>
+              <AMB00220>#{etax_date(record['end_date'])}</AMB00220>
           <AMB00225>1</AMB00225>
           #{render_attr('AMB00230', deduction + record['amount'])}
           #{render_attr('AMB00240', deduction)}

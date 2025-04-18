@@ -1,15 +1,20 @@
 <HOI150 page="1" VR="<%= @form_vers['HOI150'] %>" id="HOI150" sakuseiNM="<%= @company %>" softNM="<%= @software %> <%= @company %>" sakuseiDay="<%= @issue_date %>">
     <HOB00000>
-    <% @地代家賃.values.each do |rent| %>
-        <HOB10000>
-            <%= render_attr('HOB11000', rent[:rent_type]) %>
-            <%= render_attr('HOB12000', rent[:rent_purpose]) %>
-            <%= render_attr('HOB13000', rent[:rent_address]) %>
-            <%= render_attr('HOB14000', rent[:name]) %>
-            <%= render_attr('HOB15000', rent[:address]) %>
-            <%= render_attr('HOB17000', rent[:amount]) %>
-            <%= render_attr('HOB18000', rent[:note]) %>
-        </HOB10000>
-    <% end %>
+        <% @地代家賃.values.each do |rent| %>
+            <HOB10000>
+                <%= render_attr('HOB11000', rent[:rent_type]) %>
+                <%= render_attr('HOB12000', rent[:rent_purpose]) %>
+                <%= render_attr('HOB13000', rent[:rent_address]) %>
+                <% if @form_vers['HOI150'] >= '4.0' && rent[:tax_id] %>
+                    <HOB27000>
+                        <%= render_attr('HOB27100', rent[:tax_id]) %>
+                    </HOB27000>
+                <% end %>
+                <%= render_attr('HOB14000', rent[:name]) %>
+                <%= render_attr('HOB15000', rent[:address]) %>
+                <%= render_attr('HOB17000', rent[:amount]) %>
+                <%= render_attr('HOB18000', rent[:note]) %>
+            </HOB10000>
+        <% end %>
     </HOB00000>
 </HOI150>
