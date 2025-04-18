@@ -105,9 +105,6 @@ jp:
 | pc_seisan         | PC利用 生産管理                                             | true/false |
 | software_kaikei   | 会計ソフトの名称                                            |            |
 | software_mail     | メールソフトの名称                                          |            |
-| data_cloud        | クラウドにデータ保存                                        | true/false |
-| data_media        | 外部記憶媒体にデータ保存                                    | true/false |
-| data_server       | PCサーバにデータ保存                                        | true/false |
 | ec_uriage         | 電子商取引・売上                                            | true/false |
 | ec_shiire         | 電子商取引・仕入                                            | true/false |
 | ec_keihi          | 電子商取引・経費                                            | true/false |
@@ -135,6 +132,14 @@ jp:
 | kessai_shiire     | 仕入の決済日                                                |            |
 | kessai_gaichu     | 外注の決済日                                                |            |
 | kessai_kyuryou    | 給料の決済日                                                |            |
+
+### 改訂により廃止された項目
+
+| key               | Description                                                 |            |
+|-------------------|-------------------------------------------------------------|------------|
+| data_cloud        | クラウドにデータ保存                                        | true/false |
+| data_media        | 外部記憶媒体にデータ保存                                    | true/false |
+| data_server       | PCサーバにデータ保存                                        | true/false |
 
 
 USERINF
