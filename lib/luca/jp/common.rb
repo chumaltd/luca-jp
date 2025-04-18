@@ -68,7 +68,7 @@ module Luca
       # 繰越損失適用後の所得金額
       #
       def 所得金額
-        @繰越損失管理 = Sonshitsu.load(@end_date).update(@別表四調整所得).save if @繰越損失管理.nil?
+        @繰越損失管理 = Sonshitsu.load(@end_date).update(@別表四調整所得) if @繰越損失管理.nil?
         @繰越損失管理.profit
       end
 

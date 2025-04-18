@@ -50,6 +50,7 @@ module Luca
         @法人税未払 = [@差引所得に対する法人税額 - @法人税中間納付, 0].max
 
         if export
+          @繰越損失管理.save unless @繰越損失管理.nil?
           {
             kokuzei: {
               zeigaku: @確定法人税額,
