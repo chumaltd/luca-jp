@@ -19,18 +19,27 @@ module Luca
           customers.map do |c|
             amount = readable(c['unsettled'])
             listed_amount += amount
-            f << ['3', '0', '売掛金', c['customer'], c['address'], amount, nil ]
+            if @date > Date.new(2024, 3, 1)
+              address = c['tax_id'] ? nil : c['address']
+              f << ['3', '0', '売掛金', c['tax_id']&.to_i, nil, c['customer'], address, amount, nil ]
+            else
+              f << ['3', '0', '売掛金', c['customer'], c['address'], amount, nil ]
+            end
           end
           if total - listed_amount > 0
             f << ['3', '0', '売掛金', 'その他', nil, total - listed_amount, nil ]
           end
-          f << ['3', '1', nil, nil, nil, total, nil ]
+          if @date > Date.new(2024, 3, 1)
+            f << ['3', '1', nil, nil, nil, nil, nil, total, nil ]
+          else
+            f << ['3', '1', nil, nil, nil, total, nil ]
+          end
         end
         File.open('HOI030_3.0.csv', 'w') { |f| f.write(str) }
       end
 
       def list
-        customers = self.class.report(@date, detail: true)
+        customers = self.class.report(@date, detail: true, due: true)
                      .sort_by { |customer| customer['unsettled'] }
                      .reverse
         total = customers.inject(0) { |sum, customer| sum + customer['unsettled'] }
