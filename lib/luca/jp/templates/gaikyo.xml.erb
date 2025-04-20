@@ -69,11 +69,18 @@
         <%= render_attr('IAE04300', gaikyo_config('software_kaikei') ? '<kubun_CD>1</kubun_CD>' : nil) %>
         <%= render_attr('IAE04500', gaikyo_config('software_kaikei')) %>
         <%= render_attr('IAE04600', gaikyo_config('software_mail')) %>
+        <% if @form_vers['HOK010'] >= '7.0' %>
+          <IAE07910>
+            <%= render_attr('IAE07920', gaikyo_config('dencho_good') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <%= render_attr('IAE07930', gaikyo_config('dencho_generic') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <%= render_attr('IAE07940', gaikyo_config('dencho_scanner') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+          </IAE07910>
+        <% end %>
         <% if @form_vers['HOK010'] < '7.0' %>
-        <IAE07000>
-            <%= render_attr('IAE07700', gaikyo_config('data_cloud') ? '<kubun_CD>1</kubun_CD>' : nil) %>
-            <%= render_attr('IAE07800', gaikyo_config('data_media') ? '<kubun_CD>1</kubun_CD>' : nil) %>
-            <%= render_attr('IAE07900', gaikyo_config('data_server') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+            <IAE07000>
+                <%= render_attr('IAE07700', gaikyo_config('data_cloud') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+                <%= render_attr('IAE07800', gaikyo_config('data_media') ? '<kubun_CD>1</kubun_CD>' : nil) %>
+                <%= render_attr('IAE07900', gaikyo_config('data_server') ? '<kubun_CD>1</kubun_CD>' : nil) %>
         </IAE07000>
         <% end %>
     </IAE00000>

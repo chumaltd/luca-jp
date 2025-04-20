@@ -17,10 +17,11 @@ module Luca
       @dirname = 'journals'
       @record_type = 'raw'
 
-      def kani(report_cfg, export: false, ext_config: nil)
+      def kani(report_cfg, export: false, ext_config: nil, kessanbi: nil)
         set_pl(4)
         set_bs(4)
         @issue_date = Date.today
+        @kessanbi = kessanbi
         @software = 'LucaJp'
         @jimusho_name = report_cfg['jimusho_name']
         @report_category = report_cfg['type']
@@ -147,7 +148,7 @@ module Luca
 
       def 第六号
         @資本金準備金 = readable(['911', '9131'].map { |cd| @bs_data.dig(cd) }.compact.sum)
-        STDERR.puts "第六号様式： 「決算確定の日」などの追記が必要。「国外関連者」の確認が必要"
+        STDERR.puts "第六号様式： #{ %q(「決算確定の日」などの追記、または --kessan オプション指定が必要。) if @kessanbi.nil? }「国外関連者」の確認が必要"
         render_erb(search_template('el-no6.xml.erb'))
       end
 

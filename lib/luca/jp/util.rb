@@ -63,6 +63,8 @@ module Luca
       end
 
       def etax_date(date)
+        return nil if date.nil?
+
         "<gen:era>#{gengou(date)}</gen:era><gen:yy>#{wareki(date)}</gen:yy><gen:mm>#{date.month}</gen:mm><gen:dd>#{date.day}</gen:dd>"
       end
 

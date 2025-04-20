@@ -3,8 +3,8 @@
 
 require 'optparse'
 require 'luca/jp'
-require 'luca_salary/jp_payreport'
 require 'luca_cmd'
+require 'luca_salary/jp_payreport'
 require 'luca_support/const'
 require 'yaml'
 
@@ -24,7 +24,7 @@ class LucaCmd
     if params[:export]
       puts Luca::Jp::Aoiro.range(*auto_range(args, params)).export_json(ext_config: ext_config)
     else
-      puts Luca::Jp::Aoiro.range(*auto_range(args, params)).kani(ext_config: ext_config, no_xbrl: params[:noxbrl])
+      puts Luca::Jp::Aoiro.range(*auto_range(args, params)).kani(ext_config: ext_config, no_xbrl: params[:noxbrl], kessanbi: params[:kessanbi])
     end
   end
 
@@ -37,7 +37,9 @@ class LucaCmd
       puts JSON.dump(accounts)
     else
       Luca::Jp::Util.eltax_config('reports').each do |report|
-        File.open("chihouzei-#{report['jichitai_code']}#{report['jimusho_code']}.xml", 'w') { |f| f.puts(Luca::Jp::Chihouzei.range(*auto_range(args, params)).kani(report, ext_config: ext_config))}
+        File.open("chihouzei-#{report['jichitai_code']}#{report['jimusho_code']}.xml", 'w') do |f|
+          f.puts(Luca::Jp::Chihouzei.range(*auto_range(args, params)).kani(report, ext_config: ext_config, kessanbi: params[:kessanbi]))
+        end
       end
     end
   end
@@ -56,9 +58,14 @@ class LucaCmd
       r = LucaBook::Util.current_fy(date, to: date)
       [r[0].year, r[0].month, r[1].year, r[1].month]
     when 0
-      date = params[:lastyear] ? Date.today.prev_year : Date.today
-      r = LucaBook::Util.current_fy(date)
-      [r[0].year, r[0].month, r[1].year, r[1].month]
+      if params[:kessanbi]
+        r = LucaBook::Util.previous_fy(params[:kessanbi])
+        [r[0].year, r[0].month, r[1].year, r[1].month]
+      else
+        date = params[:lastyear] ? Date.today.prev_year : Date.today
+        r = LucaBook::Util.current_fy(date)
+        [r[0].year, r[0].month, r[1].year, r[1].month]
+      end
     end
   end
 end
@@ -81,6 +88,7 @@ when 'h', /hou?jinzei/
     opt.banner = 'Usage: luca-jp h|houjinzei [options] [yyyy mm yyyy mm]'
     opt.on('-x VAL', 'extra config') { |v| params[:extra] = v }
     opt.on('--export', 'export json') { |_v| params[:export] = true }
+    opt.on('--kessan VAL', 'settlement date') { |v| params[:kessanbi] = Date.parse(v) }
     opt.on('--lastyear', 'report on last Financial year') { |_v| params[:lastyear] = true }
     opt.on('--no-xbrl', 'skip XBRL statement') { |_v| params[:noxbrl] = true }
     args = opt.parse!(ARGV)
@@ -103,6 +111,7 @@ when 'c', /chihou?zei/
     opt.banner = 'Usage: luca-jp c|chihouzei [options] [yyyy mm yyyy mm]'
     opt.on('-x VAL', 'extra config') { |v| params[:extra] = v }
     opt.on('--export', 'export json') { |_v| params[:export] = true }
+    opt.on('--kessan VAL', 'settlement date') { |v| params[:kessanbi] = Date.parse(v) }
     opt.on('--lastyear', 'report on last Financial year') { |_v| params[:lastyear] = true }
     args = opt.parse!(ARGV)
     LucaCmd.check_dir('journals', ext_conf: EXT_CONF) do

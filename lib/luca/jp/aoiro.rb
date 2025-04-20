@@ -20,10 +20,11 @@ module Luca
       @dirname = 'journals'
       @record_type = 'raw'
 
-      def kani(ext_config: nil, export: false, no_xbrl: false)
+      def kani(ext_config: nil, export: false, no_xbrl: false, kessanbi: nil)
         set_pl(4)
         set_bs(4)
         @issue_date = Date.today
+        @kessanbi = kessanbi
         @company = CGI.escapeHTML(config.dig('company', 'name'))
         @software = 'LucaJp'
         @shinkoku_kbn = '30' # 確定申告
@@ -162,7 +163,7 @@ module Luca
       end
 
       def 別表一
-        STDERR.puts "別表一： 「決算確定の日」などの追記が必要"
+        STDERR.puts "別表一： 「決算確定の日」などの追記、または --kessan オプション指定が必要" if @kessanbi.nil?
         render_erb(search_template('beppyo1.xml.erb'))
       end
 
@@ -355,7 +356,8 @@ module Luca
         @概況給料 = gaikyo('C12')
         @概況交際費 = gaikyo('C1B')
         @概況減価償却 = gaikyo('C1P')
-        @概況地代租税 = ['C1E', 'C1I'].map { |k| gaikyo(k) }.compact.sum
+        chidai_accounts = @form_vers['HOK010'] >= '6.0' ? ['C1E'] : ['C1E', 'C1I']
+        @概況地代租税 = chidai_accounts.map { |k| gaikyo(k) }.compact.sum
         @概況営業損益 = gaikyo('CA')
         @概況特別利益 = gaikyo('F0')
         @概況特別損失 = gaikyo('G0')

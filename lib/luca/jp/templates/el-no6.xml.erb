@@ -18,12 +18,7 @@
             <gen:mm></gen:mm>
             <gen:dd></gen:dd>
           </AAA00700>
-        <AAA00800>
-          <gen:era><%= gengou(@issue_date) %></gen:era>
-          <gen:yy><%= wareki(@issue_date) %></gen:yy>
-          <gen:mm><%= @issue_date.month %></gen:mm>
-          <gen:dd><%= @issue_date.day %></gen:dd>
-        </AAA00800>
+        <%= render_attr('AAA00800', etax_date(@issue_date)) -%>
         <AAA00900 idref="ORG1_NAME"></AAA00900>
         <AAA_HONTEN_ZIP idref="HONTEN_ZIP"></AAA_HONTEN_ZIP>
         <AAA_HONTEN_ADDR idref="HONTEN_ADDR"></AAA_HONTEN_ADDR>
@@ -166,10 +161,11 @@
         <AAH00200><%= 中間還付税額(@確定法人税割, @法人税割中間納付) + 中間還付税額(@所得割, 事業税中間納付) + 中間還付税額(特別法人事業税(@所得割), @地方特別法人事業税中間納付) %></AAH00200>
         <AAH00400><%= eltax_kouza %></AAH00400>
         <AAI00100>
-          <gen:era />
-          <gen:yy />
-          <gen:mm />
-          <gen:dd />
+          <% if @kessanbi -%>
+            <%= etax_date(@kessanbi) %>
+          <% else -%>
+            <gen:era /><gen:yy /><gen:mm /><gen:dd />
+          <% end -%>
         </AAI00100>
         <AAI00900>
           <gen:era />
