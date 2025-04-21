@@ -1,8 +1,8 @@
-## Luca::Jp main
+## Luca::Jp 0.20.0
 
 * 法人税・消費税・地方税の2024年度バージョン追加
 * `luca-jp houjinzei|chihouzei --kessan yyyy-mm-dd`による決算確定の日指定をサポート
-* `luca-jp urikake`がインボイス登録番号として、LucaDeal::Customerのtax_idフィールドを参照
+* `luca-jp urikake`がインボイス登録番号として、LucaDeal::Customerの`tax_id`フィールドを参照
 * 勘定科目内訳書（地代家賃・買掛金）： インボイス登録番号追加
 * 法人概況説明書： バージョン別の地代家賃欄の変更
 * 法人概況説明書： 電子帳簿保存法のconfigを追加
