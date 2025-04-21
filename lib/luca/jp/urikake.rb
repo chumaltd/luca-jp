@@ -15,27 +15,28 @@ module Luca
         listed_amount = 0
         encoding ||= 'SJIS'
         customers, total = list
+        format_ver = @date > Date.new(2024, 3, 1) ? 4 : 3
         str = CSV.generate(String.new, headers: false, col_sep: ',', encoding: encoding) do |f|
           customers.map do |c|
             amount = readable(c['unsettled'])
             listed_amount += amount
-            if @date > Date.new(2024, 3, 1)
+            if format_ver >= 4
               address = c['tax_id'] ? nil : c['address']
               f << ['3', '0', '売掛金', c['tax_id']&.to_i, nil, c['customer'], address, amount, nil ]
             else
               f << ['3', '0', '売掛金', c['customer'], c['address'], amount, nil ]
             end
           end
-          if total - listed_amount > 0
-            f << ['3', '0', '売掛金', 'その他', nil, total - listed_amount, nil ]
-          end
-          if @date > Date.new(2024, 3, 1)
+          if format_ver >= 4
+            f << ['3', '0', '売掛金', nil, nil, 'その他', nil, total - listed_amount, nil ]
             f << ['3', '1', nil, nil, nil, nil, nil, total, nil ]
           else
+            f << ['3', '0', '売掛金', 'その他', nil, total - listed_amount, nil ]
             f << ['3', '1', nil, nil, nil, total, nil ]
           end
         end
-        File.open('HOI030_3.0.csv', 'w') { |f| f.write(str) }
+        STDERR.puts "Writing HOI030_#{format_ver}.0.csv..."
+        File.open("HOI030_#{format_ver}.0.csv", 'w') { |f| f.write(str) }
       end
 
       def list

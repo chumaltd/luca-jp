@@ -121,7 +121,7 @@ when 'c', /chihou?zei/
 when /urikake/
   OptionParser.new do |opt|
     opt.banner = 'Usage: luca-jp urikake [options] yyyy mm'
-    opt.on('--utf8', 'UTF-8でファイル生成') { |_v| params[:encode] = 'UTF-8' }
+    opt.on('--utf8', '確認用にUTF-8でファイル生成') { |_v| params[:encode] = 'UTF-8' }
     args = opt.parse!(ARGV)
     LucaCmd.check_dir('invoices', ext_conf: EXT_CONF) do
       LucaCmd.urikake(args, params)
