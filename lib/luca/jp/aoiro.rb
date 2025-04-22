@@ -333,19 +333,16 @@ module Luca
       end
 
       def 適用額明細フォーム
-        return nil if @確定法人税額 == 0
+        return nil if 中小企業の軽減税率対象所得(所得金額) == 0
 
         'HOE990'
       end
 
       def 適用額明細
-        if 期末資本金 <= 10_000_000
+        unless 軽減税率不適用法人
           STDERR.puts "適用額明細： 必要に応じて「少額減価償却資産の損金算入」（67条の5第1項, 00277。別表16[7]）の確認が必要"
         end
-        if @確定法人税額 == 0
-          STDERR.puts "別表一：適用額明細書の有無の確認が必要"
-          return nil
-        end
+        return nil if 適用額明細フォーム.nil?
 
         render_erb(search_template('tekiyougaku.xml.erb'))
       end

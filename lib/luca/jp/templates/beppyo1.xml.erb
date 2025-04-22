@@ -26,7 +26,7 @@
             <BGA00260><kubun_CD>1</kubun_CD></BGA00260>
         </BGA00210>
         <%= render_attr('BGA00290', @概況売上) %>
-        <BGA00300><kubun_CD>1</kubun_CD></BGA00300>
+        <BGA00300><kubun_CD><%= 適用額明細フォーム ? "1" : "2" -%></kubun_CD></BGA00300>
         <BGA00330>
             <BGA00340 IDREF="JIGYO_NENDO_FROM"/>
             <BGA00350 IDREF="JIGYO_NENDO_TO"/>
