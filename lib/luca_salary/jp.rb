@@ -21,7 +21,10 @@ class LucaSalary::Jp < LucaSalary::Base
     扶養控除 = self.class.扶養控除対象者の数(profile['family'], Date.new(date.year, 12, 31))
     {}.tap do |h|
       select_code(profile, '1').each { |k, v| h[k] = v }
-      h['201'] = @insurance.health_insurance_salary(insurance_rank(profile))
+      h['201'] = @insurance.health_insurance_salary(
+        insurance_rank(profile),
+        介護保険?(profile['birth_date'])
+      )
       h['202'] = @insurance.pension_salary(pension_rank(profile))
       tax_base = self.class.sum_code(h, '1', income_tax_exception) - h['201'] - h['202']
       h['203'] = JpNationalTax::IncomeTax.calc_kouran(tax_base, Date.today, 配偶者控除, 扶養控除)
@@ -29,7 +32,7 @@ class LucaSalary::Jp < LucaSalary::Base
       select_code(profile, '3').each { |k, v| h[k] = v }
       select_code(profile, '4').each { |k, v| h[k] = v }
       h.merge!(amount_by_code(h))
-      h['id'] = profile.dig('id')
+      h['id'] = profile.fetch('id')
     end
   end
 
@@ -149,12 +152,30 @@ class LucaSalary::Jp < LucaSalary::Base
     family.map { |person| 各家族の扶養控除の額(person, date) > 0 ? 1 : 0 }.sum
   end
 
-  def income_tax_exception
-    %w[116 118 119 11A 11B]
+  private
+
+  # 満40歳に達したときより徴収が始まり、満65歳に達したときより徴収されなくなる
+  #
+  def 介護保険?(birth_date)
+    return nil if birth_date.nil?
+
+    due_init = birth_date.next_year(40).prev_day
+    return false if @date.year < due_init.year
+    return false if @date.year == due_init.year && @date.month < due_init.month
+
+    due_last = birth_date.next_year(65).prev_day
+    return false if @date.year > due_last.year
+    return false if @date.year == due_last.year && @date.month >= due_last.month
+
+    true
   end
 
   def insurance_rank(dat)
     dat.dig('insurance', 'rank')
+  end
+
+  def income_tax_exception
+    %w[116 118 119 11A 11B]
   end
 
   def pension_rank(dat)

@@ -23,8 +23,11 @@ class InsuranceJP < LucaRecord::Base
     load_data(File.open(file_path))
   end
 
-  def health_insurance_salary(rank)
-    round6(select_health_insurance(rank).dig('insurance_elder_salary'))
+  def health_insurance_salary(rank, elder)
+    return nil if elder.nil?
+
+    category = elder ? 'insurance_elder_salary' : 'insurance_younger_salary'
+    round6(select_health_insurance(rank).dig(category))
   end
 
   def pension_salary(rank)
