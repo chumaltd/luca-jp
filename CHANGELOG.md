@@ -1,3 +1,7 @@
+## Luca::Jp 0.20.4 / LucaSalary::Jp 0.2.1
+
+* 扶養控除の計算をjp-national-tax gemに切り替え。控除対象者の収入計算に対応
+
 ## Luca::Jp 0.20.3 / LucaSalary::Jp 0.2.0
 
 * 年末調整の基礎控除基準額、課税所得金額の修正

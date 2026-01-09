@@ -43,8 +43,8 @@ class LucaSalary::Jp < LucaSalary::Base
     payment.tap do |p|
       p['901'] = 給与等の金額
       p['911'] = JpNationalTax::IncomeTax.basic_deduction(給与等の金額, date)
-      p['916'] = 配偶者控除の金額(p['1'], profile['spouse'], date)
-      p['917'] = 配偶者特別控除の金額(p['1'], profile['spouse'], date)
+      p['916'] = 配偶者控除の金額(給与等の金額, profile['spouse'], date)
+      p['917'] = 配偶者特別控除の金額(給与等の金額, profile['spouse'], date)
       p['918'] = 扶養控除の金額(profile['family'], date)
       p['912'] = ['201', '202', '204', '205'].map{ |cd| p[cd] }.compact.sum
       課税給与所得金額 = 給与等の金額 - ['911', '912', '916', '917', '918'].map{ |cd| p[cd] }.compact.sum
@@ -65,68 +65,23 @@ class LucaSalary::Jp < LucaSalary::Base
     end
   end
 
-  def self.配偶者控除の金額(income, spouse, date)
-    puts spouse
+  def self.配偶者控除の金額(salary, spouse, date)
     return nil if spouse.nil?
 
-    puts spouse
     spouse_salary = JpNationalTax::IncomeTax.year_salary_taxable(spouse['income'][date.year.to_s] || 0, date)
-    return 0 if spouse_salary > 480_000
+    return 0 if spouse_salary > 580_000
 
-    salary = JpNationalTax::IncomeTax.year_salary_taxable(income || 0, date)
-    birth_date = spouse['birth_date'] || date
-    if salary <= 9_000_000
-      birth_date <= date.prev_year(70) ? 480_000 : 380_000
-    elsif salary <= 9_500_000
-      birth_date <= date.prev_year(70) ? 320_000 : 260_000
-    elsif salary <= 10_000_000
-      birth_date <= date.prev_year(70) ? 160_000 : 130_000
-    else
-      0
-    end
+    JpNationalTax::IncomeTax.spouse_deduction(salary, spouse_salary, date, spouse['birth_date'])
   end
 
-  def self.配偶者特別控除の金額(income, spouse, date)
+  def self.配偶者特別控除の金額(salary, spouse, date)
     return nil if spouse.nil?
-
-    salary = JpNationalTax::IncomeTax.year_salary_taxable(income || 0, date)
     return 0 if salary > 10_000_000
 
     spouse_salary = JpNationalTax::IncomeTax.year_salary_taxable(spouse['income'][date.year.to_s] || 0, date)
-    return 0 if spouse_salary <= 480_000
-    return 0 if spouse_salary > 1_330_000
+    return 0 if spouse_salary <= 580_000
 
-    if salary <= 9_000_000
-      return 380_000 if spouse_salary <= 950_000
-      return 360_000 if spouse_salary <= 1_000_000
-      return 310_000 if spouse_salary <= 1_050_000
-      return 260_000 if spouse_salary <= 1_100_000
-      return 210_000 if spouse_salary <= 1_150_000
-      return 160_000 if spouse_salary <= 1_200_000
-      return 110_000 if spouse_salary <= 1_250_000
-      return 60_000 if spouse_salary <= 1_300_000
-      return 30_000
-    elsif salary <= 9_500_000
-      return 260_000 if spouse_salary <= 950_000
-      return 240_000 if spouse_salary <= 1_000_000
-      return 210_000 if spouse_salary <= 1_050_000
-      return 180_000 if spouse_salary <= 1_100_000
-      return 140_000 if spouse_salary <= 1_150_000
-      return 110_000 if spouse_salary <= 1_200_000
-      return 80_000 if spouse_salary <= 1_250_000
-      return 40_000 if spouse_salary <= 1_300_000
-      return 20_000
-    else
-      return 130_000 if spouse_salary <= 950_000
-      return 120_000 if spouse_salary <= 1_000_000
-      return 110_000 if spouse_salary <= 1_050_000
-      return 90_000 if spouse_salary <= 1_100_000
-      return 70_000 if spouse_salary <= 1_150_000
-      return 60_000 if spouse_salary <= 1_200_000
-      return 40_000 if spouse_salary <= 1_250_000
-      return 20_000 if spouse_salary <= 1_300_000
-      return 10_000
-    end
+    JpNationalTax::IncomeTax.spouse_deduction(salary, spouse_salary, date, spouse['birth_date'])
   end
 
   def self.扶養控除の金額(family, date)
@@ -139,15 +94,8 @@ class LucaSalary::Jp < LucaSalary::Base
     birth_date = person['birth_date']
     return 0 if birth_date.nil?
 
-    if birth_date > date.prev_year(16)
-      0
-    elsif birth_date <= date.prev_year(70)
-      person['live_with'] ? 580_000 : 480_000 # 老人扶養親族
-    elsif birth_date <= date.prev_year(19) and birth_date > date.prev_year(23)
-      630_000 # 特定扶養親族
-    else
-      380_000
-    end
+    salary = JpNationalTax::IncomeTax.year_salary_taxable(person.dig('income', date.year.to_s) || 0, date)
+    JpNationalTax::IncomeTax.family_deduction(birth_date, date, salary, live_with: person['live_with'])
   end
 
   def self.扶養控除対象者の数(family, date)
