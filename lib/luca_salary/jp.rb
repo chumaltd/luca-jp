@@ -39,14 +39,16 @@ class LucaSalary::Jp < LucaSalary::Base
   def self.year_total(profile, payment, date)
     raise '年末調整の対象となりません' if payment['1'] == 0
 
+    給与等の金額 = JpNationalTax::IncomeTax.year_salary_taxable(payment['1'], date)
     payment.tap do |p|
-      p['911'] = JpNationalTax::IncomeTax.basic_deduction(p['1'], date)
+      p['901'] = 給与等の金額
+      p['911'] = JpNationalTax::IncomeTax.basic_deduction(給与等の金額, date)
       p['916'] = 配偶者控除の金額(p['1'], profile['spouse'], date)
       p['917'] = 配偶者特別控除の金額(p['1'], profile['spouse'], date)
       p['918'] = 扶養控除の金額(profile['family'], date)
       p['912'] = ['201', '202', '204', '205'].map{ |cd| p[cd] }.compact.sum
-      p['901'] = JpNationalTax::IncomeTax.year_salary_taxable(p['1'], date)
-      p['941'] = p['901'] - ['911', '912', '916', '917', '918'].map{ |cd| p[cd] }.compact.sum
+      課税給与所得金額 = 給与等の金額 - ['911', '912', '916', '917', '918'].map{ |cd| p[cd] }.compact.sum
+      p['941'] = (課税給与所得金額 / 1000).floor * 1000
       p['961'] = JpNationalTax::IncomeTax.year_tax(p['941'], date)
       diff = p['961'] - p['203']
       if diff.positive?

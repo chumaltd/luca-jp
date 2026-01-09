@@ -1,3 +1,7 @@
+## Luca::Jp 0.20.3 / LucaSalary::Jp 0.2.0
+
+* 年末調整の基礎控除基準額、課税所得金額の修正
+
 ## Luca::Jp 0.20.2
 
 * LucaSalary::Jp 介護保険料の判定
