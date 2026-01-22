@@ -21,6 +21,10 @@ module Luca
         end
       end
 
+      def alphadigit_ja(str)
+        str.tr('A-Z0-9\- ', 'Ａ-Ｚ０-９ー　')
+      end
+
       # TODO: customerオプションを適切に扱うには
       # 納付時にx-customerを付加していないケースの考慮が必要
       def prepaid_tax(code, customer = nil)

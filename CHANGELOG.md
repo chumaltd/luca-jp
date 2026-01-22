@@ -1,3 +1,8 @@
+## Luca::Jp 0.20.5 / LucaSalary::Jp 0.2.2
+
+* `luca-jp kyuyo`の出力を2025年改定に対応
+* 住所の半角英数字表記をeLtaxが拒否する挙動に対して自動変換を追加
+
 ## Luca::Jp 0.20.4 / LucaSalary::Jp 0.2.1
 
 * 扶養控除の計算をjp-national-tax gemに切り替え。控除対象者の収入計算に対応

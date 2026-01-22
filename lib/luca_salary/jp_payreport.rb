@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 require 'luca_salary'
 require 'luca_support/const'
+require 'luca/jp/util'
+
 require 'csv'
 require 'open3'
 
@@ -39,7 +41,7 @@ end
 private
 
 def 給与支払報告明細行(slip, company, year)
-  [
+  record = [
     315, # 法定資料の種類
     提出義務者(company),
     0, # 提出区分（新規0, 追加1, 訂正2, 取消3）
@@ -49,18 +51,20 @@ def 給与支払報告明細行(slip, company, year)
     支払を受ける者の詳細(slip, year),
     company['tax_id'], # 法人番号
     支払を受ける者の扶養情報(slip['profile'], year),
-    slip['911'] == 480_000 ? nil : slip['911'], # 基礎控除の額、48万の場合記載しない
+    (year <= 2024 && slip['911'] == 480_000) ? nil : slip['911'], # 基礎控除の額
     nil, # 所得金額調整控除額 TODO: 未実装 措法41の3の3
     nil, # ひとり親
-    提出先判定(slip), # 必須：作成区分（国税のみ0, 地方のみ1, 両方2）
-  ].flatten
+  ]
+  record << [nil, nil, nil] if year >= 2025 # 特定親族控除 TODO: 未実装
+  record << 提出先判定(slip) # 必須：作成区分（国税のみ0, 地方のみ1, 両方2）
+  record.flatten
 end
 
 def 提出義務者(company)
   [
     nil,  # 整理番号1
     nil,  # 本支店等区分番号
-    ['address', 'address2'].map { |attr| company[attr] }
+    ['address', 'address2'].map { |attr| Luca::Jp::Util.alphadigit_ja(company[attr]) }
       .compact.join('　'), # 必須：住所又は所在地
     company['name'], # 必須：氏名又は名称
     company['tel'],  # 電話番号
@@ -72,7 +76,7 @@ end
 
 def 支払を受ける者(profile)
   [
-    ['address', 'address2'].map { |attr| profile[attr] }
+    ['address', 'address2'].map { |attr| Luca::Jp::Util.alphadigit_ja(profile[attr]) }
       .compact.join('　'), # 必須：住所又は居所
     nil, # 国外住所表示（国内は"0"、国外は"1"）
     profile['name'], # 必須：氏名
