@@ -36,6 +36,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'lucasalary', '>= 0.1.26'
   spec.add_dependency 'lucarecord', '>= 0.7.3'
   spec.add_dependency 'jp-national-tax', '>= 0.3.1'
+  spec.add_dependency 'rexml', '~> 3.4'
+  spec.add_dependency 'rubyzip', '~> 3.0'
 
   spec.add_development_dependency 'bundler', '~> 2.3'
   spec.add_development_dependency 'minitest', '~> 5.0'

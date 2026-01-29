@@ -4,6 +4,7 @@
 require 'optparse'
 require 'luca/jp'
 require 'luca_cmd'
+require 'luca_salary/jp_adjustment'
 require 'luca_salary/jp_payreport'
 require 'luca_support/const'
 require 'yaml'
@@ -76,6 +77,13 @@ module LucaSalaryCmd
       puts LucaSalary::JpPayreport.export(args.first)
     end
   end
+
+  class Import
+    def self.profiles(args, params = nil)
+      path, id = args
+      puts LucaSalary::JpAdjustment.import(path, id, params)
+    end
+  end
 end
 
 #LucaRecord::Base.valid_project?
@@ -135,6 +143,14 @@ when 'k', 'kyuyo', 'salary'
       LucaSalaryCmd::Export.payreport(args)
     end
   end
+when 'n', /nenmats?u/, /nenmats?u-?chou?sei/
+  OptionParser.new do |opt|
+    opt.banner = 'Usage: luca-jp nenmatsu <zip-file-path> <profile id>'
+    args = opt.parse(ARGV)
+    LucaCmd.check_dir('profiles', ext_conf: EXT_CONF) do
+      LucaSalaryCmd::Import.profiles(args, params)
+    end
+  end
 when 'version'
   puts "luca-jp: version #{Luca::Jp::VERSION}"
   exit 0
@@ -146,6 +162,7 @@ else
   puts '  s[youhizei]: 消費税の計算'
   puts '  c[hihouzei]: 地方税の計算'
   puts '  k[yuyo]: 給与報告（所得税）の計算'
+  puts '  n[enmatsu]: 年末調整アプリのデータインポート'
   puts '  urikake: 勘定科目内訳明細書の売掛金リスト(CSV)'
   exit 1
 end

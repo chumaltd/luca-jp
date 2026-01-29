@@ -1,3 +1,10 @@
+## Luca::Jp 0.20.6
+
+* `luca-jp nenmatsu-chousei`の初期実装
+  * 国税庁の年末調整申告書作成アプリが生成したzipからインポート
+    * パスワード付きzipには対応しない。解凍したディレクトリからインポート
+  * 現時点では`LucaSalary::Profile`のID指定による1件ずつのインポートのみサポート
+
 ## Luca::Jp 0.20.5 / LucaSalary::Jp 0.2.2
 
 * `luca-jp kyuyo`の出力を2025年改定に対応
