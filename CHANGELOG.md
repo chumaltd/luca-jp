@@ -1,3 +1,11 @@
+## Luca::Jp 0.21.0
+
+* `luca-jp nenmatsu-chosei`のインポート改善
+  * 個人番号を利用できる場合、個人番号を用いて照合
+  * バルクインポートに対応
+  * 既存のprofileが見つからなかったインポートファイルを`rejected/`ディレクトリに移動
+  * 原則として異動申告書の内容で洗替
+
 ## Luca::Jp 0.20.6
 
 * `luca-jp nenmatsu-chousei`の初期実装

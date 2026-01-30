@@ -145,7 +145,7 @@ when 'k', 'kyuyo', 'salary'
   end
 when 'n', /nenmats?u/, /nenmats?u-?chou?sei/
   OptionParser.new do |opt|
-    opt.banner = 'Usage: luca-jp nenmatsu <zip-file-path> <profile id>'
+    opt.banner = 'Usage: luca-jp nenmatsu <import-path> [profile id]'
     args = opt.parse(ARGV)
     LucaCmd.check_dir('profiles', ext_conf: EXT_CONF) do
       LucaSalaryCmd::Import.profiles(args, params)
