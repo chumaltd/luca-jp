@@ -26,7 +26,8 @@ class LucaSalary::Jp < LucaSalary::Base
         介護保険?(profile['birth_date'])
       )
       h['202'] = @insurance.pension_salary(pension_rank(profile))
-      tax_base = self.class.sum_code(h, '1', income_tax_exception) - h['201'] - h['202']
+      h['206'] = @insurance.childcare_salary(insurance_rank(profile))
+      tax_base = self.class.sum_code(h, '1', income_tax_exception) - ['201', '202', '204', '205', '206'].map{ |cd| h[cd] }.compact.sum
       h['203'] = JpNationalTax::IncomeTax.calc_kouran(tax_base, Date.today, 配偶者控除, 扶養控除)
       h['211'] = resident_tax(profile)
       select_code(profile, '3').each { |k, v| h[k] = v }
@@ -46,7 +47,7 @@ class LucaSalary::Jp < LucaSalary::Base
       p['916'] = 配偶者控除の金額(給与等の金額, profile['spouse'], date)
       p['917'] = 配偶者特別控除の金額(給与等の金額, profile['spouse'], date)
       p['918'] = 扶養控除の金額(profile['family'], date)
-      p['912'] = ['201', '202', '204', '205'].map{ |cd| p[cd] }.compact.sum
+      p['912'] = ['201', '202', '204', '205', '206'].map{ |cd| p[cd] }.compact.sum
       課税給与所得金額 = 給与等の金額 - ['911', '912', '916', '917', '918'].map{ |cd| p[cd] }.compact.sum
       p['941'] = (課税給与所得金額 / 1000).floor * 1000
       p['961'] = JpNationalTax::IncomeTax.year_tax(p['941'], date)
@@ -99,6 +100,8 @@ class LucaSalary::Jp < LucaSalary::Base
   end
 
   def self.扶養控除対象者の数(family, date)
+    return 0 if family.nil?
+
     family.map { |person| 各家族の扶養控除の額(person, date) > 0 ? 1 : 0 }.sum
   end
 

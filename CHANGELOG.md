@@ -1,3 +1,7 @@
+## Luca::Jp 0.21.1 / LucaSalary::Jp 0.3.0
+
+* 子育て支援金の計算
+
 ## Luca::Jp 0.21.0
 
 * `luca-jp nenmatsu-chosei`のインポート改善

@@ -30,6 +30,12 @@ class InsuranceJP < LucaRecord::Base
     round6(select_health_insurance(rank).dig(category))
   end
 
+  def childcare_salary(rank)
+    return nil if @date < Date.new(2026, 4, 1) # 徴収開始日
+
+    round6(select_health_insurance(rank).dig('childcare_salary'))
+  end
+
   def pension_salary(rank)
     round6(select_pension(rank).dig('pension_salary'))
   end
