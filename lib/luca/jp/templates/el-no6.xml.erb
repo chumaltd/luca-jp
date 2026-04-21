@@ -1,9 +1,9 @@
 <R0102AA<%= @form_vers['R0102AA'] %> xmlns="http://eltax.jp/HOJIN_DOFUKEN" vr="<%= @form_vers['R0102AA'] %>" page="" seiseiSoft="<%= @software %>" seiseiVr="1" seiseiDay="<%= Date.today.strftime('%Y%m%d') %>" seiseiNM="<%= it_part_config('nozeisha_nm') %>" koshinSoft="" koshinVr="" koshinDay="" koshinNM="" taari="">
 <AAA00100 idref="SEIRI_NUM" />
-        <AAA00200 idref="JIMUSHO_NUM"></AAA00200>
-        <AAA00300 idref="HOJIN_NUM"></AAA00300>
+        <AAA00200 idref="JIMUSHO_NUM" />
+        <AAA00300 idref="HOJIN_NUM" />
         <AAA00400 />
-        <AAA00500 idref="HOJIN_NUMBER"></AAA00500>
+        <AAA00500 idref="HOJIN_NUMBER" />
         <AAA01000>
           <gen:era />
           <gen:yy />
@@ -13,51 +13,51 @@
         </AAA01000>
         <AAA01100 />
 <AAA00700 idref="RPT_DATE">
-            <gen:era></gen:era>
-            <gen:yy></gen:yy>
-            <gen:mm></gen:mm>
-            <gen:dd></gen:dd>
+            <gen:era />
+            <gen:yy />
+            <gen:mm />
+            <gen:dd />
           </AAA00700>
         <%= render_attr('AAA00800', etax_date(@issue_date)) -%>
-        <AAA00900 idref="ORG1_NAME"></AAA00900>
-        <AAA_HONTEN_ZIP idref="HONTEN_ZIP"></AAA_HONTEN_ZIP>
-        <AAA_HONTEN_ADDR idref="HONTEN_ADDR"></AAA_HONTEN_ADDR>
-        <AAA_HONTEN_TEL_NUM idref="HONTEN_TEL"></AAA_HONTEN_TEL_NUM>
+        <AAA00900 idref="ORG1_NAME" />
+        <AAA_HONTEN_ZIP idref="HONTEN_ZIP" />
+        <AAA_HONTEN_ADDR idref="HONTEN_ADDR" />
+        <AAA_HONTEN_TEL_NUM idref="HONTEN_TEL" />
         <AAA_ZIP />
         <AAA_ADDR />
         <AAA_TEL_NUM />
-        <AAA_KANA idref="KANA"></AAA_KANA>
-        <AAA_NAME idref="NAME"></AAA_NAME>
-        <AAA_DAIHYO_KANA idref="DAIHYO_KANA"></AAA_DAIHYO_KANA>
-        <AAA_DAIHYO_NAME idref="DAIHYO_NAME"></AAA_DAIHYO_NAME>
+        <AAA_KANA idref="KANA" />
+        <AAA_NAME idref="NAME" />
+        <AAA_DAIHYO_KANA idref="DAIHYO_KANA" />
+        <AAA_DAIHYO_NAME idref="DAIHYO_NAME" />
         <AAA_KEIRI_KANA></AAA_KEIRI_KANA>
         <AAA_KEIRI_NAME></AAA_KEIRI_NAME>
-        <AAA_JIGYO_NAME idref="JIGYO_NAME"></AAA_JIGYO_NAME>
-        <AAA_SHIHON idref="SHIHON"></AAA_SHIHON>
-        <AAA_SHIHON3></AAA_SHIHON3>
+        <AAA_JIGYO_NAME idref="JIGYO_NAME" />
+        <AAA_SHIHON idref="SHIHON" />
+        <AAA_SHIHON3 />
         <% if @form_vers['R0102AA'] == '250' %>
           <AAA_GASSAN></AAA_GASSAN>
           <AAA_GASSAN2></AAA_GASSAN2>
           <AAA_HOUJIN_KBN></AAA_HOUJIN_KBN>
         <% end %>
-        <AAA_SHIHON4></AAA_SHIHON4>
+        <AAA_SHIHON4 />
         <AAA_SHIHON2><%= 資本金等の額 %></AAA_SHIHON2>
         <AAA_SHIHON5><%= @資本金準備金 %></AAA_SHIHON5>
         <AAA_SHIHON6><%= 地方税資本金等の額 %></AAA_SHIHON6>
         <AAA_JIGYO_SDATE idref="SDATE">
-            <gen:era></gen:era>
-            <gen:yy></gen:yy>
-            <gen:mm></gen:mm>
-            <gen:dd></gen:dd>
-            <gen:yyyymmdd></gen:yyyymmdd>
-          </AAA_JIGYO_SDATE>
+            <gen:era />
+            <gen:yy />
+            <gen:mm />
+            <gen:dd />
+            <gen:yyyymmdd />
+        </AAA_JIGYO_SDATE>
         <AAA_JIGYO_EDATE idref="EDATE">
-            <gen:era></gen:era>
-            <gen:yy></gen:yy>
-            <gen:mm></gen:mm>
-            <gen:dd></gen:dd>
-            <gen:yyyymmdd></gen:yyyymmdd>
-          </AAA_JIGYO_EDATE>
+            <gen:era />
+            <gen:yy />
+            <gen:mm />
+            <gen:dd />
+            <gen:yyyymmdd />
+        </AAA_JIGYO_EDATE>
         <AAA_RPT_KBN idref="RPT_NAME">確定</AAA_RPT_KBN>
         <AAA01200 />
         <AAB00100 />

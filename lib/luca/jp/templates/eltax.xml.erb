@@ -7,7 +7,7 @@
                 <ORG1_CD><%= @jichitai_code %></ORG1_CD><%# 地方公共団体コード %>
                 <PROC_ID><%= @procedure_code %></PROC_ID>
                 <PROC_NAME><%= @procedure_name %></PROC_NAME>
-                <FIRST_RCPT_NUM></FIRST_RCPT_NUM>
+                <FIRST_RCPT_NUM />
             </KANRI_INF>
             <%= @form_sec %>
             <GYOMU_PROC id="GYOMU_PROC">
@@ -28,7 +28,7 @@
                         <gen:yy><%= wareki(@end_date) %></gen:yy>
                         <gen:mm><%= @end_date.month %></gen:mm>
                         <gen:dd><%= @end_date.day %></gen:dd>
-                        <gen:yyyymmdd><%= @end_date.strftime('%Y%m%d') %></gen:yyyymmdd >
+                        <gen:yyyymmdd><%= @end_date.strftime('%Y%m%d') %></gen:yyyymmdd>
                     </EDATE>
                     <RPT_DATE id="RPT_DATE">
                         <gen:era><%= gengou(@issue_date) %></gen:era>
@@ -41,7 +41,7 @@
                     <TAX_NAME id="TAX_NAME">法人都道府県民税・事業税・特別法人事業税又は地方法人特別税</TAX_NAME>
                     <RPT_NAME id="RPT_NAME">確定</RPT_NAME>
                     <MAKE_KBN id="MAKE_KBN">1</MAKE_KBN><%# 新規 %>
-                    <REV_RCPT_NUM id="REV_RCPT_NUM"></REV_RCPT_NUM>
+                    <REV_RCPT_NUM id="REV_RCPT_NUM" />
                 </PROC_INF>
                 <%= @user_inf %>
                 <JIGYOSHO_INF id="JIGYOSHO_INF">
@@ -55,15 +55,15 @@
                     <DAIRI_TEL id="DAIRI_TEL"></DAIRI_TEL>
                 </DAIRI_INF>
                 <RENTAI_INF id="RENTAI_INF">
-                    <RENTAI1_ID id="RENTAI1_ID"></RENTAI1_ID>
-                    <RENTAI2_ID id="RENTAI2_ID"></RENTAI2_ID>
-                    <RENTAI3_ID id="RENTAI3_ID"></RENTAI3_ID>
-                    <RENTAI4_ID id="RENTAI4_ID"></RENTAI4_ID>
-                    <RENTAI5_ID id="RENTAI5_ID"></RENTAI5_ID>
-                    <RENTAI6_ID id="RENTAI6_ID"></RENTAI6_ID>
-                    <RENTAI7_ID id="RENTAI7_ID"></RENTAI7_ID>
-                    <RENTAI8_ID id="RENTAI8_ID"></RENTAI8_ID>
-                    <RENTAI9_ID id="RENTAI9_ID"></RENTAI9_ID>
+                    <RENTAI1_ID id="RENTAI1_ID" />
+                    <RENTAI2_ID id="RENTAI2_ID" />
+                    <RENTAI3_ID id="RENTAI3_ID" />
+                    <RENTAI4_ID id="RENTAI4_ID" />
+                    <RENTAI5_ID id="RENTAI5_ID" />
+                    <RENTAI6_ID id="RENTAI6_ID" />
+                    <RENTAI7_ID id="RENTAI7_ID" />
+                    <RENTAI8_ID id="RENTAI8_ID" />
+                    <RENTAI9_ID id="RENTAI9_ID" />
                 </RENTAI_INF>
             </GYOMU_PROC>
             <GYOMU_TAX id="GYOMU_TAX">
@@ -102,16 +102,16 @@
         <ATT_INF id="ATT_INF"></ATT_INF>
     </Signature_INF>
     <SYSTEM_INF id="SYSTEM_INF">
-        <SYSTEM_DATA id="SYSTEM_DATA"></SYSTEM_DATA>
+        <SYSTEM_DATA id="SYSTEM_DATA" />
         <NOUZEI_UPDATE id="NOUZEI_UPDATE">
             <SDATE><%= DateTime.now.strftime('%Y%m%d%H%M%S') %></SDATE>
             <UDATE></UDATE>
             <SIGN_DATE></SIGN_DATE>
-            <SEND_DATE></SEND_DATE>
-            <RPT_INF>10</RPT_INF><%# 未入力 %>
+            <SEND_DATE />
+            <RPT_INF>40</RPT_INF><%# 作成中 %>
             <CREATE_SYS>1</CREATE_SYS><%# PCDesk作成 %>
             <INP_KBN>1</INP_KBN><%# 通常入力モード %>
-            <USER_FILE_NM></USER_FILE_NM>
+            <USER_FILE_NM />
         </NOUZEI_UPDATE>
     </SYSTEM_INF>
 </SHINKOKU_UNIT>

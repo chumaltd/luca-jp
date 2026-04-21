@@ -1,13 +1,13 @@
 <R0102AG<%= @form_vers['R0102AG'] %> xmlns="http://eltax.jp/HOJIN_DOFUKEN" vr="<%= @form_vers['R0102AG'] %>" page="" seiseiSoft="<%= @software %>" seiseiVr="1" seiseiDay="<%= Date.today.strftime('%Y%m%d') %>" seiseiNM="<%= it_part_config('nozeisha_nm') %>" koshinSoft="" koshinVr="" koshinDay="" koshinNM="" taari="">
     <AGA_JIGYO_SDATE idref="SDATE">
-        <gen:era></gen:era><gen:yy></gen:yy><gen:mm></gen:mm><gen:dd></gen:dd>
-        <gen:yyyymmdd></gen:yyyymmdd>
+        <gen:era /><gen:yy /><gen:mm /><gen:dd />
+        <gen:yyyymmdd />
     </AGA_JIGYO_SDATE>
         <AGA_JIGYO_EDATE idref="EDATE">
-            <gen:era></gen:era><gen:yy></gen:yy><gen:mm></gen:mm><gen:dd></gen:dd>
-            <gen:yyyymmdd></gen:yyyymmdd>
+            <gen:era /><gen:yy /><gen:mm /><gen:dd />
+            <gen:yyyymmdd />
           </AGA_JIGYO_EDATE>
-        <AGA_NAME idref="NAME"></AGA_NAME>
+        <AGA_NAME idref="NAME" />
         <AGB00100><%= @address %></AGB00100>
         <AGB00200>12</AGB00200>
         <AGB00300><%= @employee %></AGB00300>
