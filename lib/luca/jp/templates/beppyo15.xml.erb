@@ -8,6 +8,7 @@
     </EGA00000>
     <%= render_attr('EGB00000', @交際費) %>
     <EGC00000>
+        <%= render_attr('EGC00017', 1) %><%# 別表十五付表5を選択する場合の区分 %>
         <%= render_attr('EGC00020', 12) %>
         <%= render_attr('EGC00030', @限度額) %>
     </EGC00000>
@@ -21,6 +22,7 @@
             <%= render_attr('EGF00030', 0) %>
             <%= render_attr('EGF00040', @交際費) %>
         </EGF00010>
+        <%# 税抜経理の場合の交際費等の額に係る控除対象外消費税額等 %>
         <EGF00100>
             <%= render_attr('EGF00110', @交際費) %>
             <%= render_attr('EGF00120', 0) %>
